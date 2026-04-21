@@ -21,16 +21,16 @@ dependencies {
 }
 
 application {
-    mainClass = 'calculator.Main'
+    mainClass = 'planner.Main'
 }
 
 test {
     useJUnitPlatform()
 }
 
-task runCalculator(type: JavaExec) {
+task runPlanner(type: JavaExec) {
     group = 'application'
-    description = 'Run the calculator application'
+    description = 'Run the planner application'
     classpath = sourceSets.main.runtimeClasspath
-    main = 'calculator.Main'
+    main = 'planner.Main'
 }
