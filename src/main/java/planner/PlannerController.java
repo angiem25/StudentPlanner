@@ -7,9 +7,11 @@ import mvc.JFrameView;
 
 public class PlannerController extends AbstractController {
     public PlannerController() {
-        setModel(new PlannerModel());
-        setView(new PlannerView((PlannerModel) getModel(), this));
-        ((JFrameView) getView()).setVisible(true);
+        super(new PlannerModel(), null);
+        PlannerModel model = (PlannerModel) getModel();
+        PlannerView view = new PlannerView(model, this);
+        setView(view);
+        view.setVisible(true);
     }
 
     public void addTask(String description, LocalDate dueDate, PlannerModel.Priority priority) {

@@ -96,7 +96,7 @@ public class PlannerModel extends AbstractModel {
         }
         tasks.add(new Task(description.trim(), dueDate, priority == null ? Priority.MEDIUM : priority, false));
         saveData();
-        notifyChanged(new ModelEvent(this, 1, "taskAdded", tasks.size()));
+        notifyChanged(new ModelEvent("taskAdded", this, tasks.size()));
     }
 
     public void editTask(int index, String description, LocalDate dueDate, Priority priority) {
@@ -106,7 +106,7 @@ public class PlannerModel extends AbstractModel {
         Task old = tasks.get(index);
         tasks.set(index, new Task(description.trim(), dueDate, priority == null ? old.getPriority() : priority, old.isCompleted()));
         saveData();
-        notifyChanged(new ModelEvent(this, 2, "taskEdited", index));
+        notifyChanged(new ModelEvent("taskEdited", this, index));
     }
 
     public void setTaskCompleted(int index, boolean completed) {
@@ -116,7 +116,7 @@ public class PlannerModel extends AbstractModel {
         Task old = tasks.get(index);
         tasks.set(index, new Task(old.getDescription(), old.getDueDate(), old.getPriority(), completed));
         saveData();
-        notifyChanged(new ModelEvent(this, 3, "taskCompletionChanged", index));
+        notifyChanged(new ModelEvent("taskCompletionChanged", this, index));
     }
 
     public void deleteTask(int index) {
@@ -125,7 +125,7 @@ public class PlannerModel extends AbstractModel {
         }
         tasks.remove(index);
         saveData();
-        notifyChanged(new ModelEvent(this, 4, "taskDeleted", tasks.size()));
+        notifyChanged(new ModelEvent("taskDeleted", this, tasks.size()));
     }
 
     public List<Task> getTasks() {
@@ -139,7 +139,7 @@ public class PlannerModel extends AbstractModel {
         eventsByDate.computeIfAbsent(start.toLocalDate(), ignored -> new ArrayList<>())
                 .add(new CalendarEvent(title.trim(), start, end, description == null ? "" : description.trim()));
         saveData();
-        notifyChanged(new ModelEvent(this, 5, "eventAdded", eventsByDate.size()));
+        notifyChanged(new ModelEvent("eventAdded", this, eventsByDate.size()));
     }
 
     public void editEvent(LocalDate date, int index, String title, LocalDateTime start, LocalDateTime end, String description) {
@@ -149,7 +149,7 @@ public class PlannerModel extends AbstractModel {
         }
         events.set(index, new CalendarEvent(title.trim(), start, end, description == null ? "" : description.trim()));
         saveData();
-        notifyChanged(new ModelEvent(this, 6, "eventEdited", index));
+        notifyChanged(new ModelEvent("eventEdited", this, index));
     }
 
     public void deleteEvent(LocalDate date, int index) {
@@ -162,7 +162,7 @@ public class PlannerModel extends AbstractModel {
             eventsByDate.remove(date);
         }
         saveData();
-        notifyChanged(new ModelEvent(this, 7, "eventDeleted", eventsByDate.size()));
+        notifyChanged(new ModelEvent("eventDeleted", this, eventsByDate.size()));
     }
 
     public Map<LocalDate, List<CalendarEvent>> getDayEvents(LocalDate day) {
@@ -205,23 +205,23 @@ public class PlannerModel extends AbstractModel {
         timerInitialSeconds = minutes * 60;
         timerRemainingSeconds = timerInitialSeconds;
         timerRunning = false;
-        notifyChanged(new ModelEvent(this, 8, "timerSet", timerRemainingSeconds));
+        notifyChanged(new ModelEvent("timerSet", this, timerRemainingSeconds));
     }
 
     public void startTimer() {
         timerRunning = true;
-        notifyChanged(new ModelEvent(this, 9, "timerStarted", timerRemainingSeconds));
+        notifyChanged(new ModelEvent("timerStarted", this, timerRemainingSeconds));
     }
 
     public void pauseTimer() {
         timerRunning = false;
-        notifyChanged(new ModelEvent(this, 10, "timerPaused", timerRemainingSeconds));
+        notifyChanged(new ModelEvent("timerPaused", this, timerRemainingSeconds));
     }
 
     public void resetTimer() {
         timerRemainingSeconds = timerInitialSeconds;
         timerRunning = false;
-        notifyChanged(new ModelEvent(this, 11, "timerReset", timerRemainingSeconds));
+        notifyChanged(new ModelEvent("timerReset", this, timerRemainingSeconds));
     }
 
     public void tickTimer() {
@@ -232,7 +232,7 @@ public class PlannerModel extends AbstractModel {
         if (timerRemainingSeconds == 0) {
             timerRunning = false;
         }
-        notifyChanged(new ModelEvent(this, 12, "timerTick", timerRemainingSeconds));
+        notifyChanged(new ModelEvent("timerTick", this, timerRemainingSeconds));
     }
 
     public int getTimerRemainingSeconds() {
