@@ -1,0 +1,71 @@
+@startuml
+!theme plain
+skinparam componentStyle rectangle
+title Student Planner - MVC Architecture
+
+package "MVC Framework" {
+  [Model\nInterface] as ModelInterface
+  [View\nInterface] as ViewInterface
+  [Controller\nInterface] as ControllerInterface
+  [AbstractModel] as AbstractModel
+  [AbstractView] as AbstractView
+  [AbstractController] as AbstractController
+  [ModelEvent] as ModelEvent
+  [ModelListener] as ModelListener
+}
+
+package "Domain Model" {
+  [PlannerModel] as PlannerModel
+  [Student] as Student
+  [Course] as Course
+  [Task] as Task
+}
+
+package "Service Layer" {
+  [PlannerService] as PlannerService
+}
+
+package "UI Layer (Swing)" {
+  [PlannerView] as PlannerView
+  [PlannerController] as PlannerController
+}
+
+package "Persistence Layer" {
+  [PlannerRepository] as PlannerRepository
+  [CSV Files] as CSVFiles
+}
+
+actor User
+
+' Inheritance Relationships
+AbstractModel --|> ModelInterface
+AbstractView --|> ViewInterface
+AbstractController --|> ControllerInterface
+PlannerModel --|> AbstractModel
+PlannerView --|> AbstractView
+PlannerController --|> AbstractController
+
+' MVC Pattern Flow
+User --> PlannerView : interacts
+PlannerView --> PlannerController : delegates actions
+PlannerController --> PlannerService : validates & processes
+PlannerService --> PlannerModel : updates
+AbstractModel --> ModelListener : notifies changes
+AbstractView --> AbstractModel : displays data
+
+' Observer Pattern
+AbstractModel ..> ModelEvent : creates
+AbstractModel ..> ModelListener : notifies
+AbstractView ..> ModelListener : implements
+
+' Persistence Flow
+PlannerRepository --> PlannerModel : loads/saves
+PlannerRepository --> CSVFiles : reads/writes
+
+' Domain Relationships
+PlannerModel *--> Student : manages
+PlannerModel *--> Course : manages
+PlannerModel *--> Task : manages
+Task --> Course : associated with
+
+@enduml
