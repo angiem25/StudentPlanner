@@ -4,6 +4,18 @@ skinparam classAttributeIconSize 0
 
 title Student Planner - Class Diagram
 
+package ""Data" {" {
+
+  class Main {
+    + generateClassDiagram(): void
+    + generateMvcDiagram(): void
+    - generateDiagram(): void
+    + generateAllDiagrams(): void
+    + main(): void
+  }
+
+}
+
 package "mvc" {
 
   interface ModelListener {
@@ -25,6 +37,17 @@ package "mvc" {
     + getView(): View
     + setModel(): void
     + setView(): void
+  }
+
+  abstract class JFrameView extends JFrame implements View, ModelListener {
+    - model: Model
+    - controller: Controller
+    ..
+    + registerWithModel(): void
+    + getController(): Controller
+    + setController(): void
+    + getModel(): Model
+    + setModel(): void
   }
 
   class ModelEvent {
@@ -60,6 +83,42 @@ package "mvc" {
 }
 
 package "planner" {
+
+  class PlannerView extends JFrameView {
+    - createTodoPanel(): JPanel
+    - createCalendarPanel(): JPanel
+    - createTimerPanel(): JPanel
+    - editSelectedTask(): void
+    - toggleSelectedTask(): void
+    ...
+  }
+
+  class Priority {
+    - description: String
+    - dueDate: LocalDate
+    - priority: Priority
+    - completed: boolean
+    - title: String
+    - start: LocalDateTime
+    - end: LocalDateTime
+    - description: String
+    ..
+    + getDescription(): String
+    + getDueDate(): LocalDate
+    + getPriority(): Priority
+    + isCompleted(): boolean
+    + getTitle(): String
+    ...
+  }
+
+  class PlannerController extends AbstractController {
+    + addTask(): void
+    + editTask(): void
+    + setTaskCompleted(): void
+    + deleteTask(): void
+    + addEvent(): void
+    ...
+  }
 
   class Main {
     + main(): void
@@ -125,6 +184,53 @@ package "planner.ui" {
 
 }
 
+package "planner.ui.calendar" {
+
+  class ViewType implements View, ModelListener {
+    - model: Model
+    - controller: Controller
+    - calendarPanel: JPanel
+    - headerPanel: JPanel
+    - titleLabel: JLabel
+    - viewTogglePanel: JPanel
+    - currentDate: LocalDate
+    - currentYearMonth: YearMonth
+    - timelineScrollPane: JScrollPane
+    ..
+    + getModel(): Model
+    + getController(): Controller
+    + setModel(): void
+    + setController(): void
+    - initializeUI(): void
+    ...
+  }
+
+}
+
+package "planner.ui.timer" {
+
+  class TimerPanel extends JPanel implements ActionListener {
+    - timeDisplay: JLabel
+    - minutesInput: JTextField
+    - startButton: JButton
+    - pauseButton: JButton
+    - resetButton: JButton
+    - swingTimer: Timer
+    - totalSeconds: int
+    - remainingSeconds: int
+    - isRunning: boolean
+    - isPaused: boolean
+    ..
+    - initializeUI(): void
+    - setupTimer(): void
+    + actionPerformed(): void
+    - startTimer(): void
+    - pauseTimer(): void
+    ...
+  }
+
+}
+
 package "planner.persistence" {
 
   class PlannerRepository {
@@ -144,12 +250,28 @@ package "planner.model" {
     - currentStudent: Student
     - courses: List<Course>
     - tasks: List<Task>
+    - events: List<Event>
     ..
     + getCurrentStudent(): Student
     + setCurrentStudent(): void
     + getCourses(): List<Course>
     + getCourseById(): Optional<Course>
     + getCourseByCode(): Optional<Course>
+    ...
+  }
+
+  class Event {
+    - id: String
+    - title: String
+    - description: String
+    - startDateTime: LocalDateTime
+    - endDateTime: LocalDateTime
+    ..
+    + getId(): String
+    + getTitle(): String
+    + getDescription(): String
+    + getStartDateTime(): LocalDateTime
+    + getEndDateTime(): LocalDateTime
     ...
   }
 
@@ -223,10 +345,19 @@ package "planner.service" {
 ' Relationships
 Model <|.. AbstractModel
 Controller <|.. AbstractController
+JFrame <|-- JFrameView
+View <|.. JFrameView
+ModelListener <|.. JFrameView
 View <|.. AbstractView
 ModelListener <|.. AbstractView
+JFrameView <|-- PlannerView
+AbstractController <|-- PlannerController
 AbstractView <|-- PlannerView
 AbstractController <|-- PlannerController
+View <|.. ViewType
+ModelListener <|.. ViewType
+JPanel <|-- TimerPanel
+ActionListener <|.. TimerPanel
 AbstractModel <|-- PlannerModel
 
 ' MVC Pattern Relationships

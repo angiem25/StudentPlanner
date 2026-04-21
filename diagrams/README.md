@@ -1,8 +1,8 @@
 # Diagram Generation Summary
 
-Generated on: 2026-04-21 14:19:55
-Total Java files scanned: 17
-Total classes parsed: 17
+Generated on: 2026-04-21 15:46:31
+Total Java files scanned: 25
+Total classes parsed: 25
 
 ## Files Generated
 
@@ -13,14 +13,21 @@ Total classes parsed: 17
 
 ## Packages Found
 
+- `"Data" {`
 - `mvc`
 - `planner`
 - `planner.model`
 - `planner.persistence`
 - `planner.service`
 - `planner.ui`
+- `planner.ui.calendar`
+- `planner.ui.timer`
 
 ## Classes by Package
+
+### "Data" {
+
+- **Main** (class)
 
 ### mvc
 
@@ -29,6 +36,9 @@ Total classes parsed: 17
   - Implements: `Model`
 - **AbstractController** (abstract class)
   - Implements: `Controller`
+- **JFrameView** (abstract class)
+  - Extends: `JFrame`
+  - Implements: `View`, `ModelListener`
 - **ModelEvent** (class)
 - **AbstractView** (abstract class)
   - Implements: `View`, `ModelListener`
@@ -38,12 +48,18 @@ Total classes parsed: 17
 
 ### planner
 
+- **PlannerView** (class)
+  - Extends: `JFrameView`
+- **Priority** (class)
+- **PlannerController** (class)
+  - Extends: `AbstractController`
 - **Main** (class)
 
 ### planner.model
 
 - **PlannerModel** (class)
   - Extends: `AbstractModel`
+- **Event** (class)
 - **Course** (class)
 - **Priority** (class)
 - **Student** (class)
@@ -62,6 +78,17 @@ Total classes parsed: 17
   - Extends: `AbstractView`
 - **PlannerController** (class)
   - Extends: `AbstractController`
+
+### planner.ui.calendar
+
+- **ViewType** (class)
+  - Implements: `View`, `ModelListener`
+
+### planner.ui.timer
+
+- **TimerPanel** (class)
+  - Extends: `JPanel`
+  - Implements: `ActionListener`
 
 ## How to View the Diagrams
 

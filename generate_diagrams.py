@@ -9,8 +9,17 @@ import re
 import zlib
 import base64
 import urllib.request
+import ssl
 from pathlib import Path
 from datetime import datetime
+
+# Create SSL context that doesn't verify certificates (for macOS Python issues)
+def get_ssl_context():
+    """Get SSL context that works on macOS with Python"""
+    context = ssl.create_default_context()
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_NONE
+    return context
 
 # Configuration
 SRC_DIR = Path('./src/main/java')
@@ -75,11 +84,13 @@ def plantuml_encode(data):
     return result
 
 
-def generate_png_from_puml(puml_file_path, output_png_path):
+def generate_png_from_puml(puml_file_path, output_png_path, verbose=False):
     """
     Generate PNG from PlantUML file using multiple methods.
-    Tries: 1) PlantUML server encoding, 2) Local Java if available
+    Tries: 1) PlantUML server encoding, 2) Text API, 3) Local Java if available
     """
+    errors = []
+    
     # First try: Use encoded URL approach
     try:
         with open(puml_file_path, 'r', encoding='utf-8') as f:
@@ -90,31 +101,48 @@ def generate_png_from_puml(puml_file_path, output_png_path):
         url = f'{PLANTUML_SERVER}/{encoded}'
         
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'image/png,image/*,*/*'
         }
         request = urllib.request.Request(url, headers=headers)
         
-        with urllib.request.urlopen(request, timeout=30) as response:
+        with urllib.request.urlopen(request, timeout=30, context=get_ssl_context()) as response:
             if response.status == 200:
                 png_data = response.read()
-                with open(output_png_path, 'wb') as f:
-                    f.write(png_data)
-                return True
+                if len(png_data) > 100:  # Ensure it's not an error page
+                    with open(output_png_path, 'wb') as f:
+                        f.write(png_data)
+                    return True
+                else:
+                    errors.append(f"Server returned empty/invalid response ({len(png_data)} bytes)")
+            else:
+                errors.append(f"Server returned status {response.status}")
                 
+    except urllib.error.HTTPError as e:
+        errors.append(f"HTTP Error {e.code}: {e.reason}")
+    except urllib.error.URLError as e:
+        errors.append(f"URL Error: {e.reason}")
     except Exception as e:
-        pass  # Fall through to next method
+        errors.append(f"Server encoding failed: {str(e)}")
     
     # Second try: Use PlantUML text API
     try:
-        return generate_png_via_text_api(puml_file_path, output_png_path)
+        if generate_png_via_text_api(puml_file_path, output_png_path):
+            return True
     except Exception as e:
-        pass  # Fall through to next method
+        errors.append(f"Text API failed: {str(e)}")
     
     # Third try: Local Java if available
     try:
-        return generate_png_via_local_java(puml_file_path, output_png_path)
+        if generate_png_via_local_java(puml_file_path, output_png_path):
+            return True
     except Exception as e:
-        pass
+        errors.append(f"Local Java failed: {str(e)}")
+    
+    if verbose:
+        print(f"      ⚠️  All methods failed:")
+        for err in errors:
+            print(f"         • {err}")
     
     return False
 
@@ -143,7 +171,7 @@ def generate_png_via_text_api(puml_file_path, output_png_path):
     
     request = urllib.request.Request(url, data=data.encode('utf-8'), headers=headers, method='POST')
     
-    with urllib.request.urlopen(request, timeout=30) as response:
+    with urllib.request.urlopen(request, timeout=30, context=get_ssl_context()) as response:
         if response.status == 200:
             png_data = response.read()
             with open(output_png_path, 'wb') as f:
@@ -153,9 +181,40 @@ def generate_png_via_text_api(puml_file_path, output_png_path):
     return False
 
 
+def download_plantuml_jar():
+    """
+    Download PlantUML jar if not present.
+    Returns path to jar or None if download fails.
+    """
+    jar_path = Path('./plantuml.jar')
+    
+    if jar_path.exists():
+        return str(jar_path)
+    
+    try:
+        print('      📥 Downloading PlantUML jar...')
+        url = 'https://github.com/plantuml/plantuml/releases/download/v1.2023.13/plantuml-1.2023.13.jar'
+        
+        request = urllib.request.Request(url, headers={
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+        })
+        
+        with urllib.request.urlopen(request, timeout=60, context=get_ssl_context()) as response:
+            if response.status == 200:
+                with open(jar_path, 'wb') as f:
+                    f.write(response.read())
+                print(f'      ✅ Downloaded to {jar_path}')
+                return str(jar_path)
+    except Exception as e:
+        print(f'      ⚠️  Download failed: {e}')
+    
+    return None
+
+
 def generate_png_via_local_java(puml_file_path, output_png_path):
     """
     Generate PNG using local PlantUML jar if available.
+    Auto-downloads jar if not found.
     """
     import subprocess
     
@@ -174,6 +233,10 @@ def generate_png_via_local_java(puml_file_path, output_png_path):
             plantuml_jar = location
             break
     
+    # Try to download if not found
+    if not plantuml_jar:
+        plantuml_jar = download_plantuml_jar()
+    
     if not plantuml_jar:
         return False
     
@@ -184,7 +247,7 @@ def generate_png_via_local_java(puml_file_path, output_png_path):
     return result.returncode == 0 and os.path.exists(output_png_path)
 
 
-def generate_all_pngs():
+def generate_all_pngs(verbose=True):
     """
     Generate PNG files from all PlantUML files in the output directory.
     """
@@ -196,6 +259,7 @@ def generate_all_pngs():
     
     print(f'🖼️  Generating PNG images from {len(puml_files)} PlantUML files...')
     print('   (Using PlantUML online server - requires internet connection)')
+    print('   Tip: If this fails, install PlantUML locally: brew install plantuml')
     print()
     
     success_count = 0
@@ -203,16 +267,23 @@ def generate_all_pngs():
         png_file = puml_file.with_suffix('.png')
         print(f'   🎨 {puml_file.name} → {png_file.name}')
         
-        if generate_png_from_puml(puml_file, png_file):
+        if generate_png_from_puml(puml_file, png_file, verbose=verbose):
             # Get file size
             size = png_file.stat().st_size
             print(f'      ✅ Success ({size:,} bytes)')
             success_count += 1
         else:
-            print(f'      ❌ Failed')
+            print(f'      ❌ Failed (see errors above)')
     
     print()
     print(f'📊 PNG Generation: {success_count}/{len(puml_files)} successful')
+    
+    if success_count == 0:
+        print()
+        print('💡 To generate PNGs locally:')
+        print('   1. Install PlantUML: brew install plantuml')
+        print('   2. Or use the VS Code PlantUML extension')
+        print('   3. Or visit https://www.plantuml.com/plantuml/uml/ and paste the .puml content')
 
 
 def parse_java_file(file_path):

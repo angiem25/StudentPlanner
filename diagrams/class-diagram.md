@@ -2,6 +2,15 @@
 classDiagram
     title Student Planner - Class Diagram
 
+    %% Package: "Data" {
+    class Main
+    class Main {
+        +generateClassDiagram() void
+        +generateMvcDiagram() void
+        -generateDiagram() void
+        ...
+    }
+
     %% Package: mvc
     class ModelListener<<interface>>
     class AbstractModel<<abstract>>
@@ -19,6 +28,16 @@ classDiagram
         +getModel() Model
         +getView() View
         +setModel() void
+        ...
+    }
+    class JFrameView<<abstract>>
+    class JFrameView {
+        -Model model
+        -Controller controller
+        ..
+        +registerWithModel() void
+        +getController() Controller
+        +setController() void
         ...
     }
     class ModelEvent
@@ -47,6 +66,36 @@ classDiagram
     class Model<<interface>>
 
     %% Package: planner
+    class PlannerView
+    class PlannerView {
+        -createTodoPanel() JPanel
+        -createCalendarPanel() JPanel
+        -createTimerPanel() JPanel
+        ...
+    }
+    class Priority
+    class Priority {
+        -String description
+        -LocalDate dueDate
+        -Priority priority
+        -boolean completed
+        -String title
+        -LocalDateTime start
+        -LocalDateTime end
+        -String description
+        ..
+        +getDescription() String
+        +getDueDate() LocalDate
+        +getPriority() Priority
+        ...
+    }
+    class PlannerController
+    class PlannerController {
+        +addTask() void
+        +editTask() void
+        +setTaskCompleted() void
+        ...
+    }
     class Main
     class Main {
         +main() void
@@ -104,6 +153,45 @@ classDiagram
         ...
     }
 
+    %% Package: planner.ui.calendar
+    class ViewType
+    class ViewType {
+        -Model model
+        -Controller controller
+        -JPanel calendarPanel
+        -JPanel headerPanel
+        -JLabel titleLabel
+        -JPanel viewTogglePanel
+        -LocalDate currentDate
+        -YearMonth currentYearMonth
+        -JScrollPane timelineScrollPane
+        ..
+        +getModel() Model
+        +getController() Controller
+        +setModel() void
+        ...
+    }
+
+    %% Package: planner.ui.timer
+    class TimerPanel
+    class TimerPanel {
+        -JLabel timeDisplay
+        -JTextField minutesInput
+        -JButton startButton
+        -JButton pauseButton
+        -JButton resetButton
+        -Timer swingTimer
+        -int totalSeconds
+        -int remainingSeconds
+        -boolean isRunning
+        -boolean isPaused
+        ..
+        -initializeUI() void
+        -setupTimer() void
+        +actionPerformed() void
+        ...
+    }
+
     %% Package: planner.persistence
     class PlannerRepository
     class PlannerRepository {
@@ -119,10 +207,24 @@ classDiagram
         -Student currentStudent
         -List<Course> courses
         -List<Task> tasks
+        -List<Event> events
         ..
         +getCurrentStudent() Student
         +setCurrentStudent() void
         +getCourses() List<Course>
+        ...
+    }
+    class Event
+    class Event {
+        -String id
+        -String title
+        -String description
+        -LocalDateTime startDateTime
+        -LocalDateTime endDateTime
+        ..
+        +getId() String
+        +getTitle() String
+        +getDescription() String
         ...
     }
     class Course
@@ -183,10 +285,19 @@ classDiagram
     %% Inheritance
     Model <|.. AbstractModel : implements
     Controller <|.. AbstractController : implements
+    JFrame <|-- JFrameView
+    View <|.. JFrameView : implements
+    ModelListener <|.. JFrameView : implements
     View <|.. AbstractView : implements
     ModelListener <|.. AbstractView : implements
+    JFrameView <|-- PlannerView
+    AbstractController <|-- PlannerController
     AbstractView <|-- PlannerView
     AbstractController <|-- PlannerController
+    View <|.. ViewType : implements
+    ModelListener <|.. ViewType : implements
+    JPanel <|-- TimerPanel
+    ActionListener <|.. TimerPanel : implements
     AbstractModel <|-- PlannerModel
 
     %% MVC Relationships
