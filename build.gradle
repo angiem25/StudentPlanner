@@ -16,9 +16,6 @@ repositories {
 }
 
 dependencies {
-    // PlantUML for diagram generation
-    implementation 'net.sourceforge.plantuml:plantuml:1.2023.13'
-
     // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
@@ -40,10 +37,3 @@ task runPlanner(type: JavaExec) {
     mainClass = 'planner.Main'
 }
 
-// Run the diagram generator
-task runDiagrams(type: JavaExec) {
-    group = 'application'
-    description = 'Generate class and MVC diagrams'
-    classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'util.DiagramGenerator'
-}
