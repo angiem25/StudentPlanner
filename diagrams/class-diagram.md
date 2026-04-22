@@ -2,7 +2,7 @@
 classDiagram
     title Student Planner - Class Diagram
 
-    %% Package: "Data" {
+    %% Package: util
     class Main
     class Main {
         +generateClassDiagram() void

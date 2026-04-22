@@ -307,12 +307,34 @@ def parse_java_file(file_path):
         'filePath': str(file_path)
     }
     
+    in_multiline_comment = False
+    
     for line in lines:
         stripped = line.strip()
         
-        # Package declaration
-        if stripped.startswith('package '):
-            result['package'] = stripped.replace('package ', '').replace(';', '')
+        # Skip empty lines
+        if not stripped:
+            continue
+        
+        # Track multi-line comments
+        if stripped.startswith('/*'):
+            in_multiline_comment = True
+        if stripped.endswith('*/'):
+            in_multiline_comment = False
+            continue
+        if in_multiline_comment:
+            continue
+        
+        # Skip single-line comments and string literals containing 'package '
+        if stripped.startswith('//') or stripped.startswith('*'):
+            continue
+        
+        # Package declaration - must be at line start, not inside strings
+        if stripped.startswith('package ') and stripped.endswith(';'):
+            # Verify it's not inside a string literal (check for odd number of quotes before 'package')
+            quote_count = line.count('"', 0, line.find('package '))
+            if quote_count % 2 == 0:  # Even number of quotes means not inside a string
+                result['package'] = stripped.replace('package ', '').replace(';', '')
         
         # Import statements
         if stripped.startswith('import '):

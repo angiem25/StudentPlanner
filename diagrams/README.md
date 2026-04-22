@@ -1,6 +1,6 @@
 # Diagram Generation Summary
 
-Generated on: 2026-04-21 15:53:30
+Generated on: 2026-04-21 16:16:12
 Total Java files scanned: 25
 Total classes parsed: 25
 
@@ -13,7 +13,6 @@ Total classes parsed: 25
 
 ## Packages Found
 
-- `"Data" {`
 - `mvc`
 - `planner`
 - `planner.model`
@@ -22,12 +21,9 @@ Total classes parsed: 25
 - `planner.ui`
 - `planner.ui.calendar`
 - `planner.ui.timer`
+- `util`
 
 ## Classes by Package
-
-### "Data" {
-
-- **Main** (class)
 
 ### mvc
 
@@ -89,6 +85,10 @@ Total classes parsed: 25
 - **TimerPanel** (class)
   - Extends: `JPanel`
   - Implements: `ActionListener`
+
+### util
+
+- **Main** (class)
 
 ## How to View the Diagrams
 
