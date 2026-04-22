@@ -3,12 +3,12 @@ plugins {
     id 'application'
 }
 
-group = 'com.example'
-version = '1.0'
+group = 'com.planner'
+version = '1.0.0'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 repositories {
@@ -16,6 +16,7 @@ repositories {
 }
 
 dependencies {
+    // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
 }
@@ -28,9 +29,11 @@ test {
     useJUnitPlatform()
 }
 
+// Run the planner application
 task runPlanner(type: JavaExec) {
     group = 'application'
-    description = 'Run the planner application'
+    description = 'Run the student planner application'
     classpath = sourceSets.main.runtimeClasspath
-    main = 'planner.Main'
+    mainClass = 'planner.Main'
 }
+

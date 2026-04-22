@@ -1,0 +1,376 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+
+title Student Planner - Class Diagram
+
+package "util" {
+
+  class Main {
+    + generateClassDiagram(): void
+    + generateMvcDiagram(): void
+    - generateDiagram(): void
+    + generateAllDiagrams(): void
+    + main(): void
+  }
+
+}
+
+package "mvc" {
+
+  interface ModelListener {
+  }
+
+  abstract class AbstractModel implements Model {
+    + addModelListener(): void
+    + removeModelListener(): void
+    + notifyChanged(): void
+    # fireModelChanged(): void
+    # fireModelChanged(): void
+  }
+
+  abstract class AbstractController implements Controller {
+    - model: Model
+    - view: View
+    ..
+    + getModel(): Model
+    + getView(): View
+    + setModel(): void
+    + setView(): void
+  }
+
+  abstract class JFrameView extends JFrame implements View, ModelListener {
+    - model: Model
+    - controller: Controller
+    ..
+    + registerWithModel(): void
+    + getController(): Controller
+    + setController(): void
+    + getModel(): Model
+    + setModel(): void
+  }
+
+  class ModelEvent {
+    - eventName: String
+    - source: Object
+    - data: Object
+    ..
+    + getEventName(): String
+    + getSource(): Object
+    + getData(): Object
+    + toString(): String
+  }
+
+  abstract class AbstractView implements View, ModelListener {
+    - model: Model
+    - controller: Controller
+    ..
+    + getModel(): Model
+    + getController(): Controller
+    + setModel(): void
+    + setController(): void
+  }
+
+  interface Controller {
+  }
+
+  interface View {
+  }
+
+  interface Model {
+  }
+
+}
+
+package "planner" {
+
+  class PlannerView extends JFrameView {
+    - createTodoPanel(): JPanel
+    - createCalendarPanel(): JPanel
+    - createTimerPanel(): JPanel
+    - editSelectedTask(): void
+    - toggleSelectedTask(): void
+    ...
+  }
+
+  class Priority {
+    - description: String
+    - dueDate: LocalDate
+    - priority: Priority
+    - completed: boolean
+    - title: String
+    - start: LocalDateTime
+    - end: LocalDateTime
+    - description: String
+    ..
+    + getDescription(): String
+    + getDueDate(): LocalDate
+    + getPriority(): Priority
+    + isCompleted(): boolean
+    + getTitle(): String
+    ...
+  }
+
+  class PlannerController extends AbstractController {
+    + addTask(): void
+    + editTask(): void
+    + setTaskCompleted(): void
+    + deleteTask(): void
+    + addEvent(): void
+    ...
+  }
+
+  class Main {
+    + main(): void
+  }
+
+}
+
+package "planner.ui" {
+
+  class PlannerView extends AbstractView {
+    - frame: JFrame
+    - tabbedPane: JTabbedPane
+    - studentPanel: JPanel
+    - firstNameField: JTextField
+    - lastNameField: JTextField
+    - emailField: JTextField
+    - studentIdField: JTextField
+    - yearField: JTextField
+    - majorField: JTextField
+    - saveStudentButton: JButton
+    - studentInfoLabel: JLabel
+    - coursePanel: JPanel
+    - courseList: JList<Course>
+    - courseListModel: DefaultListModel<Course>
+    - courseNameField: JTextField
+    - courseCodeField: JTextField
+    - instructorField: JTextField
+    - creditsField: JTextField
+    - addCourseButton: JButton
+    - updateCourseButton: JButton
+    - removeCourseButton: JButton
+    - taskPanel: JPanel
+    - taskList: JList<Task>
+    - taskListModel: DefaultListModel<Task>
+    - taskTitleField: JTextField
+    - taskDescriptionArea: JTextArea
+    - taskDueDateField: JTextField
+    - taskPriorityCombo: JComboBox<Task.Priority>
+    - taskCourseCombo: JComboBox<String>
+    - addTaskButton: JButton
+    - updateTaskButton: JButton
+    - removeTaskButton: JButton
+    - completeTaskButton: JButton
+    ..
+    - initializeUI(): void
+    - createStudentPanel(): void
+    - createCoursePanel(): void
+    - createTaskPanel(): void
+    + modelChanged(): void
+    ...
+  }
+
+  class PlannerController extends AbstractController {
+    - service: PlannerService
+    ..
+    + saveStudentProfile(): void
+    + addCourse(): void
+    + updateCourse(): void
+    + removeCourse(): void
+    + addTask(): void
+    ...
+  }
+
+}
+
+package "planner.ui.calendar" {
+
+  class ViewType implements View, ModelListener {
+    - model: Model
+    - controller: Controller
+    - calendarPanel: JPanel
+    - headerPanel: JPanel
+    - titleLabel: JLabel
+    - viewTogglePanel: JPanel
+    - currentDate: LocalDate
+    - currentYearMonth: YearMonth
+    - timelineScrollPane: JScrollPane
+    ..
+    + getModel(): Model
+    + getController(): Controller
+    + setModel(): void
+    + setController(): void
+    - initializeUI(): void
+    ...
+  }
+
+}
+
+package "planner.ui.timer" {
+
+  class TimerPanel extends JPanel implements ActionListener {
+    - timeDisplay: JLabel
+    - minutesInput: JTextField
+    - startButton: JButton
+    - pauseButton: JButton
+    - resetButton: JButton
+    - swingTimer: Timer
+    - totalSeconds: int
+    - remainingSeconds: int
+    - isRunning: boolean
+    - isPaused: boolean
+    ..
+    - initializeUI(): void
+    - setupTimer(): void
+    + actionPerformed(): void
+    - startTimer(): void
+    - pauseTimer(): void
+    ...
+  }
+
+}
+
+package "planner.persistence" {
+
+  class PlannerRepository {
+    + savePlannerData(): void
+    + loadPlannerData(): void
+    - createDataDirectory(): void
+    - saveStudent(): void
+    - loadStudent(): Student
+    ...
+  }
+
+}
+
+package "planner.model" {
+
+  class PlannerModel extends AbstractModel {
+    - currentStudent: Student
+    - courses: List<Course>
+    - tasks: List<Task>
+    - events: List<Event>
+    ..
+    + getCurrentStudent(): Student
+    + setCurrentStudent(): void
+    + getCourses(): List<Course>
+    + getCourseById(): Optional<Course>
+    + getCourseByCode(): Optional<Course>
+    ...
+  }
+
+  class Event {
+    - id: String
+    - title: String
+    - description: String
+    - startDateTime: LocalDateTime
+    - endDateTime: LocalDateTime
+    ..
+    + getId(): String
+    + getTitle(): String
+    + getDescription(): String
+    + getStartDateTime(): LocalDateTime
+    + getEndDateTime(): LocalDateTime
+    ...
+  }
+
+  class Course {
+    - id: String
+    - name: String
+    - code: String
+    - instructor: String
+    - credits: int
+    ..
+    + getId(): String
+    + getName(): String
+    + getCode(): String
+    + getInstructor(): String
+    + getCredits(): int
+    ...
+  }
+
+  class Priority {
+    - id: String
+    - title: String
+    - description: String
+    - dueDate: LocalDateTime
+    - priority: Priority
+    - completed: boolean
+    - courseId: String
+    ..
+    + getId(): String
+    + getTitle(): String
+    + getDescription(): String
+    + getDueDate(): LocalDateTime
+    + getPriority(): Priority
+    ...
+  }
+
+  class Student {
+    - id: String
+    - firstName: String
+    - lastName: String
+    - email: String
+    - studentId: String
+    - year: int
+    - major: String
+    ..
+    + getId(): String
+    + getFirstName(): String
+    + getLastName(): String
+    + getEmail(): String
+    + getStudentId(): String
+    ...
+  }
+
+}
+
+package "planner.service" {
+
+  class PlannerService {
+    - model: PlannerModel
+    ..
+    + createStudentProfile(): void
+    + updateStudentProfile(): void
+    + addCourse(): Course
+    + updateCourse(): void
+    + removeCourse(): void
+    ...
+  }
+
+}
+
+
+' Relationships
+Model <|.. AbstractModel
+Controller <|.. AbstractController
+JFrame <|-- JFrameView
+View <|.. JFrameView
+ModelListener <|.. JFrameView
+View <|.. AbstractView
+ModelListener <|.. AbstractView
+JFrameView <|-- PlannerView
+AbstractController <|-- PlannerController
+AbstractView <|-- PlannerView
+AbstractController <|-- PlannerController
+View <|.. ViewType
+ModelListener <|.. ViewType
+JPanel <|-- TimerPanel
+ActionListener <|.. TimerPanel
+AbstractModel <|-- PlannerModel
+
+' MVC Pattern Relationships
+Model ..> ModelEvent : uses
+AbstractModel ..> ModelListener : notifies
+AbstractView ..> ModelListener : implements
+PlannerService --> PlannerModel : uses
+PlannerController --> PlannerService : delegates
+
+' Domain Relationships
+PlannerModel "1" *-- "1" Student : manages
+PlannerModel "1" *-- "0..*" Course : manages
+PlannerModel "1" *-- "0..*" Task : manages
+Task --> Course : associated with
+
+@enduml

@@ -1,0 +1,40 @@
+@startuml
+!theme plain
+title Student Planner - MVC Interaction Flow (Add Task)
+
+actor User
+participant PlannerView
+participant PlannerController
+participant PlannerService
+participant PlannerModel
+participant AbstractModel
+participant ModelListener
+
+User -> PlannerView: Clicks "Add Task"
+PlannerView -> PlannerController: actionPerformed()
+PlannerController -> PlannerController: validateInput()
+PlannerController -> PlannerService: addTask()
+PlannerService -> PlannerService: validateBusinessRules()
+PlannerService -> PlannerModel: addTask()
+PlannerModel -> PlannerModel: store task
+PlannerModel -> AbstractModel: fireModelChanged("TASK_ADDED")
+AbstractModel -> ModelListener: notifyListeners()
+ModelListener -> PlannerView: modelChanged()
+PlannerView -> PlannerView: refreshTaskList()
+PlannerView --> User: Show updated list
+
+note right of PlannerService
+  Business logic validation:
+  - Check course exists
+  - Validate due date
+  - Check for duplicates
+end note
+
+note right of AbstractModel
+  Observer Pattern:
+  - All registered listeners
+  - receive notification
+  - and update accordingly
+end note
+
+@enduml
