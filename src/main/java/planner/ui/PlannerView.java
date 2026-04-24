@@ -4,25 +4,37 @@ import mvc.AbstractView;
 import mvc.ModelEvent;
 import planner.model.*;
 import planner.ui.calendar.CalendarView;
+import planner.ui.task.TimeWheelDialog;
 import planner.ui.timer.TimerPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main view for the student planner application.
  * Provides a tabbed interface for managing students, courses, and tasks.
  */
 public class PlannerView extends AbstractView {
+    private static final Logger LOGGER = Logger.getLogger(PlannerView.class.getName());
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter TIME_BUTTON_FORMAT =
+            DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.US);
     
     private JFrame frame;
     private JTabbedPane tabbedPane;
+    private CalendarView calendarView;
+    private TimerPanel timerPanel;
     
     // Student panel components
     private JPanel studentPanel;
@@ -53,7 +65,10 @@ public class PlannerView extends AbstractView {
     private DefaultListModel<Task> taskListModel;
     private JTextField taskTitleField;
     private JTextArea taskDescriptionArea;
-    private JTextField taskDueDateField;
+    private JSpinner taskDateSpinner;
+    private JButton taskTimeButton;
+    /** Due time for the task form; paired with {@link #taskDateSpinner}. */
+    private LocalTime taskDueTime;
     private JComboBox<Task.Priority> taskPriorityCombo;
     private JComboBox<String> taskCourseCombo;
     private JButton addTaskButton;
@@ -91,16 +106,46 @@ public class PlannerView extends AbstractView {
         tabbedPane.addTab("Tasks", taskPanel);
         
         // Add Calendar tab
-        CalendarView calendarView = new CalendarView((PlannerModel) getModel(), 
+        calendarView = new CalendarView((PlannerModel) getModel(),
             (PlannerController) getController());
         tabbedPane.addTab("Calendar", calendarView);
         
         // Add Timer tab
-        TimerPanel timerPanel = new TimerPanel();
+        timerPanel = new TimerPanel();
         tabbedPane.addTab("Timer", timerPanel);
         
         frame.add(tabbedPane);
+        attachMenuBar();
         frame.setVisible(true);
+    }
+    
+    /**
+     * View menu: dark mode toggle.
+     */
+    private void attachMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu viewMenu = new JMenu("View");
+        JCheckBoxMenuItem darkItem = new JCheckBoxMenuItem("Dark mode");
+        darkItem.setSelected(AppTheme.isDark());
+        darkItem.addActionListener(e -> {
+            AppTheme.setDark(darkItem.isSelected());
+            try {
+                AppTheme.installLookAndFeel();
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Could not switch theme", ex);
+            }
+            AppTheme.persistTheme();
+            AppTheme.applyFrame(frame);
+            if (calendarView != null) {
+                calendarView.refreshTheme();
+            }
+            if (timerPanel != null) {
+                timerPanel.refreshTheme();
+            }
+        });
+        viewMenu.add(darkItem);
+        menuBar.add(viewMenu);
+        frame.setJMenuBar(menuBar);
     }
     
     /**
@@ -176,6 +221,27 @@ public class PlannerView extends AbstractView {
         // Course list
         courseListModel = new DefaultListModel<>();
         courseList = new JList<>(courseListModel);
+        courseList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Course course) {
+                    String name = course.getName() != null ? course.getName().trim() : "";
+                    String code = course.getCode() != null ? course.getCode().trim() : "";
+                    if (!name.isEmpty() && !code.isEmpty()) {
+                        setText(name + " — " + code);
+                    } else if (!name.isEmpty()) {
+                        setText(name);
+                    } else if (!code.isEmpty()) {
+                        setText(code);
+                    } else {
+                        setText("(untitled course)");
+                    }
+                }
+                return this;
+            }
+        });
         courseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         courseList.addListSelectionListener(e -> onCourseSelected());
         
@@ -241,6 +307,45 @@ public class PlannerView extends AbstractView {
         // Task list
         taskListModel = new DefaultListModel<>();
         taskList = new JList<>(taskListModel);
+        taskList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Task task) {
+                    String title = task.getTitle() != null ? task.getTitle().trim() : "";
+                    if (title.isEmpty()) {
+                        title = "(untitled task)";
+                    }
+                    StringBuilder line = new StringBuilder();
+                    if (task.isCompleted()) {
+                        line.append("[Done] ");
+                    }
+                    line.append(title);
+                    String due = task.getDueDate() != null ? task.getDueDate().format(DATE_FORMATTER) : "";
+                    if (!due.isEmpty()) {
+                        line.append(" · ").append(due);
+                    }
+                    PlannerModel pm = (PlannerModel) PlannerView.this.getModel();
+                    if (task.getCourseId() != null && pm != null) {
+                        for (Course c : pm.getCourses()) {
+                            if (c.getId().equals(task.getCourseId())) {
+                                String code = c.getCode() != null ? c.getCode().trim() : "";
+                                if (!code.isEmpty()) {
+                                    line.append(" · ").append(code);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    if (task.getPriority() != null) {
+                        line.append(" · ").append(task.getPriority());
+                    }
+                    setText(line.toString());
+                }
+                return this;
+            }
+        });
         taskList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         taskList.addListSelectionListener(e -> onTaskSelected());
         
@@ -269,18 +374,37 @@ public class PlannerView extends AbstractView {
         taskFormPanel.add(descScrollPane, gbc);
         
         gbc.gridx = 0; gbc.gridy = 2;
-        taskFormPanel.add(new JLabel("Due Date (yyyy-MM-dd HH:mm):"), gbc);
+        taskFormPanel.add(new JLabel("Due date:"), gbc);
         gbc.gridx = 1;
-        taskDueDateField = new JTextField(20);
-        taskFormPanel.add(taskDueDateField, gbc);
-        
+        Calendar today = Calendar.getInstance();
+        SpinnerDateModel taskDateModel = new SpinnerDateModel(today.getTime(), null, null, Calendar.DAY_OF_MONTH);
+        taskDateSpinner = new JSpinner(taskDateModel);
+        taskDateSpinner.setEditor(new JSpinner.DateEditor(taskDateSpinner, "MMMM d, yyyy"));
+        taskFormPanel.add(taskDateSpinner, gbc);
+
         gbc.gridx = 0; gbc.gridy = 3;
+        taskFormPanel.add(new JLabel("Due time:"), gbc);
+        gbc.gridx = 1;
+        taskTimeButton = new JButton();
+        taskDueTime = LocalTime.now().withSecond(0).withNano(0);
+        refreshTaskTimeButtonLabel();
+        taskTimeButton.addActionListener(e -> {
+            Window w = SwingUtilities.getWindowAncestor(taskTimeButton);
+            LocalTime picked = TimeWheelDialog.showDialog(w, taskDueTime);
+            if (picked != null) {
+                taskDueTime = picked.withSecond(0).withNano(0);
+                refreshTaskTimeButtonLabel();
+            }
+        });
+        taskFormPanel.add(taskTimeButton, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 4;
         taskFormPanel.add(new JLabel("Priority:"), gbc);
         gbc.gridx = 1;
         taskPriorityCombo = new JComboBox<>(Task.Priority.values());
         taskFormPanel.add(taskPriorityCombo, gbc);
         
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0; gbc.gridy = 5;
         taskFormPanel.add(new JLabel("Course:"), gbc);
         gbc.gridx = 1;
         taskCourseCombo = new JComboBox<>();
@@ -303,7 +427,7 @@ public class PlannerView extends AbstractView {
         buttonPanel.add(removeTaskButton);
         buttonPanel.add(completeTaskButton);
         
-        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2;
         taskFormPanel.add(buttonPanel, gbc);
         
         taskPanel.add(taskFormPanel, BorderLayout.EAST);
@@ -455,7 +579,7 @@ public class PlannerView extends AbstractView {
             controller.addTask(
                 taskTitleField.getText().trim(),
                 taskDescriptionArea.getText().trim(),
-                taskDueDateField.getText().trim(),
+                getTaskDueDateTime(),
                 (Task.Priority) taskPriorityCombo.getSelectedItem(),
                 taskCourseCombo.getSelectedIndex() > 0 ? 
                     ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null
@@ -471,7 +595,7 @@ public class PlannerView extends AbstractView {
                 selected.getId(),
                 taskTitleField.getText().trim(),
                 taskDescriptionArea.getText().trim(),
-                taskDueDateField.getText().trim(),
+                getTaskDueDateTime(),
                 (Task.Priority) taskPriorityCombo.getSelectedItem(),
                 taskCourseCombo.getSelectedIndex() > 0 ? 
                     ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null
@@ -510,7 +634,10 @@ public class PlannerView extends AbstractView {
         if (selected != null) {
             taskTitleField.setText(selected.getTitle());
             taskDescriptionArea.setText(selected.getDescription());
-            taskDueDateField.setText(selected.getDueDate().format(DATE_FORMATTER));
+            LocalDateTime due = selected.getDueDate();
+            setSpinnerToLocalDate(taskDateSpinner, due.toLocalDate());
+            taskDueTime = due.toLocalTime().withSecond(0).withNano(0);
+            refreshTaskTimeButtonLabel();
             taskPriorityCombo.setSelectedItem(selected.getPriority());
             
             if (selected.getCourseId() != null) {
@@ -526,6 +653,31 @@ public class PlannerView extends AbstractView {
                 taskCourseCombo.setSelectedIndex(0);
             }
         }
+    }
+
+    private void refreshTaskTimeButtonLabel() {
+        if (taskTimeButton != null && taskDueTime != null) {
+            taskTimeButton.setText(TIME_BUTTON_FORMAT.format(taskDueTime));
+        }
+    }
+
+    private LocalDateTime getTaskDueDateTime() {
+        LocalDate date = localDateFromSpinner(taskDateSpinner);
+        LocalTime time = taskDueTime != null ? taskDueTime : LocalTime.NOON;
+        return LocalDateTime.of(date, time);
+    }
+
+    private static LocalDate localDateFromSpinner(JSpinner spinner) {
+        Date d = (Date) spinner.getValue();
+        return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private static void setSpinnerToLocalDate(JSpinner spinner, LocalDate ld) {
+        Calendar cal = Calendar.getInstance();
+        cal.clear();
+        cal.set(ld.getYear(), ld.getMonthValue() - 1, ld.getDayOfMonth(), 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        spinner.setValue(cal.getTime());
     }
     
     /**

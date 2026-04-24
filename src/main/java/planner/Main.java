@@ -3,10 +3,10 @@ package planner;
 import planner.model.PlannerModel;
 import planner.persistence.PlannerRepository;
 import planner.service.PlannerService;
+import planner.ui.AppTheme;
 import planner.ui.PlannerController;
 import planner.ui.PlannerView;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,11 +23,11 @@ public class Main {
      * @param args Command line arguments (not used)
      */
     public static void main(String[] args) {
-        // Set system look and feel
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            AppTheme.loadPersistedTheme();
+            AppTheme.installLookAndFeel();
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "Could not set system look and feel", e);
+            LOGGER.log(Level.WARNING, "Could not set application look and feel", e);
         }
         
         // Initialize MVC components
@@ -50,6 +50,11 @@ public class Main {
         
         // Add shutdown hook to save data
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                AppTheme.persistTheme();
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Could not persist theme preference", e);
+            }
             try {
                 repository.savePlannerData(model);
                 LOGGER.info("Planner data saved successfully");

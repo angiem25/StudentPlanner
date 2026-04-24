@@ -1,5 +1,7 @@
 package planner.ui.timer;
 
+import planner.ui.AppTheme;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -63,7 +65,7 @@ public class TimerPanel extends JPanel implements ActionListener {
         // Time display
         timeDisplay = new JLabel("00:00", JLabel.CENTER);
         timeDisplay.setFont(DISPLAY_FONT);
-        timeDisplay.setForeground(Color.DARK_GRAY);
+        timeDisplay.setForeground(AppTheme.timerIdle());
         centerPanel.add(timeDisplay, gbc);
         
         // Input panel
@@ -87,18 +89,18 @@ public class TimerPanel extends JPanel implements ActionListener {
         startButton = new JButton("▶ Start");
         startButton.setFont(LABEL_FONT);
         startButton.addActionListener(this);
-        startButton.setBackground(new Color(200, 255, 200));
+        startButton.setBackground(AppTheme.timerStartBg());
         
         pauseButton = new JButton("⏸ Pause");
         pauseButton.setFont(LABEL_FONT);
         pauseButton.addActionListener(this);
         pauseButton.setEnabled(false);
-        pauseButton.setBackground(new Color(255, 255, 200));
+        pauseButton.setBackground(AppTheme.timerPauseBg());
         
         resetButton = new JButton("⏹ Reset");
         resetButton.setFont(LABEL_FONT);
         resetButton.addActionListener(this);
-        resetButton.setBackground(new Color(255, 200, 200));
+        resetButton.setBackground(AppTheme.timerResetBg());
         
         buttonPanel.add(startButton);
         buttonPanel.add(pauseButton);
@@ -171,7 +173,7 @@ public class TimerPanel extends JPanel implements ActionListener {
         pauseButton.setEnabled(true);
         minutesInput.setEnabled(false);
         
-        timeDisplay.setForeground(new Color(0, 150, 0)); // Green when running
+        timeDisplay.setForeground(AppTheme.timerRunning()); // Green when running
     }
     
     /**
@@ -183,10 +185,10 @@ public class TimerPanel extends JPanel implements ActionListener {
             
             if (isPaused) {
                 pauseButton.setText("▶ Resume");
-                timeDisplay.setForeground(new Color(200, 150, 0)); // Orange when paused
+                timeDisplay.setForeground(AppTheme.timerPaused()); // Orange when paused
             } else {
                 pauseButton.setText("⏸ Pause");
-                timeDisplay.setForeground(new Color(0, 150, 0)); // Green when running
+                timeDisplay.setForeground(AppTheme.timerRunning()); // Green when running
             }
         }
     }
@@ -215,7 +217,7 @@ public class TimerPanel extends JPanel implements ActionListener {
         pauseButton.setText("⏸ Pause");
         minutesInput.setEnabled(true);
         
-        timeDisplay.setForeground(Color.DARK_GRAY);
+        timeDisplay.setForeground(AppTheme.timerIdle());
     }
     
     /**
@@ -241,7 +243,7 @@ public class TimerPanel extends JPanel implements ActionListener {
         minutesInput.setEnabled(true);
         
         timeDisplay.setText("00:00");
-        timeDisplay.setForeground(Color.RED);
+        timeDisplay.setForeground(AppTheme.timerAlert());
         
         // Play alert sound
         playAlertSound();
@@ -284,11 +286,11 @@ public class TimerPanel extends JPanel implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 if (count >= 6) { // Flash 3 times
                     ((Timer) e.getSource()).stop();
-                    timeDisplay.setForeground(Color.RED);
+                    timeDisplay.setForeground(AppTheme.timerAlert());
                     return;
                 }
                 
-                timeDisplay.setForeground(on ? Color.RED : Color.DARK_GRAY);
+                timeDisplay.setForeground(on ? AppTheme.timerAlert() : AppTheme.timerIdle());
                 on = !on;
                 count++;
             }
@@ -326,5 +328,21 @@ public class TimerPanel extends JPanel implements ActionListener {
      */
     public boolean isPaused() {
         return isPaused;
+    }
+    
+    /**
+     * Updates colors after light/dark theme change.
+     */
+    public void refreshTheme() {
+        startButton.setBackground(AppTheme.timerStartBg());
+        pauseButton.setBackground(AppTheme.timerPauseBg());
+        resetButton.setBackground(AppTheme.timerResetBg());
+        if (!isRunning) {
+            timeDisplay.setForeground(AppTheme.timerIdle());
+        } else if (isPaused) {
+            timeDisplay.setForeground(AppTheme.timerPaused());
+        } else {
+            timeDisplay.setForeground(AppTheme.timerRunning());
+        }
     }
 }
