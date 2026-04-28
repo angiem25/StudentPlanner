@@ -10,13 +10,17 @@ import planner.ui.timer.TimerPanel;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -75,6 +79,11 @@ public class PlannerView extends AbstractView {
     private JButton updateTaskButton;
     private JButton removeTaskButton;
     private JButton completeTaskButton;
+    /** Selected accent for add/update task form; persisted on Add/Update. */
+    private String taskFormAccentHex;
+    private final List<JPanel> taskColorSwatchPanels = new ArrayList<>();
+    private JToggleButton taskColorPreviewToggle;
+    private JButton resetTaskColorButton;
     
     /**
      * Creates a new PlannerView with the specified model and controller.
@@ -141,6 +150,9 @@ public class PlannerView extends AbstractView {
             }
             if (timerPanel != null) {
                 timerPanel.refreshTheme();
+            }
+            if (taskList != null) {
+                taskList.repaint();
             }
         });
         viewMenu.add(darkItem);
@@ -342,6 +354,16 @@ public class PlannerView extends AbstractView {
                         line.append(" · ").append(task.getPriority());
                     }
                     setText(line.toString());
+                    if (!isSelected) {
+                        if (task.isCompleted()) {
+                            setBackground(AppTheme.taskCompletedBg());
+                            setForeground(AppTheme.taskCompletedFg());
+                        } else {
+                            Color accent = AppTheme.colorFromHex(task.getAccentColorHex());
+                            setBackground(AppTheme.taskAccentChipBackground(accent));
+                            setForeground(AppTheme.taskAccentChipForeground(accent));
+                        }
+                    }
                 }
                 return this;
             }
@@ -411,6 +433,45 @@ public class PlannerView extends AbstractView {
         taskCourseCombo.addItem("None");
         taskFormPanel.add(taskCourseCombo, gbc);
         
+        taskFormAccentHex = Task.DEFAULT_ACCENT_COLOR_HEX;
+        
+        gbc.gridx = 0; gbc.gridy = 6;
+        taskFormPanel.add(new JLabel("Task color:"), gbc);
+        gbc.gridx = 1;
+        JPanel colorRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
+        taskColorSwatchPanels.clear();
+        for (String hex : TaskPalette.HEX_CHOICES) {
+            JPanel sw = new JPanel();
+            sw.setPreferredSize(new Dimension(28, 28));
+            sw.setBackground(AppTheme.colorFromHex(hex));
+            sw.setOpaque(true);
+            sw.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            String hexCapture = hex;
+            sw.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    taskFormAccentHex = TaskPalette.canonicalHex(hexCapture);
+                    refreshTaskColorFormWidgets();
+                }
+            });
+            taskColorSwatchPanels.add(sw);
+            colorRow.add(sw);
+        }
+        taskColorPreviewToggle = new JToggleButton("Task");
+        taskColorPreviewToggle.setOpaque(true);
+        taskColorPreviewToggle.setFocusable(false);
+        taskColorPreviewToggle.setToolTipText("Preview of task chip color");
+        colorRow.add(taskColorPreviewToggle);
+        resetTaskColorButton = new JButton("Reset color");
+        resetTaskColorButton.setToolTipText("Reset to default (red)");
+        resetTaskColorButton.addActionListener(e -> {
+            taskFormAccentHex = Task.DEFAULT_ACCENT_COLOR_HEX;
+            refreshTaskColorFormWidgets();
+        });
+        colorRow.add(resetTaskColorButton);
+        taskFormPanel.add(colorRow, gbc);
+        refreshTaskColorFormWidgets();
+        
         // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout());
         addTaskButton = new JButton("Add Task");
@@ -427,7 +488,7 @@ public class PlannerView extends AbstractView {
         buttonPanel.add(removeTaskButton);
         buttonPanel.add(completeTaskButton);
         
-        gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 2;
         taskFormPanel.add(buttonPanel, gbc);
         
         taskPanel.add(taskFormPanel, BorderLayout.EAST);
@@ -582,7 +643,8 @@ public class PlannerView extends AbstractView {
                 getTaskDueDateTime(),
                 (Task.Priority) taskPriorityCombo.getSelectedItem(),
                 taskCourseCombo.getSelectedIndex() > 0 ? 
-                    ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null
+                    ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null,
+                taskFormAccentHex
             );
         }
     }
@@ -598,7 +660,8 @@ public class PlannerView extends AbstractView {
                 getTaskDueDateTime(),
                 (Task.Priority) taskPriorityCombo.getSelectedItem(),
                 taskCourseCombo.getSelectedIndex() > 0 ? 
-                    ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null
+                    ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null,
+                taskFormAccentHex
             );
         }
     }
@@ -652,6 +715,24 @@ public class PlannerView extends AbstractView {
             } else {
                 taskCourseCombo.setSelectedIndex(0);
             }
+            taskFormAccentHex = TaskPalette.canonicalHex(selected.getAccentColorHex());
+            refreshTaskColorFormWidgets();
+        }
+    }
+
+    private void refreshTaskColorFormWidgets() {
+        if (taskColorPreviewToggle == null) {
+            return;
+        }
+        String canonical = TaskPalette.canonicalHex(taskFormAccentHex);
+        taskFormAccentHex = canonical;
+        Color ac = AppTheme.colorFromHex(canonical);
+        taskColorPreviewToggle.setBackground(ac);
+        taskColorPreviewToggle.setForeground(AppTheme.contrastingForeground(ac));
+        for (int i = 0; i < taskColorSwatchPanels.size() && i < TaskPalette.HEX_CHOICES.length; i++) {
+            JPanel p = taskColorSwatchPanels.get(i);
+            boolean sel = TaskPalette.HEX_CHOICES[i].equalsIgnoreCase(canonical);
+            p.setBorder(BorderFactory.createLineBorder(sel ? new Color(40, 100, 220) : Color.GRAY, sel ? 3 : 1));
         }
     }
 

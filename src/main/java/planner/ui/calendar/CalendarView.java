@@ -429,27 +429,14 @@ public class CalendarView extends JPanel implements View, ModelListener {
         label.setOpaque(true);
         label.setBorder(BorderFactory.createEmptyBorder(1, 3, 1, 3));
         
-        // Color based on priority
-        switch (task.getPriority()) {
-            case HIGH:
-                label.setBackground(AppTheme.taskHighBg());
-                label.setForeground(AppTheme.taskHighFg());
-                break;
-            case MEDIUM:
-                label.setBackground(AppTheme.taskMediumBg());
-                label.setForeground(AppTheme.taskMediumFg());
-                break;
-            case LOW:
-                label.setBackground(AppTheme.taskLowBg());
-                label.setForeground(AppTheme.taskLowFg());
-                break;
-        }
-        
-        // Strikethrough if completed
         if (task.isCompleted()) {
             label.setText("<html><strike>" + text + "</strike></html>");
             label.setBackground(AppTheme.taskCompletedBg());
             label.setForeground(AppTheme.taskCompletedFg());
+        } else {
+            Color accent = AppTheme.colorFromHex(task.getAccentColorHex());
+            label.setBackground(AppTheme.taskAccentChipBackground(accent));
+            label.setForeground(AppTheme.taskAccentChipForeground(accent));
         }
         
         return label;
@@ -574,6 +561,18 @@ public class CalendarView extends JPanel implements View, ModelListener {
                 eventArea.add(eventLabel);
                 yPosition += eventHeight + 2;
             }
+        }
+        
+        List<Task> tasks = model.getTasks();
+        for (Task task : tasks) {
+            LocalDateTime due = task.getDueDate();
+            if (!due.toLocalDate().equals(date) || due.getHour() != hour) {
+                continue;
+            }
+            JLabel taskLabel = createTaskLabel(task);
+            taskLabel.setBounds(5, yPosition, 200, eventHeight);
+            eventArea.add(taskLabel);
+            yPosition += eventHeight + 2;
         }
     }
     
@@ -707,6 +706,17 @@ public class CalendarView extends JPanel implements View, ModelListener {
                 eventArea.add(eventLabel);
                 eventArea.add(Box.createRigidArea(new Dimension(0, 2)));
             }
+        }
+        
+        List<Task> tasks = model.getTasks();
+        for (Task task : tasks) {
+            LocalDateTime due = task.getDueDate();
+            if (!due.toLocalDate().equals(date) || due.getHour() != hour) {
+                continue;
+            }
+            JLabel taskLabel = createTaskLabel(task);
+            eventArea.add(taskLabel);
+            eventArea.add(Box.createRigidArea(new Dimension(0, 2)));
         }
         
         hourCell.add(eventArea, BorderLayout.CENTER);

@@ -8,6 +8,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**trying to fix */
+import javax.sound.sampled.*;
+import java.io.IOException;
+import java.net.URL;
+
 /**
  * Timer panel for study sessions with countdown functionality.
  * Provides start, pause, and reset functionality with visual and audio alerts.
@@ -256,22 +261,26 @@ public class TimerPanel extends JPanel implements ActionListener {
      * Plays an audible alert when timer completes.
      */
     private void playAlertSound() {
-        try {
-            // Use system beep as fallback
-            Toolkit.getDefaultToolkit().beep();
-            
-            // Try to play a more pleasant alert sound
-            java.applet.AudioClip clip = java.applet.Applet.newAudioClip(
-                getClass().getResource("/sounds/alert.wav")
-            );
-            if (clip != null) {
-                clip.play();
-            }
-        } catch (Exception e) {
-            // If sound file not found, system beep already played above
-            System.out.println("Timer completed - Alert sound played");
+    try {
+        // fallback system beep
+        Toolkit.getDefaultToolkit().beep();
+
+        URL soundURL = getClass().getResource("/sounds/alert.wav");
+        if (soundURL == null) {
+            System.out.println("Sound file not found, using beep only.");
+            return;
         }
+
+        AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+        Clip clip = AudioSystem.getClip();
+        clip.open(audioIn);
+        clip.start();
+
+    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        System.out.println("Alert sound failed, using beep only.");
+        Toolkit.getDefaultToolkit().beep();
     }
+}
     
     /**
      * Shows a visual notification when timer completes.
