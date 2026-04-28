@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.model.StudentAcademicYearTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-04-28T17:54:12" hostname="Mac.lan" time="0.003">
+<testsuite name="planner.model.StudentAcademicYearTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-04-28T18:16:52" hostname="Mac.lan" time="0.003">
   <properties/>
   <testcase name="testStudentWithAcademicYear()" classname="planner.model.StudentAcademicYearTest" time="0.0"/>
-  <testcase name="testToString()" classname="planner.model.StudentAcademicYearTest" time="0.001"/>
+  <testcase name="testToString()" classname="planner.model.StudentAcademicYearTest" time="0.0"/>
   <testcase name="testFromDisplayName()" classname="planner.model.StudentAcademicYearTest" time="0.0"/>
   <testcase name="testAcademicYearDisplayNames()" classname="planner.model.StudentAcademicYearTest" time="0.0"/>
   <testcase name="testAcademicYearEnumValues()" classname="planner.model.StudentAcademicYearTest" time="0.001"/>

@@ -66,6 +66,8 @@ public class PlannerView extends AbstractView {
     private JLabel profileCoursesLabel;
     
     // Account menu items for dynamic visibility
+    private JMenu accountMenu;
+    private JMenuItem profileLoginMenuItem;
     private JMenuItem logoutMenuItem;
     
     // Course panel components
@@ -163,6 +165,9 @@ public class PlannerView extends AbstractView {
         frame.add(tabbedPane);
         attachMenuBar();
         
+        // Initialize Account menu state
+        updateAccountMenu();
+        
         frame.setVisible(true);
         initializeDueReminders();
         
@@ -245,13 +250,13 @@ public class PlannerView extends AbstractView {
         menuBar.add(viewMenu);
         
         // Account menu
-        JMenu accountMenu = new JMenu("Account");
+        accountMenu = new JMenu("Account");
         
-        // Profile button at the top
-        JMenuItem profileItem = new JMenuItem("Profile");
-        profileItem.addActionListener(e -> onShowProfile());
-        accountMenu.add(profileItem);
-        accountMenu.addSeparator(); // Add separator after Profile
+        // Profile/Login button at the top
+        profileLoginMenuItem = new JMenuItem("Login"); // Default to Login
+        profileLoginMenuItem.addActionListener(e -> onProfileLoginAction());
+        accountMenu.add(profileLoginMenuItem);
+        accountMenu.addSeparator(); // Add separator after Profile/Login
         
         // Add New Profile button
         JMenuItem addProfileItem = new JMenuItem("Add New Profile");
@@ -410,16 +415,20 @@ public class PlannerView extends AbstractView {
         // Courses (vertical list)
         gbc.gridx = 0; gbc.gridy = 6;
         gbc.gridwidth = 2;
-        gbc.gridheight = 3;
+        gbc.gridheight = 1;
         gbc.fill = GridBagConstraints.BOTH;
         profileCoursesLabel = new JLabel("");
         profileCoursesLabel.setFont(profileMajorLabel.getFont().deriveFont(Font.BOLD));
         profileCoursesLabel.setVerticalAlignment(SwingConstants.TOP);
         JScrollPane coursesScrollPane = new JScrollPane(profileCoursesLabel);
+        coursesScrollPane.setPreferredSize(new Dimension(300, 150));
         formPanel.add(coursesScrollPane, gbc);
         
         // Links to main tabs
         gbc.gridx = 0; gbc.gridy = 7;
+        gbc.gridwidth = 2;
+        gbc.gridheight = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         JPanel linksPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton coursesLink = new JButton("Go to Courses");
         coursesLink.addActionListener(e -> {
@@ -1351,6 +1360,20 @@ public class PlannerView extends AbstractView {
     }
     
     /**
+     * Handles the Profile/Login action - shows profile if logged in, or login dialog if not.
+     */
+    private void onProfileLoginAction() {
+        Student currentStudent = ((PlannerModel) getModel()).getCurrentStudent();
+        if (currentStudent != null) {
+            // Show profile dialog when logged in
+            onShowProfile();
+        } else {
+            // Show profile selection dialog when not logged in
+            showProfileSelectionDialog();
+        }
+    }
+
+    /**
      * Handles the Switch Profile action - shows profile selection dialog.
      */
     private void onSwitchProfile() {
@@ -1463,6 +1486,12 @@ public class PlannerView extends AbstractView {
                             PlannerController controller = (PlannerController) getController();
                             controller.loadProfile(selected);
                             selectionDialog.dispose();
+                            
+                            // Refresh all UI components after profile load
+                            refreshAll();
+                            refreshProfileDisplay();
+                            updateAccountMenu();
+                            
                             showInfo("Profile loaded: " + selected);
                         }
                     } catch (Exception ex) {
@@ -1513,15 +1542,11 @@ public class PlannerView extends AbstractView {
      * Handles the Logout action.
      */
     private void onLogout() {
-        ((PlannerModel) getModel()).setCurrentStudent(null);
-        showInfo("Logged out successfully");
-        
-        if (result == JOptionPane.YES_OPTION) {
-            // Save current data and clear application state
+        try {
+            // Clear profile-specific data for current student
             if (getController() instanceof PlannerController) {
                 PlannerController controller = (PlannerController) getController();
-                
-                // Export data before logout (optional - could be user choice)
+                controller.clearProfileData();
                 int exportChoice = JOptionPane.showConfirmDialog(
                     frame,
                     "Would you like to export your data before logging out?",
@@ -1538,31 +1563,19 @@ public class PlannerView extends AbstractView {
                         showError("Failed to export data: " + e.getMessage());
                     }
                 }
-                
-                // Clear the model
-                ((PlannerModel) getModel()).setCurrentStudent(null);
-                ((PlannerModel) getModel()).getCourses().clear();
-                ((PlannerModel) getModel()).getTasks().clear();
-                
-                // Refresh all UI components
-                refreshAll();
-                clearStudentForm();
-                
-                showInfo("Logged out successfully. You can create a new profile or import existing data.");
             }
+            
+            // Clear current student
+            ((PlannerModel) getModel()).setCurrentStudent(null);
+            
+            // Refresh all UI components
+            refreshAll();
+            clearStudentForm();
+            
+            showInfo("Logged out successfully. You can create a new profile or import existing data.");
+        } catch (Exception e) {
+            showError("Error during logout: " + e.getMessage());
         }
-    }
-    
-    /**
-     * Clears the student form fields.
-     */
-    private void clearStudentForm() {
-        firstNameField.setText("");
-        lastNameField.setText("");
-        emailField.setText("");
-        studentIdField.setText("");
-        yearComboBox.setSelectedItem(Student.AcademicYear.FRESHMAN);
-        majorField.setText("");
     }
     
     /**
@@ -1612,6 +1625,18 @@ public class PlannerView extends AbstractView {
     }
     
     /**
+     * Clears the student form fields.
+     */
+    private void clearStudentForm() {
+        firstNameField.setText("");
+        lastNameField.setText("");
+        emailField.setText("");
+        studentIdField.setText("");
+        majorField.setText("");
+        yearComboBox.setSelectedIndex(0);
+    }
+
+    /**
      * Clears the courses display in the profile view.
      */
     private void clearProfileCourses() {
@@ -1625,19 +1650,22 @@ public class PlannerView extends AbstractView {
         Student currentStudent = ((PlannerModel) getModel()).getCurrentStudent();
         boolean isLoggedIn = currentStudent != null;
         
-        // Show logout button only when a student is logged in
-        if (logoutMenuItem != null) {
-            logoutMenuItem.setVisible(isLoggedIn);
+        // Update Profile/Login button text and action
+        if (profileLoginMenuItem != null) {
+            if (isLoggedIn) {
+                profileLoginMenuItem.setText("Profile");
+                profileLoginMenuItem.removeActionListener(profileLoginMenuItem.getActionListeners()[0]);
+                profileLoginMenuItem.addActionListener(e -> onShowProfile());
+            } else {
+                profileLoginMenuItem.setText("Login");
+                profileLoginMenuItem.removeActionListener(profileLoginMenuItem.getActionListeners()[0]);
+                profileLoginMenuItem.addActionListener(e -> onProfileLoginAction());
+            }
         }
         
-        // Save account state to preferences
-        try {
-            if (getController() instanceof PlannerController) {
-                PlannerController controller = (PlannerController) getController();
-                controller.saveAccountState(isLoggedIn);
-            }
-        } catch (Exception e) {
-            // Ignore errors during account state saving
+        // Show/hide logout based on login status
+        if (logoutMenuItem != null) {
+            logoutMenuItem.setVisible(isLoggedIn);
         }
     }
     

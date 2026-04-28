@@ -34,10 +34,21 @@ public class PlannerRepository {
     public void savePlannerData(PlannerModel model) throws IOException {
         createDataDirectory();
         
-        saveStudent(model.getCurrentStudent());
-        saveCourses(model.getCourses());
-        saveTasks(model.getTasks());
-        saveEvents(model.getEvents());
+        Student currentStudent = model.getCurrentStudent();
+        saveStudent(currentStudent);
+        
+        // Save data to profile-specific files if logged in, otherwise to global files
+        if (currentStudent != null) {
+            String profilePrefix = getProfilePrefix(currentStudent);
+            saveCourses(model.getCourses(), profilePrefix);
+            saveTasks(model.getTasks(), profilePrefix);
+            saveEvents(model.getEvents(), profilePrefix);
+        } else {
+            // Save to global files when no student is logged in
+            saveCourses(model.getCourses(), null);
+            saveTasks(model.getTasks(), null);
+            saveEvents(model.getEvents(), null);
+        }
     }
     
     /**
@@ -54,16 +65,28 @@ public class PlannerRepository {
         Student student = loadStudent();
         if (student != null) {
             model.setCurrentStudent(student);
+            
+            // Load profile-specific data for logged in student
+            String profilePrefix = getProfilePrefix(student);
+            List<Course> courses = loadCourses(profilePrefix);
+            courses.forEach(model::addCourse);
+            
+            List<Task> tasks = loadTasks(profilePrefix);
+            tasks.forEach(model::addTask);
+            
+            List<Event> events = loadEvents(profilePrefix);
+            events.forEach(model::addEvent);
+        } else {
+            // Load global data when no student is logged in
+            List<Course> courses = loadCourses(null);
+            courses.forEach(model::addCourse);
+            
+            List<Task> tasks = loadTasks(null);
+            tasks.forEach(model::addTask);
+            
+            List<Event> events = loadEvents(null);
+            events.forEach(model::addEvent);
         }
-        
-        List<Course> courses = loadCourses();
-        courses.forEach(model::addCourse);
-        
-        List<Task> tasks = loadTasks();
-        tasks.forEach(model::addTask);
-        
-        List<Event> events = loadEvents();
-        events.forEach(model::addEvent);
     }
     
     /**
@@ -129,12 +152,32 @@ public class PlannerRepository {
     }
     
     /**
+     * Gets the profile prefix for a student.
+     * @param student The student to get prefix for
+     * @return The profile prefix string
+     */
+    private String getProfilePrefix(Student student) {
+        if (student == null) return null;
+        return student.getStudentId() + "_" + student.getFirstName() + "_" + student.getLastName();
+    }
+
+    /**
      * Saves courses to file.
      * @param courses The list of courses to save
+     * @param profilePrefix The profile prefix for profile-specific files, null for global
      * @throws IOException If an I/O error occurs
      */
-    private void saveCourses(List<Course> courses) throws IOException {
-        Path coursesFile = Paths.get(DATA_DIR, COURSES_FILE);
+    private void saveCourses(List<Course> courses, String profilePrefix) throws IOException {
+        Path coursesFile;
+        if (profilePrefix != null) {
+            // Save to profile-specific file
+            createProfilesDirectory();
+            coursesFile = Paths.get(DATA_DIR, PROFILES_DIR, profilePrefix + "_" + COURSES_FILE);
+        } else {
+            // Save to global file
+            coursesFile = Paths.get(DATA_DIR, COURSES_FILE);
+        }
+        
         try (PrintWriter writer = new PrintWriter(new FileWriter(coursesFile.toFile()))) {
             for (Course course : courses) {
                 writer.printf("%s,%s,%s,%s,%d%n",
@@ -150,12 +193,22 @@ public class PlannerRepository {
     
     /**
      * Loads courses from file.
+     * @param profilePrefix The profile prefix for profile-specific files, null for global
      * @return The list of loaded courses
      * @throws IOException If an I/O error occurs
      */
-    private List<Course> loadCourses() throws IOException {
+    private List<Course> loadCourses(String profilePrefix) throws IOException {
         List<Course> courses = new ArrayList<>();
-        Path coursesFile = Paths.get(DATA_DIR, COURSES_FILE);
+        Path coursesFile;
+        if (profilePrefix != null) {
+            // Load from profile-specific file
+            createProfilesDirectory();
+            coursesFile = Paths.get(DATA_DIR, PROFILES_DIR, profilePrefix + "_" + COURSES_FILE);
+        } else {
+            // Load from global file
+            coursesFile = Paths.get(DATA_DIR, COURSES_FILE);
+        }
+        
         if (!Files.exists(coursesFile)) {
             return courses;
         }
@@ -185,10 +238,20 @@ public class PlannerRepository {
     /**
      * Saves tasks to file.
      * @param tasks The list of tasks to save
+     * @param profilePrefix The profile prefix for profile-specific files, null for global
      * @throws IOException If an I/O error occurs
      */
-    private void saveTasks(List<Task> tasks) throws IOException {
-        Path tasksFile = Paths.get(DATA_DIR, TASKS_FILE);
+    private void saveTasks(List<Task> tasks, String profilePrefix) throws IOException {
+        Path tasksFile;
+        if (profilePrefix != null) {
+            // Save to profile-specific file
+            createProfilesDirectory();
+            tasksFile = Paths.get(DATA_DIR, PROFILES_DIR, profilePrefix + "_" + TASKS_FILE);
+        } else {
+            // Save to global file
+            tasksFile = Paths.get(DATA_DIR, TASKS_FILE);
+        }
+        
         try (PrintWriter writer = new PrintWriter(new FileWriter(tasksFile.toFile()))) {
             for (Task task : tasks) {
                 writer.printf("%s,%s,%s,%s,%s,%b,%s,%s%n",
@@ -207,12 +270,22 @@ public class PlannerRepository {
     
     /**
      * Loads tasks from file.
+     * @param profilePrefix The profile prefix for profile-specific files, null for global
      * @return The list of loaded tasks
      * @throws IOException If an I/O error occurs
      */
-    private List<Task> loadTasks() throws IOException {
+    private List<Task> loadTasks(String profilePrefix) throws IOException {
         List<Task> tasks = new ArrayList<>();
-        Path tasksFile = Paths.get(DATA_DIR, TASKS_FILE);
+        Path tasksFile;
+        if (profilePrefix != null) {
+            // Load from profile-specific file
+            createProfilesDirectory();
+            tasksFile = Paths.get(DATA_DIR, PROFILES_DIR, profilePrefix + "_" + TASKS_FILE);
+        } else {
+            // Load from global file
+            tasksFile = Paths.get(DATA_DIR, TASKS_FILE);
+        }
+        
         if (!Files.exists(tasksFile)) {
             return tasks;
         }
@@ -252,10 +325,20 @@ public class PlannerRepository {
     /**
      * Saves events to file.
      * @param events The list of events to save
+     * @param profilePrefix The profile prefix for profile-specific files, null for global
      * @throws IOException If an I/O error occurs
      */
-    private void saveEvents(List<Event> events) throws IOException {
-        Path eventsFile = Paths.get(DATA_DIR, EVENTS_FILE);
+    private void saveEvents(List<Event> events, String profilePrefix) throws IOException {
+        Path eventsFile;
+        if (profilePrefix != null) {
+            // Save to profile-specific file
+            createProfilesDirectory();
+            eventsFile = Paths.get(DATA_DIR, PROFILES_DIR, profilePrefix + "_" + EVENTS_FILE);
+        } else {
+            // Save to global file
+            eventsFile = Paths.get(DATA_DIR, EVENTS_FILE);
+        }
+        
         try (PrintWriter writer = new PrintWriter(new FileWriter(eventsFile.toFile()))) {
             for (Event event : events) {
                 writer.printf("%s,%s,%s,%s,%s%n",
@@ -271,12 +354,22 @@ public class PlannerRepository {
     
     /**
      * Loads events from file.
+     * @param profilePrefix The profile prefix for profile-specific files, null for global
      * @return The list of loaded events
      * @throws IOException If an I/O error occurs
      */
-    private List<Event> loadEvents() throws IOException {
+    private List<Event> loadEvents(String profilePrefix) throws IOException {
         List<Event> events = new ArrayList<>();
-        Path eventsFile = Paths.get(DATA_DIR, EVENTS_FILE);
+        Path eventsFile;
+        if (profilePrefix != null) {
+            // Load from profile-specific file
+            createProfilesDirectory();
+            eventsFile = Paths.get(DATA_DIR, PROFILES_DIR, profilePrefix + "_" + EVENTS_FILE);
+        } else {
+            // Load from global file
+            eventsFile = Paths.get(DATA_DIR, EVENTS_FILE);
+        }
+        
         if (!Files.exists(eventsFile)) {
             return events;
         }
@@ -329,6 +422,46 @@ public class PlannerRepository {
         return value;
     }
     
+    /**
+     * Clears profile-specific data for a student.
+     * @param student The student whose data should be cleared
+     * @throws IOException If an I/O error occurs
+     */
+    public void clearProfileData(Student student) throws IOException {
+        if (student == null) return;
+        
+        String profilePrefix = getProfilePrefix(student);
+        clearProfileFiles(profilePrefix);
+    }
+
+    /**
+     * Clears profile-specific files for a profile prefix.
+     * @param profilePrefix The profile prefix to clear files for
+     * @throws IOException If an I/O error occurs
+     */
+    private void clearProfileFiles(String profilePrefix) throws IOException {
+        if (profilePrefix == null) return;
+        
+        Path profilesDir = Paths.get(DATA_DIR, PROFILES_DIR);
+        if (!Files.exists(profilesDir)) return;
+        
+        // Delete profile-specific data files
+        String[] dataFiles = {profilePrefix + "_" + COURSES_FILE, 
+                               profilePrefix + "_" + TASKS_FILE, 
+                               profilePrefix + "_" + EVENTS_FILE};
+        
+        for (String fileName : dataFiles) {
+            Path filePath = profilesDir.resolve(fileName);
+            if (Files.exists(filePath)) {
+                try {
+                    Files.delete(filePath);
+                } catch (IOException e) {
+                    // Ignore errors during deletion
+                }
+            }
+        }
+    }
+
     /**
      * Deletes all planner data files.
      * @throws IOException If an I/O error occurs

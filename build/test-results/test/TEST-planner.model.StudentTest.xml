@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.model.StudentTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-04-28T17:54:12" hostname="Mac.lan" time="0.004">
+<testsuite name="planner.model.StudentTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-04-28T18:16:52" hostname="Mac.lan" time="0.004">
   <properties/>
   <testcase name="Should not equal different type" classname="planner.model.StudentTest" time="0.0"/>
   <testcase name="Should handle toString correctly" classname="planner.model.StudentTest" time="0.001"/>
   <testcase name="Should equal itself" classname="planner.model.StudentTest" time="0.0"/>
   <testcase name="Should create student with valid data" classname="planner.model.StudentTest" time="0.0"/>
-  <testcase name="Should generate unique IDs for different students" classname="planner.model.StudentTest" time="0.0"/>
+  <testcase name="Should generate unique IDs for different students" classname="planner.model.StudentTest" time="0.001"/>
   <testcase name="Should implement hashCode based on ID" classname="planner.model.StudentTest" time="0.0"/>
-  <testcase name="Should not equal null" classname="planner.model.StudentTest" time="0.001"/>
-  <testcase name="Should implement equals based on ID" classname="planner.model.StudentTest" time="0.0"/>
+  <testcase name="Should not equal null" classname="planner.model.StudentTest" time="0.0"/>
+  <testcase name="Should implement equals based on ID" classname="planner.model.StudentTest" time="0.001"/>
   <testcase name="Should update student information" classname="planner.model.StudentTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

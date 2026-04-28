@@ -260,7 +260,13 @@ public class PlannerController extends AbstractController {
         Student student = repository.loadProfile(displayName);
         if (student != null) {
             PlannerModel model = (PlannerModel) getModel();
+            
+            // Clear existing data and load profile-specific data
+            model.clearAll();
             model.setCurrentStudent(student);
+            
+            // Load the profile's data
+            repository.loadPlannerData(model);
         }
     }
     
@@ -272,6 +278,19 @@ public class PlannerController extends AbstractController {
     public void removeProfile(String displayName) throws IOException {
         planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
         repository.removeProfile(displayName);
+    }
+
+    /**
+     * Clears all profile-specific data for the current student.
+     * @throws IOException If an I/O error occurs during clearing
+     */
+    public void clearProfileData() throws IOException {
+        PlannerModel model = (PlannerModel) getModel();
+        Student currentStudent = model.getCurrentStudent();
+        if (currentStudent != null) {
+            planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+            repository.clearProfileData(currentStudent);
+        }
     }
     
     /**
