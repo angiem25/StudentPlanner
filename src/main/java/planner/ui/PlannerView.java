@@ -4,25 +4,45 @@ import mvc.AbstractView;
 import mvc.ModelEvent;
 import planner.model.*;
 import planner.ui.calendar.CalendarView;
+import planner.ui.task.TimeWheelDialog;
 import planner.ui.timer.TimerPanel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main view for the student planner application.
  * Provides a tabbed interface for managing students, courses, and tasks.
  */
 public class PlannerView extends AbstractView {
+    private static final Logger LOGGER = Logger.getLogger(PlannerView.class.getName());
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter TIME_BUTTON_FORMAT =
+            DateTimeFormatter.ofPattern("h:mm a").withLocale(Locale.US);
     
     private JFrame frame;
     private JTabbedPane tabbedPane;
+    private CalendarView calendarView;
+    private TimerPanel timerPanel;
     
     // Student panel components
     private JPanel studentPanel;
@@ -53,13 +73,29 @@ public class PlannerView extends AbstractView {
     private DefaultListModel<Task> taskListModel;
     private JTextField taskTitleField;
     private JTextArea taskDescriptionArea;
-    private JTextField taskDueDateField;
+    private JSpinner taskDateSpinner;
+    private JButton taskTimeButton;
+    /** Due time for the task form; paired with {@link #taskDateSpinner}. */
+    private LocalTime taskDueTime;
     private JComboBox<Task.Priority> taskPriorityCombo;
     private JComboBox<String> taskCourseCombo;
     private JButton addTaskButton;
     private JButton updateTaskButton;
     private JButton removeTaskButton;
     private JButton completeTaskButton;
+    /** Selected accent for add/update task form; persisted on Add/Update. */
+    private String taskFormAccentHex;
+    private final List<JPanel> taskColorSwatchPanels = new ArrayList<>();
+    private JToggleButton taskColorPreviewToggle;
+    private JButton resetTaskColorButton;
+    
+    // Weekly priorities tab components
+    private JPanel weeklyPrioritiesPanel;
+    private JLabel weeklyPrioritiesRangeLabel;
+    private JList<Task> weeklyPrioritiesList;
+    private DefaultListModel<Task> weeklyPrioritiesListModel;
+    private Timer dueReminderTimer;
+    private final Set<String> shownDailyReminderKeys = new HashSet<>();
     
     /**
      * Creates a new PlannerView with the specified model and controller.
@@ -85,22 +121,58 @@ public class PlannerView extends AbstractView {
         createStudentPanel();
         createCoursePanel();
         createTaskPanel();
+        createWeeklyPrioritiesPanel();
         
         tabbedPane.addTab("Student Profile", studentPanel);
         tabbedPane.addTab("Courses", coursePanel);
         tabbedPane.addTab("Tasks", taskPanel);
+        tabbedPane.addTab("Weekly Priorities", weeklyPrioritiesPanel);
         
         // Add Calendar tab
-        CalendarView calendarView = new CalendarView((PlannerModel) getModel(), 
+        calendarView = new CalendarView((PlannerModel) getModel(),
             (PlannerController) getController());
         tabbedPane.addTab("Calendar", calendarView);
         
         // Add Timer tab
-        TimerPanel timerPanel = new TimerPanel();
+        timerPanel = new TimerPanel();
         tabbedPane.addTab("Timer", timerPanel);
         
         frame.add(tabbedPane);
+        attachMenuBar();
         frame.setVisible(true);
+        initializeDueReminders();
+    }
+    
+    /**
+     * View menu: dark mode toggle.
+     */
+    private void attachMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu viewMenu = new JMenu("View");
+        JCheckBoxMenuItem darkItem = new JCheckBoxMenuItem("Dark mode");
+        darkItem.setSelected(AppTheme.isDark());
+        darkItem.addActionListener(e -> {
+            AppTheme.setDark(darkItem.isSelected());
+            try {
+                AppTheme.installLookAndFeel();
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, "Could not switch theme", ex);
+            }
+            AppTheme.persistTheme();
+            AppTheme.applyFrame(frame);
+            if (calendarView != null) {
+                calendarView.refreshTheme();
+            }
+            if (timerPanel != null) {
+                timerPanel.refreshTheme();
+            }
+            if (taskList != null) {
+                taskList.repaint();
+            }
+        });
+        viewMenu.add(darkItem);
+        menuBar.add(viewMenu);
+        frame.setJMenuBar(menuBar);
     }
     
     /**
@@ -176,6 +248,27 @@ public class PlannerView extends AbstractView {
         // Course list
         courseListModel = new DefaultListModel<>();
         courseList = new JList<>(courseListModel);
+        courseList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Course course) {
+                    String name = course.getName() != null ? course.getName().trim() : "";
+                    String code = course.getCode() != null ? course.getCode().trim() : "";
+                    if (!name.isEmpty() && !code.isEmpty()) {
+                        setText(name + " — " + code);
+                    } else if (!name.isEmpty()) {
+                        setText(name);
+                    } else if (!code.isEmpty()) {
+                        setText(code);
+                    } else {
+                        setText("(untitled course)");
+                    }
+                }
+                return this;
+            }
+        });
         courseList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         courseList.addListSelectionListener(e -> onCourseSelected());
         
@@ -241,6 +334,55 @@ public class PlannerView extends AbstractView {
         // Task list
         taskListModel = new DefaultListModel<>();
         taskList = new JList<>(taskListModel);
+        taskList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Task task) {
+                    String title = task.getTitle() != null ? task.getTitle().trim() : "";
+                    if (title.isEmpty()) {
+                        title = "(untitled task)";
+                    }
+                    StringBuilder line = new StringBuilder();
+                    if (task.isCompleted()) {
+                        line.append("[Done] ");
+                    }
+                    line.append(title);
+                    String due = task.getDueDate() != null ? task.getDueDate().format(DATE_FORMATTER) : "";
+                    if (!due.isEmpty()) {
+                        line.append(" · ").append(due);
+                    }
+                    PlannerModel pm = (PlannerModel) PlannerView.this.getModel();
+                    if (task.getCourseId() != null && pm != null) {
+                        for (Course c : pm.getCourses()) {
+                            if (c.getId().equals(task.getCourseId())) {
+                                String code = c.getCode() != null ? c.getCode().trim() : "";
+                                if (!code.isEmpty()) {
+                                    line.append(" · ").append(code);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    if (task.getPriority() != null) {
+                        line.append(" · ").append(task.getPriority());
+                    }
+                    setText(line.toString());
+                    if (!isSelected) {
+                        if (task.isCompleted()) {
+                            setBackground(AppTheme.taskCompletedBg());
+                            setForeground(AppTheme.taskCompletedFg());
+                        } else {
+                            Color accent = AppTheme.colorFromHex(task.getAccentColorHex());
+                            setBackground(AppTheme.taskAccentChipBackground(accent));
+                            setForeground(AppTheme.taskAccentChipForeground(accent));
+                        }
+                    }
+                }
+                return this;
+            }
+        });
         taskList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         taskList.addListSelectionListener(e -> onTaskSelected());
         
@@ -269,23 +411,81 @@ public class PlannerView extends AbstractView {
         taskFormPanel.add(descScrollPane, gbc);
         
         gbc.gridx = 0; gbc.gridy = 2;
-        taskFormPanel.add(new JLabel("Due Date (yyyy-MM-dd HH:mm):"), gbc);
+        taskFormPanel.add(new JLabel("Due date:"), gbc);
         gbc.gridx = 1;
-        taskDueDateField = new JTextField(20);
-        taskFormPanel.add(taskDueDateField, gbc);
-        
+        Calendar today = Calendar.getInstance();
+        SpinnerDateModel taskDateModel = new SpinnerDateModel(today.getTime(), null, null, Calendar.DAY_OF_MONTH);
+        taskDateSpinner = new JSpinner(taskDateModel);
+        taskDateSpinner.setEditor(new JSpinner.DateEditor(taskDateSpinner, "MMMM d, yyyy"));
+        taskFormPanel.add(taskDateSpinner, gbc);
+
         gbc.gridx = 0; gbc.gridy = 3;
+        taskFormPanel.add(new JLabel("Due time:"), gbc);
+        gbc.gridx = 1;
+        taskTimeButton = new JButton();
+        taskDueTime = LocalTime.now().withSecond(0).withNano(0);
+        refreshTaskTimeButtonLabel();
+        taskTimeButton.addActionListener(e -> {
+            Window w = SwingUtilities.getWindowAncestor(taskTimeButton);
+            LocalTime picked = TimeWheelDialog.showDialog(w, taskDueTime);
+            if (picked != null) {
+                taskDueTime = picked.withSecond(0).withNano(0);
+                refreshTaskTimeButtonLabel();
+            }
+        });
+        taskFormPanel.add(taskTimeButton, gbc);
+        
+        gbc.gridx = 0; gbc.gridy = 4;
         taskFormPanel.add(new JLabel("Priority:"), gbc);
         gbc.gridx = 1;
         taskPriorityCombo = new JComboBox<>(Task.Priority.values());
         taskFormPanel.add(taskPriorityCombo, gbc);
         
-        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.gridx = 0; gbc.gridy = 5;
         taskFormPanel.add(new JLabel("Course:"), gbc);
         gbc.gridx = 1;
         taskCourseCombo = new JComboBox<>();
         taskCourseCombo.addItem("None");
         taskFormPanel.add(taskCourseCombo, gbc);
+        
+        taskFormAccentHex = Task.DEFAULT_ACCENT_COLOR_HEX;
+        
+        gbc.gridx = 0; gbc.gridy = 6;
+        taskFormPanel.add(new JLabel("Task color:"), gbc);
+        gbc.gridx = 1;
+        JPanel colorRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
+        taskColorSwatchPanels.clear();
+        for (String hex : TaskPalette.HEX_CHOICES) {
+            JPanel sw = new JPanel();
+            sw.setPreferredSize(new Dimension(28, 28));
+            sw.setBackground(AppTheme.colorFromHex(hex));
+            sw.setOpaque(true);
+            sw.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            String hexCapture = hex;
+            sw.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    taskFormAccentHex = TaskPalette.canonicalHex(hexCapture);
+                    refreshTaskColorFormWidgets();
+                }
+            });
+            taskColorSwatchPanels.add(sw);
+            colorRow.add(sw);
+        }
+        taskColorPreviewToggle = new JToggleButton("Task");
+        taskColorPreviewToggle.setOpaque(true);
+        taskColorPreviewToggle.setFocusable(false);
+        taskColorPreviewToggle.setToolTipText("Preview of task chip color");
+        colorRow.add(taskColorPreviewToggle);
+        resetTaskColorButton = new JButton("Reset color");
+        resetTaskColorButton.setToolTipText("Reset to default (red)");
+        resetTaskColorButton.addActionListener(e -> {
+            taskFormAccentHex = Task.DEFAULT_ACCENT_COLOR_HEX;
+            refreshTaskColorFormWidgets();
+        });
+        colorRow.add(resetTaskColorButton);
+        taskFormPanel.add(colorRow, gbc);
+        refreshTaskColorFormWidgets();
         
         // Buttons
         JPanel buttonPanel = new JPanel(new FlowLayout());
@@ -303,7 +503,7 @@ public class PlannerView extends AbstractView {
         buttonPanel.add(removeTaskButton);
         buttonPanel.add(completeTaskButton);
         
-        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 2;
         taskFormPanel.add(buttonPanel, gbc);
         
         taskPanel.add(taskFormPanel, BorderLayout.EAST);
@@ -333,6 +533,8 @@ public class PlannerView extends AbstractView {
                 case "TASK_COMPLETED":
                 case "TASK_INCOMPLETED":
                     refreshTaskList();
+                    refreshWeeklyPriorities();
+                    checkDueDateReminders();
                     break;
                 case "PLANNER_CLEARED":
                     refreshAll();
@@ -349,6 +551,8 @@ public class PlannerView extends AbstractView {
         refreshCourseList();
         refreshTaskList();
         refreshTaskCourseCombo();
+        refreshWeeklyPriorities();
+        checkDueDateReminders();
     }
     
     /**
@@ -386,6 +590,7 @@ public class PlannerView extends AbstractView {
         for (Task task : model.getTasks()) {
             taskListModel.addElement(task);
         }
+        pruneReminderKeysForRemovedTasks(model.getTasks());
     }
     
     /**
@@ -398,6 +603,117 @@ public class PlannerView extends AbstractView {
         for (Course course : model.getCourses()) {
             taskCourseCombo.addItem(course.getCode() + " - " + course.getName());
         }
+    }
+
+    private void createWeeklyPrioritiesPanel() {
+        weeklyPrioritiesPanel = new JPanel(new BorderLayout());
+        weeklyPrioritiesPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        weeklyPrioritiesRangeLabel = new JLabel("", JLabel.LEFT);
+        weeklyPrioritiesRangeLabel.setBorder(new EmptyBorder(0, 0, 8, 0));
+        weeklyPrioritiesPanel.add(weeklyPrioritiesRangeLabel, BorderLayout.NORTH);
+
+        weeklyPrioritiesListModel = new DefaultListModel<>();
+        weeklyPrioritiesList = new JList<>(weeklyPrioritiesListModel);
+        weeklyPrioritiesList.setCellRenderer(new ListCellRenderer<Task>() {
+            @Override
+            public Component getListCellRendererComponent(JList<? extends Task> list, Task task, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                JCheckBox box = new JCheckBox();
+                box.setOpaque(true);
+                box.setBorder(new EmptyBorder(6, 8, 6, 8));
+                box.setSelected(task != null && task.isCompleted());
+                if (task != null) {
+                    String title = task.getTitle() != null && !task.getTitle().isBlank()
+                            ? task.getTitle().trim()
+                            : "(untitled task)";
+                    box.setText(title + " · " + task.getPriority() + " · " + task.getDueDate().format(DATE_FORMATTER));
+                    if (isSelected) {
+                        box.setBackground(list.getSelectionBackground());
+                        box.setForeground(list.getSelectionForeground());
+                    } else if (task.isCompleted()) {
+                        box.setBackground(AppTheme.taskCompletedBg());
+                        box.setForeground(AppTheme.taskCompletedFg());
+                    } else {
+                        Color accent = AppTheme.colorFromHex(task.getAccentColorHex());
+                        box.setBackground(AppTheme.taskAccentChipBackground(accent));
+                        box.setForeground(AppTheme.taskAccentChipForeground(accent));
+                    }
+                }
+                return box;
+            }
+        });
+        weeklyPrioritiesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        weeklyPrioritiesList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int index = weeklyPrioritiesList.locationToIndex(e.getPoint());
+                if (index < 0) {
+                    return;
+                }
+                Rectangle cellBounds = weeklyPrioritiesList.getCellBounds(index, index);
+                if (cellBounds == null) {
+                    return;
+                }
+                int relativeX = e.getX() - cellBounds.x;
+                if (relativeX > 28) {
+                    return;
+                }
+                Task task = weeklyPrioritiesListModel.get(index);
+                if (getController() instanceof PlannerController controller) {
+                    try {
+                        controller.toggleTaskCompletionSilently(task.getId());
+                    } catch (IllegalArgumentException ex) {
+                        showError(ex.getMessage());
+                    }
+                }
+            }
+        });
+
+        weeklyPrioritiesPanel.add(new JScrollPane(weeklyPrioritiesList), BorderLayout.CENTER);
+        refreshWeeklyPriorities();
+    }
+
+    private void refreshWeeklyPriorities() {
+        if (weeklyPrioritiesListModel == null) {
+            return;
+        }
+        PlannerModel model = (PlannerModel) getModel();
+        LocalDate today = LocalDate.now();
+        LocalDate weekStart = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate weekEnd = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+        weeklyPrioritiesRangeLabel.setText(
+                "Most important tasks due this week (" + weekStart + " to " + weekEnd + ")"
+        );
+
+        List<Task> weeklyTasks = model.getTasks().stream()
+                .filter(task -> {
+                    LocalDate dueDate = task.getDueDate().toLocalDate();
+                    return !dueDate.isBefore(weekStart) && !dueDate.isAfter(weekEnd);
+                })
+                .sorted((a, b) -> {
+                    int prio = Integer.compare(priorityRank(a.getPriority()), priorityRank(b.getPriority()));
+                    if (prio != 0) return prio;
+                    int due = a.getDueDate().compareTo(b.getDueDate());
+                    if (due != 0) return due;
+                    return Boolean.compare(a.isCompleted(), b.isCompleted());
+                })
+                .toList();
+
+        weeklyPrioritiesListModel.clear();
+        for (Task task : weeklyTasks) {
+            weeklyPrioritiesListModel.addElement(task);
+        }
+    }
+
+    private int priorityRank(Task.Priority priority) {
+        if (priority == null) return 3;
+        return switch (priority) {
+            case HIGH -> 0;
+            case MEDIUM -> 1;
+            case LOW -> 2;
+        };
     }
     
     // Event handlers
@@ -455,10 +771,11 @@ public class PlannerView extends AbstractView {
             controller.addTask(
                 taskTitleField.getText().trim(),
                 taskDescriptionArea.getText().trim(),
-                taskDueDateField.getText().trim(),
+                getTaskDueDateTime(),
                 (Task.Priority) taskPriorityCombo.getSelectedItem(),
                 taskCourseCombo.getSelectedIndex() > 0 ? 
-                    ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null
+                    ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null,
+                taskFormAccentHex
             );
         }
     }
@@ -471,10 +788,11 @@ public class PlannerView extends AbstractView {
                 selected.getId(),
                 taskTitleField.getText().trim(),
                 taskDescriptionArea.getText().trim(),
-                taskDueDateField.getText().trim(),
+                getTaskDueDateTime(),
                 (Task.Priority) taskPriorityCombo.getSelectedItem(),
                 taskCourseCombo.getSelectedIndex() > 0 ? 
-                    ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null
+                    ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null,
+                taskFormAccentHex
             );
         }
     }
@@ -510,7 +828,10 @@ public class PlannerView extends AbstractView {
         if (selected != null) {
             taskTitleField.setText(selected.getTitle());
             taskDescriptionArea.setText(selected.getDescription());
-            taskDueDateField.setText(selected.getDueDate().format(DATE_FORMATTER));
+            LocalDateTime due = selected.getDueDate();
+            setSpinnerToLocalDate(taskDateSpinner, due.toLocalDate());
+            taskDueTime = due.toLocalTime().withSecond(0).withNano(0);
+            refreshTaskTimeButtonLabel();
             taskPriorityCombo.setSelectedItem(selected.getPriority());
             
             if (selected.getCourseId() != null) {
@@ -525,7 +846,137 @@ public class PlannerView extends AbstractView {
             } else {
                 taskCourseCombo.setSelectedIndex(0);
             }
+            taskFormAccentHex = TaskPalette.canonicalHex(selected.getAccentColorHex());
+            refreshTaskColorFormWidgets();
         }
+    }
+
+    private void refreshTaskColorFormWidgets() {
+        if (taskColorPreviewToggle == null) {
+            return;
+        }
+        String canonical = TaskPalette.canonicalHex(taskFormAccentHex);
+        taskFormAccentHex = canonical;
+        Color ac = AppTheme.colorFromHex(canonical);
+        taskColorPreviewToggle.setBackground(ac);
+        taskColorPreviewToggle.setForeground(AppTheme.contrastingForeground(ac));
+        for (int i = 0; i < taskColorSwatchPanels.size() && i < TaskPalette.HEX_CHOICES.length; i++) {
+            JPanel p = taskColorSwatchPanels.get(i);
+            boolean sel = TaskPalette.HEX_CHOICES[i].equalsIgnoreCase(canonical);
+            p.setBorder(BorderFactory.createLineBorder(sel ? new Color(40, 100, 220) : Color.GRAY, sel ? 3 : 1));
+        }
+    }
+
+    private void refreshTaskTimeButtonLabel() {
+        if (taskTimeButton != null && taskDueTime != null) {
+            taskTimeButton.setText(TIME_BUTTON_FORMAT.format(taskDueTime));
+        }
+    }
+
+    private void initializeDueReminders() {
+        dueReminderTimer = new Timer(60_000, e -> checkDueDateReminders());
+        dueReminderTimer.setInitialDelay(10_000);
+        dueReminderTimer.start();
+        checkDueDateReminders();
+    }
+
+    private void checkDueDateReminders() {
+        PlannerModel model = (PlannerModel) getModel();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate today = now.toLocalDate();
+        for (Task task : model.getTasks()) {
+            if (task.isCompleted()) {
+                continue;
+            }
+            LocalDateTime due = task.getDueDate();
+            LocalDate dueDate = due.toLocalDate();
+            LocalDate reminderStart = dueDate.minusDays(7);
+            boolean shouldRemind = !today.isBefore(reminderStart) && !today.isAfter(dueDate);
+            if (!shouldRemind) {
+                continue;
+            }
+            String reminderKey = task.getId() + "|" + due + "|" + today;
+            if (shownDailyReminderKeys.contains(reminderKey)) {
+                continue;
+            }
+            shownDailyReminderKeys.add(reminderKey);
+            long daysUntilDue = java.time.temporal.ChronoUnit.DAYS.between(today, dueDate);
+            showDueReminderPopup(task, due, daysUntilDue);
+        }
+    }
+
+    private void showDueReminderPopup(Task task, LocalDateTime due, long daysUntilDue) {
+        String status;
+        if (daysUntilDue > 1) {
+            status = "Due in " + daysUntilDue + " days";
+        } else if (daysUntilDue == 1) {
+            status = "Due tomorrow";
+        } else if (daysUntilDue == 0) {
+            status = "Due today";
+        } else {
+            status = "Overdue";
+        }
+
+        JDialog reminderDialog = new JDialog(frame, "Task Reminder", false);
+        reminderDialog.setLayout(new BorderLayout(10, 8));
+        reminderDialog.getRootPane().setBorder(new EmptyBorder(10, 12, 10, 12));
+
+        JLabel title = new JLabel(task.getTitle() != null && !task.getTitle().isBlank()
+                ? task.getTitle()
+                : "(untitled task)");
+        title.setFont(title.getFont().deriveFont(Font.BOLD));
+        JLabel detail = new JLabel(status + " · " + due.format(DATE_FORMATTER));
+        reminderDialog.add(title, BorderLayout.NORTH);
+        reminderDialog.add(detail, BorderLayout.CENTER);
+
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+        JButton dismiss = new JButton("Dismiss");
+        dismiss.addActionListener(e -> reminderDialog.dispose());
+        actions.add(dismiss);
+        reminderDialog.add(actions, BorderLayout.SOUTH);
+
+        reminderDialog.pack();
+        reminderDialog.setLocationRelativeTo(frame);
+        reminderDialog.setAlwaysOnTop(true);
+        reminderDialog.setVisible(true);
+
+        Timer autoClose = new Timer(10_000, e -> reminderDialog.dispose());
+        autoClose.setRepeats(false);
+        autoClose.start();
+    }
+
+    private void pruneReminderKeysForRemovedTasks(List<Task> currentTasks) {
+        Set<String> activeTaskIds = new HashSet<>();
+        for (Task task : currentTasks) {
+            activeTaskIds.add(task.getId());
+        }
+        shownDailyReminderKeys.removeIf(key -> {
+            int sep = key.indexOf('|');
+            if (sep <= 0) {
+                return true;
+            }
+            String taskId = key.substring(0, sep);
+            return !activeTaskIds.contains(taskId);
+        });
+    }
+
+    private LocalDateTime getTaskDueDateTime() {
+        LocalDate date = localDateFromSpinner(taskDateSpinner);
+        LocalTime time = taskDueTime != null ? taskDueTime : LocalTime.NOON;
+        return LocalDateTime.of(date, time);
+    }
+
+    private static LocalDate localDateFromSpinner(JSpinner spinner) {
+        Date d = (Date) spinner.getValue();
+        return d.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    private static void setSpinnerToLocalDate(JSpinner spinner, LocalDate ld) {
+        Calendar cal = Calendar.getInstance();
+        cal.clear();
+        cal.set(ld.getYear(), ld.getMonthValue() - 1, ld.getDayOfMonth(), 0, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        spinner.setValue(cal.getTime());
     }
     
     /**

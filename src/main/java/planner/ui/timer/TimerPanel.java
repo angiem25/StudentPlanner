@@ -1,10 +1,17 @@
 package planner.ui.timer;
 
+import planner.ui.AppTheme;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+/**trying to fix */
+import javax.sound.sampled.*;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Timer panel for study sessions with countdown functionality.
@@ -20,6 +27,9 @@ public class TimerPanel extends JPanel implements ActionListener {
     private JButton startButton;
     private JButton pauseButton;
     private JButton resetButton;
+    private JButton preset30Button;
+    private JButton preset60Button;
+    private JButton preset90Button;
     private Timer swingTimer;
     
     private int totalSeconds;
@@ -63,7 +73,7 @@ public class TimerPanel extends JPanel implements ActionListener {
         // Time display
         timeDisplay = new JLabel("00:00", JLabel.CENTER);
         timeDisplay.setFont(DISPLAY_FONT);
-        timeDisplay.setForeground(Color.DARK_GRAY);
+        timeDisplay.setForeground(AppTheme.timerIdle());
         centerPanel.add(timeDisplay, gbc);
         
         // Input panel
@@ -78,6 +88,26 @@ public class TimerPanel extends JPanel implements ActionListener {
         minutesInput.setFont(LABEL_FONT);
         minutesInput.setHorizontalAlignment(JTextField.CENTER);
         centerPanel.add(minutesInput, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JPanel presetsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 0));
+        presetsPanel.add(new JLabel("Presets:"));
+        preset30Button = new JButton("30 min");
+        preset60Button = new JButton("60 min");
+        preset90Button = new JButton("90 min");
+        preset30Button.setFont(LABEL_FONT);
+        preset60Button.setFont(LABEL_FONT);
+        preset90Button.setFont(LABEL_FONT);
+        preset30Button.addActionListener(e -> applyPresetMinutes(30));
+        preset60Button.addActionListener(e -> applyPresetMinutes(60));
+        preset90Button.addActionListener(e -> applyPresetMinutes(90));
+        presetsPanel.add(preset30Button);
+        presetsPanel.add(preset60Button);
+        presetsPanel.add(preset90Button);
+        centerPanel.add(presetsPanel, gbc);
         
         add(centerPanel, BorderLayout.CENTER);
         
@@ -87,18 +117,18 @@ public class TimerPanel extends JPanel implements ActionListener {
         startButton = new JButton("▶ Start");
         startButton.setFont(LABEL_FONT);
         startButton.addActionListener(this);
-        startButton.setBackground(new Color(200, 255, 200));
+        startButton.setBackground(AppTheme.timerStartBg());
         
         pauseButton = new JButton("⏸ Pause");
         pauseButton.setFont(LABEL_FONT);
         pauseButton.addActionListener(this);
         pauseButton.setEnabled(false);
-        pauseButton.setBackground(new Color(255, 255, 200));
+        pauseButton.setBackground(AppTheme.timerPauseBg());
         
         resetButton = new JButton("⏹ Reset");
         resetButton.setFont(LABEL_FONT);
         resetButton.addActionListener(this);
-        resetButton.setBackground(new Color(255, 200, 200));
+        resetButton.setBackground(AppTheme.timerResetBg());
         
         buttonPanel.add(startButton);
         buttonPanel.add(pauseButton);
@@ -171,7 +201,26 @@ public class TimerPanel extends JPanel implements ActionListener {
         pauseButton.setEnabled(true);
         minutesInput.setEnabled(false);
         
-        timeDisplay.setForeground(new Color(0, 150, 0)); // Green when running
+        timeDisplay.setForeground(AppTheme.timerRunning()); // Green when running
+    }
+
+    /**
+     * Applies a preset minute value while timer is idle.
+     * @param minutes preset duration in minutes
+     */
+    private void applyPresetMinutes(int minutes) {
+        if (isRunning) {
+            JOptionPane.showMessageDialog(this,
+                    "Reset or finish the current timer before changing presets.",
+                    "Timer Running", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        minutesInput.setText(String.valueOf(minutes));
+        totalSeconds = minutes * 60;
+        remainingSeconds = totalSeconds;
+        updateDisplay();
+        timeDisplay.setForeground(AppTheme.timerIdle());
     }
     
     /**
@@ -183,10 +232,10 @@ public class TimerPanel extends JPanel implements ActionListener {
             
             if (isPaused) {
                 pauseButton.setText("▶ Resume");
-                timeDisplay.setForeground(new Color(200, 150, 0)); // Orange when paused
+                timeDisplay.setForeground(AppTheme.timerPaused()); // Orange when paused
             } else {
                 pauseButton.setText("⏸ Pause");
-                timeDisplay.setForeground(new Color(0, 150, 0)); // Green when running
+                timeDisplay.setForeground(AppTheme.timerRunning()); // Green when running
             }
         }
     }
@@ -215,7 +264,7 @@ public class TimerPanel extends JPanel implements ActionListener {
         pauseButton.setText("⏸ Pause");
         minutesInput.setEnabled(true);
         
-        timeDisplay.setForeground(Color.DARK_GRAY);
+        timeDisplay.setForeground(AppTheme.timerIdle());
     }
     
     /**
@@ -241,7 +290,7 @@ public class TimerPanel extends JPanel implements ActionListener {
         minutesInput.setEnabled(true);
         
         timeDisplay.setText("00:00");
-        timeDisplay.setForeground(Color.RED);
+        timeDisplay.setForeground(AppTheme.timerAlert());
         
         // Play alert sound
         playAlertSound();
@@ -254,22 +303,26 @@ public class TimerPanel extends JPanel implements ActionListener {
      * Plays an audible alert when timer completes.
      */
     private void playAlertSound() {
-        try {
-            // Use system beep as fallback
-            Toolkit.getDefaultToolkit().beep();
-            
-            // Try to play a more pleasant alert sound
-            java.applet.AudioClip clip = java.applet.Applet.newAudioClip(
-                getClass().getResource("/sounds/alert.wav")
-            );
-            if (clip != null) {
-                clip.play();
-            }
-        } catch (Exception e) {
-            // If sound file not found, system beep already played above
-            System.out.println("Timer completed - Alert sound played");
+    try {
+        // fallback system beep
+        Toolkit.getDefaultToolkit().beep();
+
+        URL soundURL = getClass().getResource("/sounds/alert.wav");
+        if (soundURL == null) {
+            System.out.println("Sound file not found, using beep only.");
+            return;
         }
+
+        AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundURL);
+        Clip clip = AudioSystem.getClip();
+        clip.open(audioIn);
+        clip.start();
+
+    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        System.out.println("Alert sound failed, using beep only.");
+        Toolkit.getDefaultToolkit().beep();
     }
+}
     
     /**
      * Shows a visual notification when timer completes.
@@ -284,11 +337,11 @@ public class TimerPanel extends JPanel implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 if (count >= 6) { // Flash 3 times
                     ((Timer) e.getSource()).stop();
-                    timeDisplay.setForeground(Color.RED);
+                    timeDisplay.setForeground(AppTheme.timerAlert());
                     return;
                 }
                 
-                timeDisplay.setForeground(on ? Color.RED : Color.DARK_GRAY);
+                timeDisplay.setForeground(on ? AppTheme.timerAlert() : AppTheme.timerIdle());
                 on = !on;
                 count++;
             }
@@ -326,5 +379,21 @@ public class TimerPanel extends JPanel implements ActionListener {
      */
     public boolean isPaused() {
         return isPaused;
+    }
+    
+    /**
+     * Updates colors after light/dark theme change.
+     */
+    public void refreshTheme() {
+        startButton.setBackground(AppTheme.timerStartBg());
+        pauseButton.setBackground(AppTheme.timerPauseBg());
+        resetButton.setBackground(AppTheme.timerResetBg());
+        if (!isRunning) {
+            timeDisplay.setForeground(AppTheme.timerIdle());
+        } else if (isPaused) {
+            timeDisplay.setForeground(AppTheme.timerPaused());
+        } else {
+            timeDisplay.setForeground(AppTheme.timerRunning());
+        }
     }
 }

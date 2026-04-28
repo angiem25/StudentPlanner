@@ -84,7 +84,7 @@ public class PlannerService {
     
     // Task operations
     public Task addTask(String title, String description, LocalDateTime dueDate, 
-                       Task.Priority priority, String courseId) {
+                       Task.Priority priority, String courseId, String accentColorHex) {
         validateTaskData(title, description, dueDate, priority, courseId);
         
         // Verify course exists if courseId is provided
@@ -96,17 +96,19 @@ public class PlannerService {
         
         Task task = new Task(title, description, dueDate, priority);
         task.setCourseId(courseId);
+        task.setAccentColorHex(TaskPalette.canonicalHex(accentColorHex));
         model.addTask(task);
         return task;
     }
     
     public Task addTaskWithoutCourse(String title, String description, 
                                     LocalDateTime dueDate, Task.Priority priority) {
-        return addTask(title, description, dueDate, priority, null);
+        return addTask(title, description, dueDate, priority, null, Task.DEFAULT_ACCENT_COLOR_HEX);
     }
     
     public void updateTask(String taskId, String title, String description, 
-                          LocalDateTime dueDate, Task.Priority priority, String courseId) {
+                          LocalDateTime dueDate, Task.Priority priority, String courseId,
+                          String accentColorHex) {
         validateTaskData(title, description, dueDate, priority, courseId);
         
         Optional<Task> taskOpt = model.getTaskById(taskId);
@@ -125,6 +127,7 @@ public class PlannerService {
             task.setDueDate(dueDate);
             task.setPriority(priority);
             task.setCourseId(courseId);
+            task.setAccentColorHex(TaskPalette.canonicalHex(accentColorHex));
             model.updateTask(task);
         } else {
             throw new IllegalArgumentException("Task not found: " + taskId);

@@ -4,15 +4,12 @@ import mvc.AbstractController;
 import planner.model.*;
 import planner.service.PlannerService;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 /**
  * Controller for the student planner application.
  * Handles user interactions and coordinates between the view and service layer.
  */
 public class PlannerController extends AbstractController {
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private final PlannerService service;
     
     /**
@@ -116,20 +113,16 @@ public class PlannerController extends AbstractController {
      * Adds a new task.
      * @param title The task title
      * @param description The task description
-     * @param dueDateText The due date as text
+     * @param dueDate The due date and time
      * @param priority The task priority
      * @param courseId The course ID (can be null)
      */
-    public void addTask(String title, String description, String dueDateText, 
-                       Task.Priority priority, String courseId) {
+    public void addTask(String title, String description, LocalDateTime dueDate,
+                       Task.Priority priority, String courseId, String accentColorHex) {
         try {
-            LocalDateTime dueDate = LocalDateTime.parse(dueDateText, DATE_FORMATTER);
-            service.addTask(title, description, dueDate, priority, courseId);
+            service.addTask(title, description, dueDate, priority, courseId, accentColorHex);
             PlannerView view = (PlannerView) getView();
             view.showInfo("Task added successfully!");
-        } catch (DateTimeParseException e) {
-            PlannerView view = (PlannerView) getView();
-            view.showError("Due date must be in format: yyyy-MM-dd HH:mm");
         } catch (IllegalArgumentException e) {
             PlannerView view = (PlannerView) getView();
             view.showError(e.getMessage());
@@ -141,26 +134,23 @@ public class PlannerController extends AbstractController {
      * @param taskId The task ID to update
      * @param title The new task title
      * @param description The new task description
-     * @param dueDateText The new due date as text
+     * @param dueDate The new due date and time
      * @param priority The new task priority
      * @param courseId The new course ID (can be null)
      */
-    public void updateTask(String taskId, String title, String description, 
-                         String dueDateText, Task.Priority priority, String courseId) {
+    public void updateTask(String taskId, String title, String description,
+                         LocalDateTime dueDate, Task.Priority priority, String courseId,
+                         String accentColorHex) {
         try {
-            LocalDateTime dueDate = LocalDateTime.parse(dueDateText, DATE_FORMATTER);
-            service.updateTask(taskId, title, description, dueDate, priority, courseId);
+            service.updateTask(taskId, title, description, dueDate, priority, courseId, accentColorHex);
             PlannerView view = (PlannerView) getView();
             view.showInfo("Task updated successfully!");
-        } catch (DateTimeParseException e) {
-            PlannerView view = (PlannerView) getView();
-            view.showError("Due date must be in format: yyyy-MM-dd HH:mm");
         } catch (IllegalArgumentException e) {
             PlannerView view = (PlannerView) getView();
             view.showError(e.getMessage());
         }
     }
-    
+
     /**
      * Removes a task.
      * @param taskId The task ID to remove
@@ -189,5 +179,12 @@ public class PlannerController extends AbstractController {
             PlannerView view = (PlannerView) getView();
             view.showError(e.getMessage());
         }
+    }
+
+    /**
+     * Toggles task completion without success popup, for checklist-style interactions.
+     */
+    public void toggleTaskCompletionSilently(String taskId) {
+        service.toggleTaskCompletion(taskId);
     }
 }

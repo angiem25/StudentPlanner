@@ -9,6 +9,7 @@ import mvc.View;
 import planner.model.Event;
 import planner.model.PlannerModel;
 import planner.model.Task;
+import planner.ui.AppTheme;
 import planner.ui.PlannerController;
 
 import javax.swing.*;
@@ -83,6 +84,13 @@ public class CalendarView extends JPanel implements View, ModelListener {
         
         this.currentYearMonth = YearMonth.now();
         initializeUI();
+        refreshCalendar();
+    }
+    
+    /**
+     * Re-applies calendar colors after light/dark theme change.
+     */
+    public void refreshTheme() {
         refreshCalendar();
     }
     
@@ -208,8 +216,9 @@ public class CalendarView extends JPanel implements View, ModelListener {
             JLabel dayHeader = new JLabel(dayName, JLabel.CENTER);
             dayHeader.setFont(new Font("Arial", Font.BOLD, 12));
             dayHeader.setOpaque(true);
-            dayHeader.setBackground(Color.LIGHT_GRAY);
-            dayHeader.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            dayHeader.setForeground(AppTheme.calDayHeaderFg());
+            dayHeader.setBackground(AppTheme.calDayHeaderBg());
+            dayHeader.setBorder(BorderFactory.createLineBorder(AppTheme.calDayHeaderBorder()));
             gridPanel.add(dayHeader);
         }
         
@@ -234,13 +243,14 @@ public class CalendarView extends JPanel implements View, ModelListener {
      */
     private JPanel createDayCell(int row, int col) {
         JPanel cell = new JPanel(new BorderLayout());
-        cell.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        cell.setBackground(Color.WHITE);
+        cell.setBorder(BorderFactory.createLineBorder(AppTheme.calCellBorder()));
+        cell.setBackground(AppTheme.calCellBg());
         cell.setPreferredSize(new Dimension(120, 80));
         
         // Date label (top)
         JLabel dateLabel = new JLabel("", JLabel.RIGHT);
         dateLabel.setFont(new Font("Arial", Font.PLAIN, 11));
+        dateLabel.setForeground(AppTheme.calCellFg());
         dateLabel.setBorder(new EmptyBorder(2, 5, 2, 5));
         cell.add(dateLabel, BorderLayout.NORTH);
         dateLabels[row][col] = dateLabel;
@@ -248,7 +258,7 @@ public class CalendarView extends JPanel implements View, ModelListener {
         // Event panel (center)
         JPanel eventPanel = new JPanel();
         eventPanel.setLayout(new BoxLayout(eventPanel, BoxLayout.Y_AXIS));
-        eventPanel.setBackground(Color.WHITE);
+        eventPanel.setBackground(AppTheme.calEventPanelBg());
         eventPanel.setOpaque(true);
         eventPanels[row][col] = eventPanel;
         
@@ -317,11 +327,12 @@ public class CalendarView extends JPanel implements View, ModelListener {
                     
                     // Set date label
                     dateLabels[row][col].setText(String.valueOf(day));
+                    dateLabels[row][col].setForeground(AppTheme.calCellFg());
                     
                     // Highlight today
                     if (cellDate.equals(today)) {
-                        dayCells[row][col].setBackground(new Color(230, 245, 255));
-                        dayCells[row][col].setBorder(BorderFactory.createLineBorder(new Color(100, 150, 200), 2));
+                        dayCells[row][col].setBackground(AppTheme.calTodayBg());
+                        dayCells[row][col].setBorder(BorderFactory.createLineBorder(AppTheme.calTodayBorder(), 2));
                     }
                     
                     // Add tasks for this date
@@ -418,32 +429,19 @@ public class CalendarView extends JPanel implements View, ModelListener {
         label.setOpaque(true);
         label.setBorder(BorderFactory.createEmptyBorder(1, 3, 1, 3));
         
-        // Color based on priority
-        switch (task.getPriority()) {
-            case HIGH:
-                label.setBackground(new Color(255, 200, 200));
-                label.setForeground(Color.RED);
-                break;
-            case MEDIUM:
-                label.setBackground(new Color(255, 240, 200));
-                label.setForeground(new Color(200, 150, 0));
-                break;
-            case LOW:
-                label.setBackground(new Color(220, 255, 220));
-                label.setForeground(new Color(0, 150, 0));
-                break;
-        }
-        
-        // Strikethrough if completed
         if (task.isCompleted()) {
             label.setText("<html><strike>" + text + "</strike></html>");
-            label.setBackground(Color.LIGHT_GRAY);
-            label.setForeground(Color.GRAY);
+            label.setBackground(AppTheme.taskCompletedBg());
+            label.setForeground(AppTheme.taskCompletedFg());
+        } else {
+            Color accent = AppTheme.colorFromHex(task.getAccentColorHex());
+            label.setBackground(AppTheme.taskAccentChipBackground(accent));
+            label.setForeground(AppTheme.taskAccentChipForeground(accent));
         }
         
         return label;
     }
-    
+
     // ============================================
     // VIEW SWITCHING
     // ============================================
@@ -485,7 +483,7 @@ public class CalendarView extends JPanel implements View, ModelListener {
         
         // Timeline panel with hours
         JPanel timelineContent = new JPanel(new GridBagLayout());
-        timelineContent.setBackground(Color.WHITE);
+        timelineContent.setBackground(AppTheme.timelineBg());
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -499,8 +497,8 @@ public class CalendarView extends JPanel implements View, ModelListener {
             // Hour row panel
             JPanel hourRow = new JPanel(new BorderLayout());
             hourRow.setPreferredSize(new Dimension(0, HOUR_HEIGHT));
-            hourRow.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
-            hourRow.setBackground(Color.WHITE);
+            hourRow.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, AppTheme.hourDivider()));
+            hourRow.setBackground(AppTheme.timelineBg());
             
             // Time label
             String timeText = formatHour(hour);
@@ -513,7 +511,7 @@ public class CalendarView extends JPanel implements View, ModelListener {
             // Event area for this hour
             JPanel eventArea = new JPanel();
             eventArea.setLayout(null); // Absolute positioning for overlapping events
-            eventArea.setBackground(Color.WHITE);
+            eventArea.setBackground(AppTheme.timelineBg());
             eventArea.setOpaque(true);
             hourRow.add(eventArea, BorderLayout.CENTER);
             
@@ -563,6 +561,18 @@ public class CalendarView extends JPanel implements View, ModelListener {
                 eventArea.add(eventLabel);
                 yPosition += eventHeight + 2;
             }
+        }
+        
+        List<Task> tasks = model.getTasks();
+        for (Task task : tasks) {
+            LocalDateTime due = task.getDueDate();
+            if (!due.toLocalDate().equals(date) || due.getHour() != hour) {
+                continue;
+            }
+            JLabel taskLabel = createTaskLabel(task);
+            taskLabel.setBounds(5, yPosition, 200, eventHeight);
+            eventArea.add(taskLabel);
+            yPosition += eventHeight + 2;
         }
     }
     
@@ -618,12 +628,12 @@ public class CalendarView extends JPanel implements View, ModelListener {
      */
     private JPanel createWeekDayColumn(LocalDate date) {
         JPanel dayColumn = new JPanel(new BorderLayout());
-        dayColumn.setBackground(Color.WHITE);
+        dayColumn.setBackground(AppTheme.timelineBg());
         
         // Column header
         JPanel header = new JPanel(new BorderLayout());
-        header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.GRAY));
-        header.setBackground(new Color(240, 240, 240));
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, AppTheme.weekColumnHeaderBorder()));
+        header.setBackground(AppTheme.weekColumnHeaderBg());
         header.setPreferredSize(new Dimension(0, 30));
         
         String dayName = date.getDayOfWeek().toString().substring(0, 3);
@@ -633,8 +643,10 @@ public class CalendarView extends JPanel implements View, ModelListener {
         
         // Highlight today
         if (date.equals(LocalDate.now())) {
-            header.setBackground(new Color(200, 230, 255));
-            headerLabel.setForeground(new Color(0, 100, 200));
+            header.setBackground(AppTheme.weekTodayHeaderBg());
+            headerLabel.setForeground(AppTheme.weekTodayHeaderFg());
+        } else {
+            headerLabel.setForeground(AppTheme.weekColumnHeaderFg());
         }
         
         header.add(headerLabel, BorderLayout.CENTER);
@@ -642,7 +654,7 @@ public class CalendarView extends JPanel implements View, ModelListener {
         
         // Hour cells panel with grid
         JPanel hoursPanel = new JPanel(new GridLayout(END_HOUR - START_HOUR, 1));
-        hoursPanel.setBackground(Color.WHITE);
+        hoursPanel.setBackground(AppTheme.timelineBg());
         
         // Hour cells with time labels
         for (int hour = START_HOUR; hour < END_HOUR; hour++) {
@@ -661,13 +673,13 @@ public class CalendarView extends JPanel implements View, ModelListener {
     private JPanel createWeekHourCellWithTime(LocalDate date, int hour) {
         JPanel hourCell = new JPanel(new BorderLayout());
         hourCell.setPreferredSize(new Dimension(0, HOUR_HEIGHT));
-        hourCell.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, Color.LIGHT_GRAY));
-        hourCell.setBackground(Color.WHITE);
+        hourCell.setBorder(BorderFactory.createMatteBorder(1, 1, 0, 1, AppTheme.hourDivider()));
+        hourCell.setBackground(AppTheme.timelineBg());
         
         // Time label on the left side of each hour cell
         JLabel timeLabel = new JLabel(formatHour(hour));
         timeLabel.setFont(new Font("Arial", Font.PLAIN, 9));
-        timeLabel.setForeground(Color.GRAY);
+        timeLabel.setForeground(AppTheme.timeMuted());
         timeLabel.setPreferredSize(new Dimension(45, HOUR_HEIGHT));
         timeLabel.setBorder(new EmptyBorder(2, 3, 0, 2));
         hourCell.add(timeLabel, BorderLayout.WEST);
@@ -675,7 +687,7 @@ public class CalendarView extends JPanel implements View, ModelListener {
         // Event area
         JPanel eventArea = new JPanel();
         eventArea.setLayout(new BoxLayout(eventArea, BoxLayout.Y_AXIS));
-        eventArea.setBackground(Color.WHITE);
+        eventArea.setBackground(AppTheme.timelineBg());
         eventArea.setOpaque(true);
         
         PlannerModel model = (PlannerModel) getModel();
@@ -694,6 +706,17 @@ public class CalendarView extends JPanel implements View, ModelListener {
                 eventArea.add(eventLabel);
                 eventArea.add(Box.createRigidArea(new Dimension(0, 2)));
             }
+        }
+        
+        List<Task> tasks = model.getTasks();
+        for (Task task : tasks) {
+            LocalDateTime due = task.getDueDate();
+            if (!due.toLocalDate().equals(date) || due.getHour() != hour) {
+                continue;
+            }
+            JLabel taskLabel = createTaskLabel(task);
+            eventArea.add(taskLabel);
+            eventArea.add(Box.createRigidArea(new Dimension(0, 2)));
         }
         
         hourCell.add(eventArea, BorderLayout.CENTER);
@@ -722,8 +745,8 @@ public class CalendarView extends JPanel implements View, ModelListener {
         label.setFont(new Font("Arial", Font.PLAIN, 10));
         label.setOpaque(true);
         label.setBorder(BorderFactory.createEmptyBorder(2, 4, 2, 4));
-        label.setBackground(new Color(100, 150, 220));
-        label.setForeground(Color.WHITE);
+        label.setBackground(AppTheme.eventBarBg());
+        label.setForeground(AppTheme.eventBarFg());
         
         return label;
     }
