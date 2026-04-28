@@ -118,9 +118,9 @@ public class PlannerController extends AbstractController {
      * @param courseId The course ID (can be null)
      */
     public void addTask(String title, String description, LocalDateTime dueDate,
-                       Task.Priority priority, String courseId) {
+                       Task.Priority priority, String courseId, String accentColorHex) {
         try {
-            service.addTask(title, description, dueDate, priority, courseId);
+            service.addTask(title, description, dueDate, priority, courseId, accentColorHex);
             PlannerView view = (PlannerView) getView();
             view.showInfo("Task added successfully!");
         } catch (IllegalArgumentException e) {
@@ -139,9 +139,10 @@ public class PlannerController extends AbstractController {
      * @param courseId The new course ID (can be null)
      */
     public void updateTask(String taskId, String title, String description,
-                         LocalDateTime dueDate, Task.Priority priority, String courseId) {
+                         LocalDateTime dueDate, Task.Priority priority, String courseId,
+                         String accentColorHex) {
         try {
-            service.updateTask(taskId, title, description, dueDate, priority, courseId);
+            service.updateTask(taskId, title, description, dueDate, priority, courseId, accentColorHex);
             PlannerView view = (PlannerView) getView();
             view.showInfo("Task updated successfully!");
         } catch (IllegalArgumentException e) {
@@ -149,7 +150,7 @@ public class PlannerController extends AbstractController {
             view.showError(e.getMessage());
         }
     }
-    
+
     /**
      * Removes a task.
      * @param taskId The task ID to remove
@@ -178,5 +179,12 @@ public class PlannerController extends AbstractController {
             PlannerView view = (PlannerView) getView();
             view.showError(e.getMessage());
         }
+    }
+
+    /**
+     * Toggles task completion without success popup, for checklist-style interactions.
+     */
+    public void toggleTaskCompletionSilently(String taskId) {
+        service.toggleTaskCompletion(taskId);
     }
 }

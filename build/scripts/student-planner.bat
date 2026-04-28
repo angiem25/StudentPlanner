@@ -68,7 +68,7 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\student-planner-1.0.0.jar
+set CLASSPATH=%APP_HOME%\lib\student-planner-1.0.0.jar;%APP_HOME%\lib\flatlaf-3.4.1.jar
 
 
 @rem Execute student-planner

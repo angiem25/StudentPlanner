@@ -100,6 +100,7 @@ This document summarizes the modular MVC-based student planner application, demo
 - Form validation and user feedback
 - Component reuse and consistent layout
 - Event delegation to controller layer
+- Theme-aware visual cues (task accents and timer state colors)
 
 ### Phase 5: Persistence Layer (Data Storage)
 
@@ -193,10 +194,36 @@ Service Exception → Controller → View → User (Dialog)
 - **Observer Extensions**: Real-time synchronization
 
 ### Feature Extensions
-- **Calendar Module**: Schedule visualization
+- **Palette Extension**: User-defined custom hex colors and saved favorites
+- **Timer Session Analytics**: Track completed study sessions and streaks
 - **Grade Module**: GPA calculation and tracking
 - **Notification Module**: Deadline reminders
 - **Export Module**: Data export in multiple formats
+
+## Recent UI Enhancements
+
+### Task Color Palette (K-4)
+- Added `Task.accentColorHex` with default red (`#E53935`)
+- Added model-level `TaskPalette` for canonical allowed values
+- Persisted color into `tasks.csv` with backward-compatible loading
+- Rendered accent color consistently in task list and calendar chips
+
+### Timer Presets (K-5)
+- Added one-click preset buttons in `TimerPanel`: 30, 60, 90 minutes
+- Presets update input and display immediately while timer is idle
+- Running-session guard prevents preset changes mid-countdown
+
+### Due Date Reminder Popups (K-6)
+- Added scheduled popup reminders in `PlannerView` for incomplete tasks
+- Reminder cadence is daily, starting 7 days before due date
+- Reminder keys are tracked by task+due+date to prevent duplicate popups
+- Completed tasks are excluded from reminder checks automatically
+
+### Weekly Priorities Checklist (K-7)
+- Added a dedicated weekly tab for high-priority due-this-week tasks
+- Checklist rows use clickable checkboxes instead of plain text items
+- Checkbox toggles completion directly through controller logic
+- Completed tasks remain visible and render as checked/complete in the tab
 
 ## Design Patterns Used
 

@@ -189,14 +189,15 @@ public class PlannerRepository {
         Path tasksFile = Paths.get(DATA_DIR, TASKS_FILE);
         try (PrintWriter writer = new PrintWriter(new FileWriter(tasksFile.toFile()))) {
             for (Task task : tasks) {
-                writer.printf("%s,%s,%s,%s,%s,%b,%s%n",
+                writer.printf("%s,%s,%s,%s,%s,%b,%s,%s%n",
                     task.getId(),
                     escapeCsv(task.getTitle()),
                     escapeCsv(task.getDescription()),
                     task.getDueDate().format(DATE_FORMATTER),
                     task.getPriority().toString(),
                     task.isCompleted(),
-                    task.getCourseId() != null ? task.getCourseId() : ""
+                    task.getCourseId() != null ? task.getCourseId() : "",
+                    escapeCsv(task.getAccentColorHex() != null ? task.getAccentColorHex() : "")
                 );
             }
         }
@@ -228,11 +229,15 @@ public class PlannerRepository {
                     Task.Priority priority = Task.Priority.valueOf(parts[4]);
                     boolean completed = Boolean.parseBoolean(parts[5]);
                     String courseId = parts[6].isEmpty() ? null : parts[6];
+                    String accentHex = parts.length >= 8 ? unescapeCsv(parts[7]) : "";
                     
                     Task task = new Task(title, description, dueDate, priority);
                     task.setCompleted(completed);
                     if (courseId != null && !courseId.isEmpty()) {
                         task.setCourseId(courseId);
+                    }
+                    if (accentHex != null && !accentHex.isEmpty()) {
+                        task.setAccentColorHex(accentHex);
                     }
                     tasks.add(task);
                 }

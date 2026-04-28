@@ -8,6 +8,9 @@ import java.util.UUID;
  * A task has a title, description, due date, priority, and completion status.
  */
 public class Task {
+    /** Default task accent (red) for list and calendar chips; hex #RRGGBB. */
+    public static final String DEFAULT_ACCENT_COLOR_HEX = "#E53935";
+
     private final String id;
     private String title;
     private String description;
@@ -15,6 +18,8 @@ public class Task {
     private Priority priority;
     private boolean completed;
     private String courseId;
+    /** User-chosen color from the app palette; persisted as #RRGGBB. */
+    private String accentColorHex;
     
     /**
      * Enumeration for task priority levels.
@@ -37,6 +42,7 @@ public class Task {
         this.dueDate = dueDate;
         this.priority = priority;
         this.completed = false;
+        this.accentColorHex = DEFAULT_ACCENT_COLOR_HEX;
     }
     
     /**
@@ -57,6 +63,7 @@ public class Task {
     public Priority getPriority() { return priority; }
     public boolean isCompleted() { return completed; }
     public String getCourseId() { return courseId; }
+    public String getAccentColorHex() { return accentColorHex; }
     
     // Setters
     public void setTitle(String title) { this.title = title; }
@@ -65,6 +72,11 @@ public class Task {
     public void setPriority(Priority priority) { this.priority = priority; }
     public void setCompleted(boolean completed) { this.completed = completed; }
     public void setCourseId(String courseId) { this.courseId = courseId; }
+    public void setAccentColorHex(String accentColorHex) {
+        this.accentColorHex = accentColorHex != null && !accentColorHex.isBlank()
+                ? accentColorHex.trim()
+                : DEFAULT_ACCENT_COLOR_HEX;
+    }
     
     /**
      * Marks this task as completed.
@@ -90,6 +102,7 @@ public class Task {
                 ", priority=" + priority +
                 ", completed=" + completed +
                 ", courseId='" + courseId + '\'' +
+                ", accentColorHex='" + accentColorHex + '\'' +
                 '}';
     }
     

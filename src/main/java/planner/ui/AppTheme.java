@@ -2,6 +2,8 @@ package planner.ui;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import planner.model.Task;
+import planner.model.TaskPalette;
 
 import javax.swing.*;
 import java.awt.*;
@@ -137,6 +139,66 @@ public final class AppTheme {
 
     public static Color taskCompletedFg() {
         return dark ? new Color(150, 152, 160) : Color.GRAY;
+    }
+
+    // --- Task accent palette (primary + secondary hex swatches) ---
+
+    public static String[] taskPaletteHexStrings() {
+        return TaskPalette.HEX_CHOICES.clone();
+    }
+
+    public static Color colorFromHex(String hex) {
+        if (hex == null || hex.isBlank()) {
+            return Color.decode(Task.DEFAULT_ACCENT_COLOR_HEX);
+        }
+        String h = hex.trim();
+        if (!h.startsWith("#")) {
+            h = "#" + h;
+        }
+        try {
+            return Color.decode(h);
+        } catch (NumberFormatException e) {
+            return Color.decode(Task.DEFAULT_ACCENT_COLOR_HEX);
+        }
+    }
+
+    /** Light background tint for task chips and list rows from accent. */
+    public static Color taskAccentChipBackground(Color accent) {
+        int r = accent.getRed(), g = accent.getGreen(), b = accent.getBlue();
+        if (dark) {
+            return new Color(mix(r, 43, 0.45), mix(g, 46, 0.45), mix(b, 52, 0.45));
+        }
+        return new Color(mix(r, 255, 0.82), mix(g, 255, 0.82), mix(b, 255, 0.82));
+    }
+
+    /** Foreground text on task accent chip / list row. */
+    public static Color taskAccentChipForeground(Color accent) {
+        int r = accent.getRed(), g = accent.getGreen(), b = accent.getBlue();
+        if (dark) {
+            return new Color(mix(r, 255, 0.55), mix(g, 255, 0.55), mix(b, 255, 0.55));
+        }
+        double lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255.0;
+        if (lum > 0.65) {
+            return new Color(mix(r, 30, 0.75), mix(g, 30, 0.75), mix(b, 30, 0.75));
+        }
+        return new Color(mix(r, 255, 0.15), mix(g, 255, 0.15), mix(b, 255, 0.15));
+    }
+
+    /** Preferred text/icon color on solid accent (e.g. preview toggle). */
+    public static Color contrastingForeground(Color background) {
+        double lum = luminance(background);
+        return lum > 0.55 ? new Color(30, 30, 35) : Color.WHITE;
+    }
+
+    private static double luminance(Color c) {
+        double r = c.getRed() / 255.0;
+        double g = c.getGreen() / 255.0;
+        double b = c.getBlue() / 255.0;
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    }
+
+    private static int mix(int a, int b, double ratioB) {
+        return (int) Math.round(a * (1 - ratioB) + b * ratioB);
     }
 
     public static Color timelineBg() {
