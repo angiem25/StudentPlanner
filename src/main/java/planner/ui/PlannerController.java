@@ -29,19 +29,37 @@ public class PlannerController extends AbstractController {
      * @param lastName The last name
      * @param email The email address
      * @param studentId The student ID
+     * @param academicYear The academic year
+     * @param major The major field of study
+     */
+    public void saveStudentProfile(String firstName, String lastName, String email, 
+                                  String studentId, Student.AcademicYear academicYear, String major) {
+        try {
+            service.createStudentProfile(firstName, lastName, email, studentId, academicYear, major);
+            PlannerView view = (PlannerView) getView();
+            view.showInfo("Student profile saved successfully!");
+        } catch (IllegalArgumentException e) {
+            PlannerView view = (PlannerView) getView();
+            view.showError(e.getMessage());
+        }
+    }
+    
+    /**
+     * Saves the student profile with year as string for backward compatibility.
+     * @param firstName The first name
+     * @param lastName The last name
+     * @param email The email address
+     * @param studentId The student ID
      * @param yearText The year as text
      * @param major The major field of study
      */
     public void saveStudentProfile(String firstName, String lastName, String email, 
                                   String studentId, String yearText, String major) {
         try {
-            int year = Integer.parseInt(yearText);
-            service.createStudentProfile(firstName, lastName, email, studentId, year, major);
+            Student.AcademicYear academicYear = Student.AcademicYear.fromDisplayName(yearText);
+            service.createStudentProfile(firstName, lastName, email, studentId, academicYear, major);
             PlannerView view = (PlannerView) getView();
             view.showInfo("Student profile saved successfully!");
-        } catch (NumberFormatException e) {
-            PlannerView view = (PlannerView) getView();
-            view.showError("Year must be a valid number");
         } catch (IllegalArgumentException e) {
             PlannerView view = (PlannerView) getView();
             view.showError(e.getMessage());

@@ -50,7 +50,7 @@ public class PlannerView extends AbstractView {
     private JTextField lastNameField;
     private JTextField emailField;
     private JTextField studentIdField;
-    private JTextField yearField;
+    private JComboBox<Student.AcademicYear> yearComboBox;
     private JTextField majorField;
     private JButton saveStudentButton;
     private JLabel studentInfoLabel;
@@ -226,8 +226,9 @@ public class PlannerView extends AbstractView {
         gbc.gridx = 0; gbc.gridy = 4;
         formPanel.add(new JLabel("Year:"), gbc);
         gbc.gridx = 1;
-        yearField = new JTextField(20);
-        formPanel.add(yearField, gbc);
+        yearComboBox = new JComboBox<>(Student.AcademicYear.values());
+        yearComboBox.setSelectedItem(Student.AcademicYear.FRESHMAN);
+        formPanel.add(yearComboBox, gbc);
         
         gbc.gridx = 0; gbc.gridy = 5;
         formPanel.add(new JLabel("Major:"), gbc);
@@ -845,12 +846,13 @@ public class PlannerView extends AbstractView {
     private void onSaveStudent() {
         if (getController() instanceof PlannerController) {
             PlannerController controller = (PlannerController) getController();
+            Student.AcademicYear selectedYear = (Student.AcademicYear) yearComboBox.getSelectedItem();
             controller.saveStudentProfile(
                 firstNameField.getText().trim(),
                 lastNameField.getText().trim(),
                 emailField.getText().trim(),
                 studentIdField.getText().trim(),
-                yearField.getText().trim(),
+                selectedYear,
                 majorField.getText().trim()
             );
         }

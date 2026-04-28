@@ -22,9 +22,20 @@ public class PlannerService {
     
     // Student operations
     public void createStudentProfile(String firstName, String lastName, String email, 
+                                   String studentId, Student.AcademicYear academicYear, String major) {
+        validateStudentData(firstName, lastName, email, studentId, academicYear, major);
+        Student student = new Student(firstName, lastName, email, studentId, academicYear, major);
+        model.setCurrentStudent(student);
+    }
+    
+    /**
+     * Creates a student profile with year as integer for backward compatibility.
+     */
+    public void createStudentProfile(String firstName, String lastName, String email, 
                                    String studentId, int year, String major) {
         validateStudentData(firstName, lastName, email, studentId, year, major);
-        Student student = new Student(firstName, lastName, email, studentId, year, major);
+        Student.AcademicYear academicYear = Student.AcademicYear.fromNumeric(year);
+        Student student = new Student(firstName, lastName, email, studentId, academicYear, major);
         model.setCurrentStudent(student);
     }
     
@@ -185,6 +196,31 @@ public class PlannerService {
     }
     
     // Validation methods
+    private void validateStudentData(String firstName, String lastName, String email, 
+                                   String studentId, Student.AcademicYear academicYear, String major) {
+        if (firstName == null || firstName.trim().isEmpty()) {
+            throw new IllegalArgumentException("First name cannot be empty");
+        }
+        if (lastName == null || lastName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Last name cannot be empty");
+        }
+        if (email == null || !email.contains("@")) {
+            throw new IllegalArgumentException("Invalid email address");
+        }
+        if (studentId == null || studentId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Student ID cannot be empty");
+        }
+        if (academicYear == null) {
+            throw new IllegalArgumentException("Academic year cannot be null");
+        }
+        if (major == null || major.trim().isEmpty()) {
+            throw new IllegalArgumentException("Major cannot be empty");
+        }
+    }
+    
+    /**
+     * Validation method for backward compatibility with integer year.
+     */
     private void validateStudentData(String firstName, String lastName, String email, 
                                    String studentId, int year, String major) {
         if (firstName == null || firstName.trim().isEmpty()) {

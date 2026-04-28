@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.model.TaskTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2026-04-28T17:13:45" hostname="Mac.lan" time="0.006">
+  <properties/>
+  <testcase name="Should not equal different type" classname="planner.model.TaskTest" time="0.0"/>
+  <testcase name="Should handle toString correctly" classname="planner.model.TaskTest" time="0.002"/>
+  <testcase name="Should equal itself" classname="planner.model.TaskTest" time="0.0"/>
+  <testcase name="Should test priority enum values" classname="planner.model.TaskTest" time="0.0"/>
+  <testcase name="Should implement hashCode based on ID" classname="planner.model.TaskTest" time="0.0"/>
+  <testcase name="Should not equal null" classname="planner.model.TaskTest" time="0.0"/>
+  <testcase name="Should create task with valid data" classname="planner.model.TaskTest" time="0.001"/>
+  <testcase name="Should implement equals based on ID" classname="planner.model.TaskTest" time="0.0"/>
+  <testcase name="Should handle accent color hex validation" classname="planner.model.TaskTest" time="0.0"/>
+  <testcase name="Should update task information" classname="planner.model.TaskTest" time="0.001"/>
+  <testcase name="Should create task with default priority" classname="planner.model.TaskTest" time="0.0"/>
+  <testcase name="Should handle task completion" classname="planner.model.TaskTest" time="0.001"/>
+  <testcase name="Should handle task with ID constructor" classname="planner.model.TaskTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
