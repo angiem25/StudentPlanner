@@ -3,6 +3,7 @@ package planner.ui;
 import mvc.AbstractController;
 import planner.model.*;
 import planner.service.PlannerService;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 /**
@@ -204,5 +205,72 @@ public class PlannerController extends AbstractController {
      */
     public void toggleTaskCompletionSilently(String taskId) {
         service.toggleTaskCompletion(taskId);
+    }
+    
+    /**
+     * Exports the current planner data to files.
+     * @throws IOException If an I/O error occurs during export
+     */
+    public void exportData() throws IOException {
+        PlannerModel model = (PlannerModel) getModel();
+        planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+        repository.savePlannerData(model);
+    }
+    
+    /**
+     * Imports planner data from files.
+     * @throws IOException If an I/O error occurs during import
+     */
+    public void importData() throws IOException {
+        PlannerModel model = (PlannerModel) getModel();
+        planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+        repository.loadPlannerData(model);
+    }
+    
+    /**
+     * Saves the current student as a profile.
+     * @throws IOException If an I/O error occurs during save
+     */
+    public void saveProfile() throws IOException {
+        PlannerModel model = (PlannerModel) getModel();
+        Student currentStudent = model.getCurrentStudent();
+        if (currentStudent != null) {
+            planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+            repository.saveProfile(currentStudent);
+        }
+    }
+    
+    /**
+     * Loads all available profile names.
+     * @return List of profile display names
+     * @throws IOException If an I/O error occurs during load
+     */
+    public java.util.List<String> loadProfileNames() throws IOException {
+        planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+        return repository.loadProfileNames();
+    }
+    
+    /**
+     * Loads a specific profile by display name.
+     * @param displayName The display name of the profile to load
+     * @throws IOException If an I/O error occurs during load
+     */
+    public void loadProfile(String displayName) throws IOException {
+        planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+        Student student = repository.loadProfile(displayName);
+        if (student != null) {
+            PlannerModel model = (PlannerModel) getModel();
+            model.setCurrentStudent(student);
+        }
+    }
+    
+    /**
+     * Removes a profile by display name.
+     * @param displayName The display name of the profile to remove
+     * @throws IOException If an I/O error occurs during removal
+     */
+    public void removeProfile(String displayName) throws IOException {
+        planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+        repository.removeProfile(displayName);
     }
 }

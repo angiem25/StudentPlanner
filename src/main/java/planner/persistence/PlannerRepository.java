@@ -3,9 +3,7 @@ package planner.persistence;
 import planner.model.*;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,6 +20,8 @@ public class PlannerRepository {
     private static final String COURSES_FILE = "courses.csv";
     private static final String TASKS_FILE = "tasks.csv";
     private static final String EVENTS_FILE = "events.csv";
+    private static final String PROFILES_FILE = "profiles.csv";
+    private static final String PROFILES_DIR = "profiles";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     
     /**
@@ -343,6 +343,158 @@ public class PlannerRepository {
                         // Ignore errors during deletion
                     }
                 });
+        }
+    }
+    
+    /**
+     * Saves a student profile to the profiles directory.
+     * @param student The student to save as a profile
+     * @throws IOException If an I/O error occurs
+     */
+    public void saveProfile(Student student) throws IOException {
+        createProfilesDirectory();
+        String profileFileName = student.getStudentId() + "_" + student.getFirstName() + "_" + student.getLastName() + ".csv";
+        Path profilePath = Paths.get(DATA_DIR, PROFILES_DIR, profileFileName);
+        
+        try (BufferedWriter writer = Files.newBufferedWriter(profilePath)) {
+            // Save student data
+            writer.write("STUDENT");
+            writer.newLine();
+            writer.write(student.getId() + "," + student.getFirstName() + "," + student.getLastName() + "," +
+                        student.getEmail() + "," + student.getStudentId() + "," + student.getAcademicYear().getDisplayName() + "," +
+                        student.getMajor());
+            writer.newLine();
+        }
+    }
+    
+    /**
+     * Loads all available student profiles.
+     * @return List of profile names (display strings)
+     * @throws IOException If an I/O error occurs
+     */
+    public List<String> loadProfileNames() throws IOException {
+        List<String> profileNames = new ArrayList<>();
+        Path profilesDir = Paths.get(DATA_DIR, PROFILES_DIR);
+        
+        if (!Files.exists(profilesDir)) {
+            return profileNames;
+        }
+        
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(profilesDir, "*.csv")) {
+            for (Path profileFile : stream) {
+                try (BufferedReader reader = Files.newBufferedReader(profileFile)) {
+                    String line = reader.readLine(); // Skip STUDENT header
+                    if (line != null && line.equals("STUDENT")) {
+                        String dataLine = reader.readLine();
+                        if (dataLine != null) {
+                            String[] parts = dataLine.split(",");
+                            if (parts.length >= 7) {
+                                String displayName = parts[1] + " " + parts[2] + " - " + parts[6] + " (" + parts[5] + ")";
+                                profileNames.add(displayName);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    // Skip problematic files
+                }
+            }
+        }
+        
+        return profileNames;
+    }
+    
+    /**
+     * Loads a specific student profile by display name.
+     * @param displayName The display name of the profile to load
+     * @return The loaded student, or null if not found
+     * @throws IOException If an I/O error occurs
+     */
+    public Student loadProfile(String displayName) throws IOException {
+        Path profilesDir = Paths.get(DATA_DIR, PROFILES_DIR);
+        
+        if (!Files.exists(profilesDir)) {
+            return null;
+        }
+        
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(profilesDir, "*.csv")) {
+            for (Path profileFile : stream) {
+                try (BufferedReader reader = Files.newBufferedReader(profileFile)) {
+                    String line = reader.readLine(); // Skip STUDENT header
+                    if (line != null && line.equals("STUDENT")) {
+                        String dataLine = reader.readLine();
+                        if (dataLine != null) {
+                            String[] parts = dataLine.split(",");
+                            if (parts.length >= 7) {
+                                String currentDisplayName = parts[1] + " " + parts[2] + " - " + parts[6] + " (" + parts[5] + ")";
+                                if (currentDisplayName.equals(displayName)) {
+                                    // Parse and create student
+                                    String id = parts[0];
+                                    String firstName = parts[1];
+                                    String lastName = parts[2];
+                                    String email = parts[3];
+                                    String studentId = parts[4];
+                                    String yearDisplayName = parts[5];
+                                    String major = parts[6];
+                                    
+                                    Student.AcademicYear academicYear = Student.AcademicYear.fromDisplayName(yearDisplayName);
+                                    return new Student(firstName, lastName, email, studentId, academicYear, major);
+                                }
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    // Skip problematic files
+                }
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Removes a student profile by display name.
+     * @param displayName The display name of the profile to remove
+     * @throws IOException If an I/O error occurs
+     */
+    public void removeProfile(String displayName) throws IOException {
+        Path profilesDir = Paths.get(DATA_DIR, PROFILES_DIR);
+        
+        if (!Files.exists(profilesDir)) {
+            return;
+        }
+        
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(profilesDir, "*.csv")) {
+            for (Path profileFile : stream) {
+                try (BufferedReader reader = Files.newBufferedReader(profileFile)) {
+                    String line = reader.readLine(); // Skip STUDENT header
+                    if (line != null && line.equals("STUDENT")) {
+                        String dataLine = reader.readLine();
+                        if (dataLine != null) {
+                            String[] parts = dataLine.split(",");
+                            if (parts.length >= 7) {
+                                String currentDisplayName = parts[1] + " " + parts[2] + " - " + parts[6] + " (" + parts[5] + ")";
+                                if (currentDisplayName.equals(displayName)) {
+                                    Files.delete(profileFile);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    // Skip problematic files
+                }
+            }
+        }
+    }
+    
+    /**
+     * Creates the profiles directory if it doesn't exist.
+     * @throws IOException If an I/O error occurs
+     */
+    private void createProfilesDirectory() throws IOException {
+        Path profilesDir = Paths.get(DATA_DIR, PROFILES_DIR);
+        if (!Files.exists(profilesDir)) {
+            Files.createDirectories(profilesDir);
         }
     }
 }

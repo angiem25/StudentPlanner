@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.ui.RealProfileManagementTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-28T17:31:51" hostname="Mac.lan" time="1.455">
+  <properties/>
+  <testcase name="testRemoveProfile()" classname="planner.ui.RealProfileManagementTest" time="0.75"/>
+  <testcase name="testSaveAndLoadProfiles()" classname="planner.ui.RealProfileManagementTest" time="0.134"/>
+  <testcase name="testProfilePersistenceAcrossSessions()" classname="planner.ui.RealProfileManagementTest" time="0.151"/>
+  <testcase name="testProfileManagementIntegration()" classname="planner.ui.RealProfileManagementTest" time="0.328"/>
+  <testcase name="testLoadSpecificProfile()" classname="planner.ui.RealProfileManagementTest" time="0.081"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

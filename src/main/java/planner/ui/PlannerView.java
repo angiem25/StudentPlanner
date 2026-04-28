@@ -55,6 +55,18 @@ public class PlannerView extends AbstractView {
     private JButton saveStudentButton;
     private JLabel studentInfoLabel;
     
+    // Read-only profile view components
+    private JPanel profileViewPanel;
+    private JLabel profileFirstNameLabel;
+    private JLabel profileLastNameLabel;
+    private JLabel profileEmailLabel;
+    private JLabel profileStudentIdLabel;
+    private JLabel profileYearLabel;
+    private JLabel profileMajorLabel;
+    
+    // Account menu items for dynamic visibility
+    private JMenuItem logoutMenuItem;
+    
     // Course panel components
     private JPanel coursePanel;
     private JList<Course> courseList;
@@ -127,12 +139,12 @@ public class PlannerView extends AbstractView {
         tabbedPane = new JTabbedPane();
         
         createStudentPanel();
+        createProfileViewPanel();
         createCoursePanel();
         createTaskPanel();
         createWeeklyPrioritiesPanel();
         createTodayPanel();
         
-        tabbedPane.addTab("Student Profile", studentPanel);
         tabbedPane.addTab("Courses", coursePanel);
         tabbedPane.addTab("Tasks", taskPanel);
         tabbedPane.addTab("Today", todayPanel);
@@ -182,6 +194,33 @@ public class PlannerView extends AbstractView {
         });
         viewMenu.add(darkItem);
         menuBar.add(viewMenu);
+        
+        // Account menu
+        JMenu accountMenu = new JMenu("Account");
+        
+        // Profile button at the top
+        JMenuItem profileItem = new JMenuItem("Profile");
+        profileItem.addActionListener(e -> onShowProfile());
+        accountMenu.add(profileItem);
+        accountMenu.addSeparator(); // Add separator after Profile
+        
+        // Add New Profile button
+        JMenuItem addProfileItem = new JMenuItem("Add New Profile");
+        addProfileItem.addActionListener(e -> onAddNewProfile());
+        accountMenu.add(addProfileItem);
+        
+        JMenuItem switchProfileItem = new JMenuItem("Switch Profile");
+        switchProfileItem.addActionListener(e -> onSwitchProfile());
+        accountMenu.add(switchProfileItem);
+        
+        accountMenu.addSeparator(); // Add separator before Logout
+        
+        // Logout button (only enabled when logged in)
+        logoutMenuItem = new JMenuItem("Logout");
+        logoutMenuItem.addActionListener(e -> onLogout());
+        accountMenu.add(logoutMenuItem);
+        
+        menuBar.add(accountMenu);
         frame.setJMenuBar(menuBar);
     }
     
@@ -247,6 +286,70 @@ public class PlannerView extends AbstractView {
         studentInfoLabel = new JLabel("No student profile set");
         studentInfoLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
         studentPanel.add(studentInfoLabel, BorderLayout.SOUTH);
+    }
+    
+    /**
+     * Creates the read-only profile view panel.
+     */
+    private void createProfileViewPanel() {
+        profileViewPanel = new JPanel(new BorderLayout());
+        profileViewPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        
+        // Create form panel for read-only display
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+        
+        // First Name
+        gbc.gridx = 0; gbc.gridy = 0;
+        formPanel.add(new JLabel("First Name:"), gbc);
+        gbc.gridx = 1;
+        profileFirstNameLabel = new JLabel("Not set");
+        profileFirstNameLabel.setFont(profileFirstNameLabel.getFont().deriveFont(Font.BOLD));
+        formPanel.add(profileFirstNameLabel, gbc);
+        
+        // Last Name
+        gbc.gridx = 0; gbc.gridy = 1;
+        formPanel.add(new JLabel("Last Name:"), gbc);
+        gbc.gridx = 1;
+        profileLastNameLabel = new JLabel("Not set");
+        profileLastNameLabel.setFont(profileLastNameLabel.getFont().deriveFont(Font.BOLD));
+        formPanel.add(profileLastNameLabel, gbc);
+        
+        // Email
+        gbc.gridx = 0; gbc.gridy = 2;
+        formPanel.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        profileEmailLabel = new JLabel("Not set");
+        profileEmailLabel.setFont(profileEmailLabel.getFont().deriveFont(Font.BOLD));
+        formPanel.add(profileEmailLabel, gbc);
+        
+        // Student ID
+        gbc.gridx = 0; gbc.gridy = 3;
+        formPanel.add(new JLabel("Student ID:"), gbc);
+        gbc.gridx = 1;
+        profileStudentIdLabel = new JLabel("Not set");
+        profileStudentIdLabel.setFont(profileStudentIdLabel.getFont().deriveFont(Font.BOLD));
+        formPanel.add(profileStudentIdLabel, gbc);
+        
+        // Year
+        gbc.gridx = 0; gbc.gridy = 4;
+        formPanel.add(new JLabel("Year:"), gbc);
+        gbc.gridx = 1;
+        profileYearLabel = new JLabel("Not set");
+        profileYearLabel.setFont(profileYearLabel.getFont().deriveFont(Font.BOLD));
+        formPanel.add(profileYearLabel, gbc);
+        
+        // Major
+        gbc.gridx = 0; gbc.gridy = 5;
+        formPanel.add(new JLabel("Major:"), gbc);
+        gbc.gridx = 1;
+        profileMajorLabel = new JLabel("Not set");
+        profileMajorLabel.setFont(profileMajorLabel.getFont().deriveFont(Font.BOLD));
+        formPanel.add(profileMajorLabel, gbc);
+        
+        profileViewPanel.add(formPanel, BorderLayout.CENTER);
     }
     
     /**
@@ -531,6 +634,7 @@ public class PlannerView extends AbstractView {
             switch (event.getEventName()) {
                 case "STUDENT_CHANGED":
                     refreshStudentInfo();
+                    updateAccountMenu();
                     break;
                 case "COURSE_ADDED":
                 case "COURSE_REMOVED":
@@ -855,6 +959,21 @@ public class PlannerView extends AbstractView {
                 selectedYear,
                 majorField.getText().trim()
             );
+            
+            // Also save as a profile
+            try {
+                controller.saveProfile();
+                showInfo("Student profile saved and added to profiles!");
+            } catch (Exception e) {
+                showError("Failed to save profile: " + e.getMessage());
+            }
+            
+            // Close the dialog after successful save
+            // Find the parent dialog and close it
+            java.awt.Window parent = javax.swing.SwingUtilities.getWindowAncestor(saveStudentButton);
+            if (parent instanceof JDialog) {
+                parent.dispose();
+            }
         }
     }
     
@@ -1120,5 +1239,266 @@ public class PlannerView extends AbstractView {
      */
     public void showInfo(String message) {
         JOptionPane.showMessageDialog(frame, message, "Information", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    /**
+     * Handles the Show Profile action - opens profile dialog.
+     */
+    private void onShowProfile() {
+        showProfileDialog();
+    }
+    
+    /**
+     * Handles the Switch Profile action - shows profile selection dialog.
+     */
+    private void onSwitchProfile() {
+        showProfileSelectionDialog();
+    }
+    
+    /**
+     * Shows the student profile dialog (read-only view).
+     */
+    private void showProfileDialog() {
+        JDialog profileDialog = new JDialog(frame, "Student Profile", true);
+        profileDialog.setLayout(new BorderLayout());
+        profileDialog.setSize(400, 300);
+        profileDialog.setLocationRelativeTo(frame);
+        
+        // Add the read-only profile view panel
+        profileDialog.add(profileViewPanel, BorderLayout.CENTER);
+        
+        // Update profile display with current student data
+        refreshProfileDisplay();
+        
+        // Add close button
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(e -> profileDialog.dispose());
+        buttonPanel.add(closeButton);
+        profileDialog.add(buttonPanel, BorderLayout.SOUTH);
+        
+        profileDialog.setVisible(true);
+    }
+    
+    /**
+     * Handles the Add New Profile action - opens editable profile dialog.
+     */
+    private void onAddNewProfile() {
+        showAddProfileDialog();
+    }
+    
+    /**
+     * Shows the add/edit profile dialog.
+     */
+    private void showAddProfileDialog() {
+        JDialog profileDialog = new JDialog(frame, "Add New Profile", true);
+        profileDialog.setLayout(new BorderLayout());
+        profileDialog.setSize(600, 500);
+        profileDialog.setLocationRelativeTo(frame);
+        
+        // Add the editable student panel to the dialog
+        profileDialog.add(studentPanel, BorderLayout.CENTER);
+        
+        // Add close button
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(e -> profileDialog.dispose());
+        buttonPanel.add(closeButton);
+        profileDialog.add(buttonPanel, BorderLayout.SOUTH);
+        
+        profileDialog.setVisible(true);
+    }
+    
+    /**
+     * Shows the profile selection dialog.
+     */
+    private void showProfileSelectionDialog() {
+        JDialog selectionDialog = new JDialog(frame, "Select Profile", true);
+        selectionDialog.setLayout(new BorderLayout());
+        selectionDialog.setSize(450, 350);
+        selectionDialog.setLocationRelativeTo(frame);
+        
+        // Create profile list
+        DefaultListModel<String> profileListModel = new DefaultListModel<>();
+        JList<String> profileList = new JList<>(profileListModel);
+        
+        // Load real profiles
+        try {
+            if (getController() instanceof PlannerController) {
+                PlannerController controller = (PlannerController) getController();
+                java.util.List<String> profileNames = controller.loadProfileNames();
+                for (String profileName : profileNames) {
+                    profileListModel.addElement(profileName);
+                }
+            }
+        } catch (Exception e) {
+            // If loading fails, continue with empty list
+        }
+        
+        // Always add "Create New Profile..." option
+        profileListModel.addElement("Create New Profile...");
+        
+        JScrollPane scrollPane = new JScrollPane(profileList);
+        selectionDialog.add(scrollPane, BorderLayout.CENTER);
+        
+        // Add buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton selectButton = new JButton("Select");
+        JButton removeButton = new JButton("Remove");
+        JButton cancelButton = new JButton("Cancel");
+        
+        selectButton.addActionListener(e -> {
+            String selected = profileList.getSelectedValue();
+            if (selected != null) {
+                if (selected.equals("Create New Profile...")) {
+                    // Open add profile dialog for new profile
+                    selectionDialog.dispose();
+                    showAddProfileDialog();
+                } else {
+                    // Load selected profile
+                    try {
+                        if (getController() instanceof PlannerController) {
+                            PlannerController controller = (PlannerController) getController();
+                            controller.loadProfile(selected);
+                            selectionDialog.dispose();
+                            showInfo("Profile loaded: " + selected);
+                        }
+                    } catch (Exception ex) {
+                        showError("Failed to load profile: " + ex.getMessage());
+                    }
+                }
+            }
+        });
+        
+        removeButton.addActionListener(e -> {
+            String selected = profileList.getSelectedValue();
+            if (selected != null && !selected.equals("Create New Profile...")) {
+                // Confirm removal
+                int result = JOptionPane.showConfirmDialog(
+                    selectionDialog,
+                    "Are you sure you want to remove this profile?\n" + selected,
+                    "Remove Profile",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+                );
+                
+                if (result == JOptionPane.YES_OPTION) {
+                    try {
+                        if (getController() instanceof PlannerController) {
+                            PlannerController controller = (PlannerController) getController();
+                            controller.removeProfile(selected);
+                            profileListModel.removeElement(selected);
+                            showInfo("Profile removed: " + selected);
+                        }
+                    } catch (Exception ex) {
+                        showError("Failed to remove profile: " + ex.getMessage());
+                    }
+                }
+            }
+        });
+        
+        cancelButton.addActionListener(e -> selectionDialog.dispose());
+        
+        buttonPanel.add(selectButton);
+        buttonPanel.add(removeButton);
+        buttonPanel.add(cancelButton);
+        selectionDialog.add(buttonPanel, BorderLayout.SOUTH);
+        
+        selectionDialog.setVisible(true);
+    }
+    
+    /**
+     * Handles the Logout action.
+     */
+    private void onLogout() {
+        // Confirm before logging out
+        int result = JOptionPane.showConfirmDialog(
+            frame,
+            "Are you sure you want to logout? Any unsaved changes will be lost.",
+            "Logout",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (result == JOptionPane.YES_OPTION) {
+            // Save current data and clear application state
+            if (getController() instanceof PlannerController) {
+                PlannerController controller = (PlannerController) getController();
+                
+                // Export data before logout (optional - could be user choice)
+                int exportChoice = JOptionPane.showConfirmDialog(
+                    frame,
+                    "Would you like to export your data before logging out?",
+                    "Export Data",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+                
+                if (exportChoice == JOptionPane.YES_OPTION) {
+                    try {
+                        controller.exportData();
+                        showInfo("Data exported successfully.");
+                    } catch (Exception e) {
+                        showError("Failed to export data: " + e.getMessage());
+                    }
+                }
+                
+                // Clear the model
+                ((PlannerModel) getModel()).setCurrentStudent(null);
+                ((PlannerModel) getModel()).getCourses().clear();
+                ((PlannerModel) getModel()).getTasks().clear();
+                
+                // Refresh all UI components
+                refreshAll();
+                clearStudentForm();
+                
+                showInfo("Logged out successfully. You can create a new profile or import existing data.");
+            }
+        }
+    }
+    
+    /**
+     * Clears the student form fields.
+     */
+    private void clearStudentForm() {
+        firstNameField.setText("");
+        lastNameField.setText("");
+        emailField.setText("");
+        studentIdField.setText("");
+        yearComboBox.setSelectedItem(Student.AcademicYear.FRESHMAN);
+        majorField.setText("");
+    }
+    
+    /**
+     * Refreshes the profile display with current student data.
+     */
+    private void refreshProfileDisplay() {
+        Student currentStudent = ((PlannerModel) getModel()).getCurrentStudent();
+        if (currentStudent != null) {
+            profileFirstNameLabel.setText(currentStudent.getFirstName());
+            profileLastNameLabel.setText(currentStudent.getLastName());
+            profileEmailLabel.setText(currentStudent.getEmail());
+            profileStudentIdLabel.setText(currentStudent.getStudentId());
+            profileYearLabel.setText(currentStudent.getAcademicYear().getDisplayName());
+            profileMajorLabel.setText(currentStudent.getMajor());
+        } else {
+            profileFirstNameLabel.setText("Not set");
+            profileLastNameLabel.setText("Not set");
+            profileEmailLabel.setText("Not set");
+            profileStudentIdLabel.setText("Not set");
+            profileYearLabel.setText("Not set");
+            profileMajorLabel.setText("Not set");
+        }
+    }
+    
+    /**
+     * Updates the Account menu based on login status.
+     */
+    private void updateAccountMenu() {
+        Student currentStudent = ((PlannerModel) getModel()).getCurrentStudent();
+        // Show logout button only when a student is logged in
+        if (logoutMenuItem != null) {
+            logoutMenuItem.setVisible(currentStudent != null);
+        }
     }
 }
