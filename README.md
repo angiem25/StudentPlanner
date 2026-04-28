@@ -7,6 +7,8 @@ A modular MVC-based student planner application built with Java Swing. This appl
 - **Student Profile Management**: Create and manage student information including name, email, student ID, year, and major
 - **Course Management**: Add, update, and remove courses with instructor and credit information
 - **Task Management**: Create, organize, and track tasks with due dates, priorities, and course associations
+- **Task Color Palette**: Assign color-coded accents to tasks and see the same color in task list and calendar
+- **Study Timer Presets**: One-click timer presets for 30, 60, and 90 minute sessions
 - **Data Persistence**: Automatic saving and loading of all planner data
 - **Modular Architecture**: Clean separation of concerns using the MVC pattern
 
@@ -105,9 +107,17 @@ src/main/java/
 1. Click on the "Tasks" tab
 2. Enter task details (title, description, due date, priority)
 3. Optionally associate the task with a course
-4. Click "Add Task" to create a new task
-5. Use "Toggle Complete" to mark tasks as completed
-6. Select a task from the list to edit or remove it
+4. Pick a task color from the palette (default is red)
+5. Click "Add Task" to create a new task
+6. Use "Toggle Complete" to mark tasks as completed
+7. Select a task from the list to edit/remove and change color
+
+### Timer
+1. Click on the "Timer" tab
+2. Enter minutes manually or use preset buttons (`30 min`, `60 min`, `90 min`)
+3. Click "Start" to begin countdown
+4. Use "Pause/Resume" and "Reset" as needed
+5. On completion, audio + visual alerts are shown
 
 ## Data Storage
 
@@ -115,7 +125,7 @@ The application automatically saves all data to a `planner_data` directory in th
 
 - `student.csv`: Student profile information
 - `courses.csv`: Course information
-- `tasks.csv`: Task information with completion status
+- `tasks.csv`: Task information with completion status and task accent color
 
 ## Design Principles
 
@@ -131,7 +141,7 @@ This application demonstrates several important software design principles:
 
 Potential improvements for future versions:
 
-- Calendar view for tasks and deadlines
+- Custom color picker in addition to fixed palette
 - Grade tracking and GPA calculation
 - Course schedule visualization
 - Export/import functionality

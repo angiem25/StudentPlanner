@@ -379,7 +379,7 @@ After this prompt, you should have:
 ### Future Enhancements
 
 - **Sound Selection**: Choose alert sound
-- **Preset Durations**: 25min, 45min, 60min buttons
+- ~~**Preset Durations**: 25min, 45min, 60min buttons~~ ✅ Implemented as 30/60/90 in PROMPT-K5
 - **Multiple Timers**: Track different activities
 - **History Log**: Track completed sessions
 - **Auto-Start Break**: Auto-start 5-min break after session

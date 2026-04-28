@@ -100,6 +100,7 @@ This document summarizes the modular MVC-based student planner application, demo
 - Form validation and user feedback
 - Component reuse and consistent layout
 - Event delegation to controller layer
+- Theme-aware visual cues (task accents and timer state colors)
 
 ### Phase 5: Persistence Layer (Data Storage)
 
@@ -193,10 +194,24 @@ Service Exception → Controller → View → User (Dialog)
 - **Observer Extensions**: Real-time synchronization
 
 ### Feature Extensions
-- **Calendar Module**: Schedule visualization
+- **Palette Extension**: User-defined custom hex colors and saved favorites
+- **Timer Session Analytics**: Track completed study sessions and streaks
 - **Grade Module**: GPA calculation and tracking
 - **Notification Module**: Deadline reminders
 - **Export Module**: Data export in multiple formats
+
+## Recent UI Enhancements
+
+### Task Color Palette (K-4)
+- Added `Task.accentColorHex` with default red (`#E53935`)
+- Added model-level `TaskPalette` for canonical allowed values
+- Persisted color into `tasks.csv` with backward-compatible loading
+- Rendered accent color consistently in task list and calendar chips
+
+### Timer Presets (K-5)
+- Added one-click preset buttons in `TimerPanel`: 30, 60, 90 minutes
+- Presets update input and display immediately while timer is idle
+- Running-session guard prevents preset changes mid-countdown
 
 ## Design Patterns Used
 
