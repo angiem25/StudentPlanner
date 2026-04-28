@@ -6,8 +6,8 @@ import java.io.*;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Logger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -133,7 +133,7 @@ public class PlannerRepository {
             return null;
         }
         
-        try (BufferedReader reader = new BufferedReader(new FileReader(studentFile.toFile()))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(studentFile.toString()))) {
             String id = reader.readLine();
             String firstName = reader.readLine();
             String lastName = reader.readLine();

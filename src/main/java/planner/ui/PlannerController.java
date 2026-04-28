@@ -267,6 +267,9 @@ public class PlannerController extends AbstractController {
             
             // Load the profile's data
             repository.loadPlannerData(model);
+            
+            // Save the current profile state
+            repository.saveAccountState(true);
         }
     }
     
@@ -332,4 +335,5 @@ public class PlannerController extends AbstractController {
         planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
         return repository.loadAccountState();
     }
-}
+    
+    }
