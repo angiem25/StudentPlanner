@@ -63,6 +63,7 @@ public class PlannerView extends AbstractView {
     private JLabel profileStudentIdLabel;
     private JLabel profileYearLabel;
     private JLabel profileMajorLabel;
+    private JLabel profileCoursesLabel;
     
     // Account menu items for dynamic visibility
     private JMenuItem logoutMenuItem;
@@ -161,8 +162,56 @@ public class PlannerView extends AbstractView {
         
         frame.add(tabbedPane);
         attachMenuBar();
+        
         frame.setVisible(true);
         initializeDueReminders();
+        
+        // Load and set default tab after all tabs are added
+        SwingUtilities.invokeLater(() -> {
+            loadAndSetDefaultTab();
+        });
+        
+        // Save initial account state
+        try {
+            if (getController() instanceof PlannerController) {
+                PlannerController controller = (PlannerController) getController();
+                boolean isLoggedIn = ((PlannerModel) getModel()).getCurrentStudent() != null;
+                controller.saveAccountState(isLoggedIn);
+                
+                // Update menu visibility based on loaded account state
+                if (logoutMenuItem != null) {
+                    logoutMenuItem.setVisible(isLoggedIn);
+                }
+            }
+        } catch (Exception e) {
+            // Ignore errors during account state saving
+        }
+    }
+    
+    /**
+     * Loads and sets the default tab from preferences.
+     */
+    private void loadAndSetDefaultTab() {
+        try {
+            if (getController() instanceof PlannerController) {
+                PlannerController controller = (PlannerController) getController();
+                String defaultTab = controller.loadPreferences();
+                
+                // Find and select the default tab
+                for (int i = 0; i < tabbedPane.getTabCount(); i++) {
+                    String tabTitle = tabbedPane.getTitleAt(i);
+                    if (tabTitle.equals(defaultTab)) {
+                        tabbedPane.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // If loading fails, default to first tab (Tasks)
+            if (tabbedPane.getTabCount() > 0) {
+                tabbedPane.setSelectedIndex(0);
+            }
+        }
     }
     
     /**
@@ -221,6 +270,15 @@ public class PlannerView extends AbstractView {
         accountMenu.add(logoutMenuItem);
         
         menuBar.add(accountMenu);
+        
+        // Settings menu
+        JMenu settingsMenu = new JMenu("Settings");
+        
+        JMenuItem defaultTabItem = new JMenuItem("Set Default Tab");
+        defaultTabItem.addActionListener(e -> onSetDefaultTab());
+        settingsMenu.add(defaultTabItem);
+        
+        menuBar.add(settingsMenu);
         frame.setJMenuBar(menuBar);
     }
     
@@ -348,6 +406,40 @@ public class PlannerView extends AbstractView {
         profileMajorLabel = new JLabel("Not set");
         profileMajorLabel.setFont(profileMajorLabel.getFont().deriveFont(Font.BOLD));
         formPanel.add(profileMajorLabel, gbc);
+        
+        // Courses (vertical list)
+        gbc.gridx = 0; gbc.gridy = 6;
+        gbc.gridwidth = 2;
+        gbc.gridheight = 3;
+        gbc.fill = GridBagConstraints.BOTH;
+        profileCoursesLabel = new JLabel("");
+        profileCoursesLabel.setFont(profileMajorLabel.getFont().deriveFont(Font.BOLD));
+        profileCoursesLabel.setVerticalAlignment(SwingConstants.TOP);
+        JScrollPane coursesScrollPane = new JScrollPane(profileCoursesLabel);
+        formPanel.add(coursesScrollPane, gbc);
+        
+        // Links to main tabs
+        gbc.gridx = 0; gbc.gridy = 7;
+        JPanel linksPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JButton coursesLink = new JButton("Go to Courses");
+        coursesLink.addActionListener(e -> {
+            tabbedPane.setSelectedIndex(1); // Courses tab
+        });
+        JButton tasksLink = new JButton("Go to Tasks");
+        tasksLink.addActionListener(e -> {
+            tabbedPane.setSelectedIndex(0); // Tasks tab
+        });
+        JButton calendarLink = new JButton("Go to Calendar");
+        calendarLink.addActionListener(e -> {
+            tabbedPane.setSelectedIndex(5); // Calendar tab
+        });
+        
+        linksPanel.add(coursesLink);
+        linksPanel.add(tasksLink);
+        linksPanel.add(calendarLink);
+        
+        gbc.gridx = 0; gbc.gridy = 8;
+        formPanel.add(linksPanel, gbc);
         
         profileViewPanel.add(formPanel, BorderLayout.CENTER);
     }
@@ -635,6 +727,16 @@ public class PlannerView extends AbstractView {
                 case "STUDENT_CHANGED":
                     refreshStudentInfo();
                     updateAccountMenu();
+                    // Save account state
+                    try {
+                        if (getController() instanceof PlannerController) {
+                            PlannerController controller = (PlannerController) getController();
+                            boolean isLoggedIn = ((PlannerModel) getModel()).getCurrentStudent() != null;
+                            controller.saveAccountState(isLoggedIn);
+                        }
+                    } catch (Exception e) {
+                        // Ignore errors during account state saving
+                    }
                     break;
                 case "COURSE_ADDED":
                 case "COURSE_REMOVED":
@@ -1411,14 +1513,8 @@ public class PlannerView extends AbstractView {
      * Handles the Logout action.
      */
     private void onLogout() {
-        // Confirm before logging out
-        int result = JOptionPane.showConfirmDialog(
-            frame,
-            "Are you sure you want to logout? Any unsaved changes will be lost.",
-            "Logout",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.QUESTION_MESSAGE
-        );
+        ((PlannerModel) getModel()).setCurrentStudent(null);
+        showInfo("Logged out successfully");
         
         if (result == JOptionPane.YES_OPTION) {
             // Save current data and clear application state
@@ -1481,6 +1577,9 @@ public class PlannerView extends AbstractView {
             profileStudentIdLabel.setText(currentStudent.getStudentId());
             profileYearLabel.setText(currentStudent.getAcademicYear().getDisplayName());
             profileMajorLabel.setText(currentStudent.getMajor());
+            
+            // Add courses to profile display when logged in
+            refreshProfileCourses();
         } else {
             profileFirstNameLabel.setText("Not set");
             profileLastNameLabel.setText("Not set");
@@ -1488,7 +1587,35 @@ public class PlannerView extends AbstractView {
             profileStudentIdLabel.setText("Not set");
             profileYearLabel.setText("Not set");
             profileMajorLabel.setText("Not set");
+            
+            // Clear courses when not logged in
+            clearProfileCourses();
         }
+    }
+    
+    /**
+     * Refreshes the courses display in the profile view.
+     */
+    private void refreshProfileCourses() {
+        Student currentStudent = ((PlannerModel) getModel()).getCurrentStudent();
+        if (currentStudent != null) {
+            // Get courses from the model and display them
+            java.util.List<planner.model.Course> courses = ((PlannerModel) getModel()).getCourses();
+            StringBuilder coursesText = new StringBuilder();
+            for (planner.model.Course course : courses) {
+                coursesText.append("• ").append(course.getName()).append("\n");
+            }
+            profileCoursesLabel.setText(coursesText.toString());
+        } else {
+            profileCoursesLabel.setText("");
+        }
+    }
+    
+    /**
+     * Clears the courses display in the profile view.
+     */
+    private void clearProfileCourses() {
+        profileCoursesLabel.setText("");
     }
     
     /**
@@ -1496,9 +1623,60 @@ public class PlannerView extends AbstractView {
      */
     private void updateAccountMenu() {
         Student currentStudent = ((PlannerModel) getModel()).getCurrentStudent();
+        boolean isLoggedIn = currentStudent != null;
+        
         // Show logout button only when a student is logged in
         if (logoutMenuItem != null) {
-            logoutMenuItem.setVisible(currentStudent != null);
+            logoutMenuItem.setVisible(isLoggedIn);
+        }
+        
+        // Save account state to preferences
+        try {
+            if (getController() instanceof PlannerController) {
+                PlannerController controller = (PlannerController) getController();
+                controller.saveAccountState(isLoggedIn);
+            }
+        } catch (Exception e) {
+            // Ignore errors during account state saving
+        }
+    }
+    
+    /**
+     * Handles the Set Default Tab action.
+     */
+    private void onSetDefaultTab() {
+        String[] options = {"Tasks", "Today", "Weekly Priorities", "Calendar"};
+        String currentDefault = null;
+        
+        try {
+            if (getController() instanceof PlannerController) {
+                PlannerController controller = (PlannerController) getController();
+                currentDefault = controller.loadPreferences();
+            }
+        } catch (Exception e) {
+            currentDefault = "Tasks"; // Default fallback
+        }
+        
+        String selected = (String) JOptionPane.showInputDialog(
+            frame,
+            "Select Default Tab:",
+            "Default Tab Settings",
+            JOptionPane.QUESTION_MESSAGE,
+            null,
+            options,
+            options[0]
+        );
+        
+        if (selected != null) {
+            try {
+                if (getController() instanceof PlannerController) {
+                    PlannerController controller = (PlannerController) getController();
+                    controller.savePreferences(selected);
+                    showInfo("Default tab set to: " + selected);
+                }
+            } catch (Exception e) {
+                showError("Failed to save default tab: " + e.getMessage());
+            }
         }
     }
 }

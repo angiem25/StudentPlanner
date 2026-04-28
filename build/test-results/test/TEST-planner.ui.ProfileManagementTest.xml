@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.ui.ProfileManagementTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-28T17:54:14" hostname="Mac.lan" time="0.326">
+  <properties/>
+  <testcase name="testProfileSelectionWorkflow()" classname="planner.ui.ProfileManagementTest" time="0.084"/>
+  <testcase name="testProfileDialogComponents()" classname="planner.ui.ProfileManagementTest" time="0.037"/>
+  <testcase name="testProfileDataPersistence()" classname="planner.ui.ProfileManagementTest" time="0.108"/>
+  <testcase name="testAccountMenuIntegration()" classname="planner.ui.ProfileManagementTest" time="0.047"/>
+  <testcase name="testStudentPanelRemovalFromTabs()" classname="planner.ui.ProfileManagementTest" time="0.047"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

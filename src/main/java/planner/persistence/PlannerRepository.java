@@ -7,6 +7,7 @@ import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,6 +23,7 @@ public class PlannerRepository {
     private static final String EVENTS_FILE = "events.csv";
     private static final String PROFILES_FILE = "profiles.csv";
     private static final String PROFILES_DIR = "profiles";
+    private static final String PREFERENCES_FILE = "preferences.csv";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     
     /**
@@ -488,7 +490,7 @@ public class PlannerRepository {
     }
     
     /**
-     * Creates the profiles directory if it doesn't exist.
+     * Creates profiles directory if it doesn't exist.
      * @throws IOException If an I/O error occurs
      */
     private void createProfilesDirectory() throws IOException {
@@ -496,5 +498,117 @@ public class PlannerRepository {
         if (!Files.exists(profilesDir)) {
             Files.createDirectories(profilesDir);
         }
+    }
+    
+    /**
+     * Saves user preferences including default tab setting.
+     * @param defaultTab The default tab name
+     * @throws IOException If an I/O error occurs
+     */
+    public void savePreferences(String defaultTab) throws IOException {
+        createDataDirectory();
+        Path preferencesPath = Paths.get(DATA_DIR, PREFERENCES_FILE);
+        
+        try (BufferedWriter writer = Files.newBufferedWriter(preferencesPath)) {
+            writer.write("DEFAULT_TAB," + defaultTab);
+            writer.newLine();
+        }
+    }
+    
+    /**
+     * Saves user preferences including account state.
+     * @param isLoggedIn Whether user is logged into an account
+     * @throws IOException If an I/O error occurs
+     */
+    public void saveAccountState(boolean isLoggedIn) throws IOException {
+        createDataDirectory();
+        Path preferencesPath = Paths.get(DATA_DIR, PREFERENCES_FILE);
+        
+        // Read existing preferences
+        String existingPreferences = "";
+        if (Files.exists(preferencesPath)) {
+            try (BufferedReader reader = Files.newBufferedReader(preferencesPath)) {
+                existingPreferences = String.join("\n", java.util.Arrays.asList(reader.lines().toArray(String[]::new)));
+            }
+        }
+        
+        try (BufferedWriter writer = Files.newBufferedWriter(preferencesPath)) {
+            // Update or add account state line
+            String[] lines = existingPreferences.split("\n");
+            boolean accountLineFound = false;
+            
+            for (int i = 0; i < lines.length; i++) {
+                if (lines[i].startsWith("ACCOUNT_STATE,")) {
+                    lines[i] = "ACCOUNT_STATE," + (isLoggedIn ? "LOGGED_IN" : "LOGGED_OUT");
+                    accountLineFound = true;
+                    break;
+                }
+            }
+            
+            // If no account state line exists, add it
+            if (!accountLineFound) {
+                String[] newLines = new String[lines.length + 1];
+                System.arraycopy(lines, 0, newLines, 0, lines.length);
+                newLines[lines.length] = "ACCOUNT_STATE," + (isLoggedIn ? "LOGGED_IN" : "LOGGED_OUT");
+                lines = newLines;
+            }
+            
+            // Write all preferences
+            for (String line : lines) {
+                writer.write(line);
+                writer.newLine();
+            }
+        }
+    }
+    
+    /**
+     * Loads user preferences including default tab setting.
+     * @return The default tab name, or "Tasks" if not set
+     * @throws IOException If an I/O error occurs
+     */
+    public String loadPreferences() throws IOException {
+        Path preferencesPath = Paths.get(DATA_DIR, PREFERENCES_FILE);
+        if (!Files.exists(preferencesPath)) {
+            return "Tasks"; // Default to Tasks tab
+        }
+        
+        try (BufferedReader reader = Files.newBufferedReader(preferencesPath)) {
+            String line = reader.readLine();
+            if (line != null && line.startsWith("DEFAULT_TAB,")) {
+                String defaultTab = line.substring("DEFAULT_TAB,".length());
+                // Validate that it's one of the allowed tabs
+                if (defaultTab.equals("Tasks") || defaultTab.equals("Today") || 
+                    defaultTab.equals("Weekly Priorities") || defaultTab.equals("Calendar")) {
+                    return defaultTab;
+                }
+            }
+        }
+        
+        return "Tasks"; // Default to Tasks tab if invalid or not found
+    }
+    
+    /**
+     * Loads user preferences including account state.
+     * @return True if user is logged in, false otherwise
+     * @throws IOException If an I/O error occurs
+     */
+    public boolean loadAccountState() throws IOException {
+        Path preferencesPath = Paths.get(DATA_DIR, PREFERENCES_FILE);
+        if (!Files.exists(preferencesPath)) {
+            return false; // Default to not logged in
+        }
+        
+        try (BufferedReader reader = Files.newBufferedReader(preferencesPath)) {
+            String line = reader.readLine();
+            while (line != null) {
+                if (line.startsWith("ACCOUNT_STATE,")) {
+                    String state = line.substring("ACCOUNT_STATE,".length());
+                    return "LOGGED_IN".equals(state);
+                }
+                line = reader.readLine();
+            }
+        }
+        
+        return false; // Default to not logged in if not found
     }
 }

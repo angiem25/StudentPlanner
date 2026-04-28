@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.ui.UpdatedProfileManagementTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-04-28T17:54:14" hostname="Mac.lan" time="0.423">
+  <properties/>
+  <testcase name="testProfileSelectionWorkflow()" classname="planner.ui.UpdatedProfileManagementTest" time="0.059"/>
+  <testcase name="testSaveProfileAutoClose()" classname="planner.ui.UpdatedProfileManagementTest" time="0.071"/>
+  <testcase name="testLogoutButtonVisibility()" classname="planner.ui.UpdatedProfileManagementTest" time="0.071"/>
+  <testcase name="testReadOnlyProfileView()" classname="planner.ui.UpdatedProfileManagementTest" time="0.043"/>
+  <testcase name="testAccountMenuStructure()" classname="planner.ui.UpdatedProfileManagementTest" time="0.067"/>
+  <testcase name="testAddNewProfileWorkflow()" classname="planner.ui.UpdatedProfileManagementTest" time="0.051"/>
+  <testcase name="testProfileDialogWorkflows()" classname="planner.ui.UpdatedProfileManagementTest" time="0.056"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.ui.AccountMenuTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-04-28T17:54:12" hostname="Mac.lan" time="1.286">
+  <properties/>
+  <testcase name="testProfileSwitchClearsData()" classname="planner.ui.AccountMenuTest" time="0.682"/>
+  <testcase name="testExportData()" classname="planner.ui.AccountMenuTest" time="0.283"/>
+  <testcase name="testLogoutClearsAllData()" classname="planner.ui.AccountMenuTest" time="0.121"/>
+  <testcase name="testImportData()" classname="planner.ui.AccountMenuTest" time="0.101"/>
+  <testcase name="testAccountMenuComponents()" classname="planner.ui.AccountMenuTest" time="0.095"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -266,11 +266,51 @@ public class PlannerController extends AbstractController {
     
     /**
      * Removes a profile by display name.
-     * @param displayName The display name of the profile to remove
+     * @param displayName The display name of profile to remove
      * @throws IOException If an I/O error occurs during removal
      */
     public void removeProfile(String displayName) throws IOException {
         planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
         repository.removeProfile(displayName);
+    }
+    
+    /**
+     * Saves user preferences including default tab setting.
+     * @param defaultTab The default tab name
+     * @throws IOException If an I/O error occurs during save
+     */
+    public void savePreferences(String defaultTab) throws IOException {
+        planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+        repository.savePreferences(defaultTab);
+    }
+    
+    /**
+     * Loads user preferences including default tab setting.
+     * @return The default tab name
+     * @throws IOException If an I/O error occurs during load
+     */
+    public String loadPreferences() throws IOException {
+        planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+        return repository.loadPreferences();
+    }
+    
+    /**
+     * Saves user preferences including account state.
+     * @param isLoggedIn Whether user is logged into an account
+     * @throws IOException If an I/O error occurs during save
+     */
+    public void saveAccountState(boolean isLoggedIn) throws IOException {
+        planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+        repository.saveAccountState(isLoggedIn);
+    }
+    
+    /**
+     * Loads user preferences including account state.
+     * @return True if user is logged in, false otherwise
+     * @throws IOException If an I/O error occurs during load
+     */
+    public boolean loadAccountState() throws IOException {
+        planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+        return repository.loadAccountState();
     }
 }
