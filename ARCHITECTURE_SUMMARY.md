@@ -219,6 +219,12 @@ Service Exception → Controller → View → User (Dialog)
 - Reminder keys are tracked by task+due+date to prevent duplicate popups
 - Completed tasks are excluded from reminder checks automatically
 
+### Weekly Priorities Checklist (K-7)
+- Added a dedicated weekly tab for high-priority due-this-week tasks
+- Checklist rows use clickable checkboxes instead of plain text items
+- Checkbox toggles completion directly through controller logic
+- Completed tasks remain visible and render as checked/complete in the tab
+
 ## Design Patterns Used
 
 1. **Model-View-Controller**: Overall architectural pattern

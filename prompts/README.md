@@ -72,8 +72,9 @@ Execute prompts in order. Each builds upon the previous:
 | 16 | [PROMPT-K4](PROMPT-K4-TASK-COLOR-PALETTE.md) | Task Color Palette | 1 file | Color-coded tasks with persistence |
 | 17 | [PROMPT-K5](PROMPT-K5-TIMER-PRESETS.md) | Timer Presets | 1 file | One-click timer durations |
 | 18 | [PROMPT-K6](PROMPT-K6-DUE-DATE-REMINDER-POPUPS.md) | Due Date Reminder Popups | 1 file | Daily reminders from 7 days before due |
+| 19 | [PROMPT-K7](PROMPT-K7-WEEKLY-PRIORITIES-CHECKLIST.md) | Weekly Priorities Checklist | 1 file | Clickable checkbox list for this week's key tasks |
 
-**Outcome**: Enhanced UI with calendar, events, timer, task colors, presets, and reminder popups
+**Outcome**: Enhanced UI with calendar, events, timer, task colors, presets, reminder popups, and checklist priorities
 
 ## Total Files Created
 
@@ -88,7 +89,7 @@ Execute prompts in order. Each builds upon the previous:
 **Total: 19 Java files**
 
 **Documentation & Configuration**:
-- 17 prompt files (this documentation)
+- 18 prompt files (this documentation)
 - 2 project documentation files (README, ARCHITECTURE_SUMMARY)
 - 1 build configuration (pom.xml)
 - 2 diagram generation scripts
@@ -195,6 +196,7 @@ Additional prompts for extended functionality:
 - ~~PROMPT-K4: Task Color Palette~~ ✅ **COMPLETED**
 - ~~PROMPT-K5: Timer Presets~~ ✅ **COMPLETED**
 - ~~PROMPT-K6: Due Date Reminder Popups~~ ✅ **COMPLETED**
+- ~~PROMPT-K7: Weekly Priorities Checklist~~ ✅ **COMPLETED**
 - PROMPT-L: Grade Tracking (GPA calculation)
 - PROMPT-M: Notification System (deadline reminders)
 - PROMPT-N: Export/Import Functionality (JSON/Excel)

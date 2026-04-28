@@ -180,4 +180,11 @@ public class PlannerController extends AbstractController {
             view.showError(e.getMessage());
         }
     }
+
+    /**
+     * Toggles task completion without success popup, for checklist-style interactions.
+     */
+    public void toggleTaskCompletionSilently(String taskId) {
+        service.toggleTaskCompletion(taskId);
+    }
 }

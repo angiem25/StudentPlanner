@@ -16,7 +16,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.DayOfWeek;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -86,6 +88,12 @@ public class PlannerView extends AbstractView {
     private final List<JPanel> taskColorSwatchPanels = new ArrayList<>();
     private JToggleButton taskColorPreviewToggle;
     private JButton resetTaskColorButton;
+    
+    // Weekly priorities tab components
+    private JPanel weeklyPrioritiesPanel;
+    private JLabel weeklyPrioritiesRangeLabel;
+    private JList<Task> weeklyPrioritiesList;
+    private DefaultListModel<Task> weeklyPrioritiesListModel;
     private Timer dueReminderTimer;
     private final Set<String> shownDailyReminderKeys = new HashSet<>();
     
@@ -113,10 +121,12 @@ public class PlannerView extends AbstractView {
         createStudentPanel();
         createCoursePanel();
         createTaskPanel();
+        createWeeklyPrioritiesPanel();
         
         tabbedPane.addTab("Student Profile", studentPanel);
         tabbedPane.addTab("Courses", coursePanel);
         tabbedPane.addTab("Tasks", taskPanel);
+        tabbedPane.addTab("Weekly Priorities", weeklyPrioritiesPanel);
         
         // Add Calendar tab
         calendarView = new CalendarView((PlannerModel) getModel(),
@@ -523,6 +533,7 @@ public class PlannerView extends AbstractView {
                 case "TASK_COMPLETED":
                 case "TASK_INCOMPLETED":
                     refreshTaskList();
+                    refreshWeeklyPriorities();
                     checkDueDateReminders();
                     break;
                 case "PLANNER_CLEARED":
@@ -540,6 +551,7 @@ public class PlannerView extends AbstractView {
         refreshCourseList();
         refreshTaskList();
         refreshTaskCourseCombo();
+        refreshWeeklyPriorities();
         checkDueDateReminders();
     }
     
@@ -591,6 +603,117 @@ public class PlannerView extends AbstractView {
         for (Course course : model.getCourses()) {
             taskCourseCombo.addItem(course.getCode() + " - " + course.getName());
         }
+    }
+
+    private void createWeeklyPrioritiesPanel() {
+        weeklyPrioritiesPanel = new JPanel(new BorderLayout());
+        weeklyPrioritiesPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        weeklyPrioritiesRangeLabel = new JLabel("", JLabel.LEFT);
+        weeklyPrioritiesRangeLabel.setBorder(new EmptyBorder(0, 0, 8, 0));
+        weeklyPrioritiesPanel.add(weeklyPrioritiesRangeLabel, BorderLayout.NORTH);
+
+        weeklyPrioritiesListModel = new DefaultListModel<>();
+        weeklyPrioritiesList = new JList<>(weeklyPrioritiesListModel);
+        weeklyPrioritiesList.setCellRenderer(new ListCellRenderer<Task>() {
+            @Override
+            public Component getListCellRendererComponent(JList<? extends Task> list, Task task, int index,
+                                                          boolean isSelected, boolean cellHasFocus) {
+                JCheckBox box = new JCheckBox();
+                box.setOpaque(true);
+                box.setBorder(new EmptyBorder(6, 8, 6, 8));
+                box.setSelected(task != null && task.isCompleted());
+                if (task != null) {
+                    String title = task.getTitle() != null && !task.getTitle().isBlank()
+                            ? task.getTitle().trim()
+                            : "(untitled task)";
+                    box.setText(title + " · " + task.getPriority() + " · " + task.getDueDate().format(DATE_FORMATTER));
+                    if (isSelected) {
+                        box.setBackground(list.getSelectionBackground());
+                        box.setForeground(list.getSelectionForeground());
+                    } else if (task.isCompleted()) {
+                        box.setBackground(AppTheme.taskCompletedBg());
+                        box.setForeground(AppTheme.taskCompletedFg());
+                    } else {
+                        Color accent = AppTheme.colorFromHex(task.getAccentColorHex());
+                        box.setBackground(AppTheme.taskAccentChipBackground(accent));
+                        box.setForeground(AppTheme.taskAccentChipForeground(accent));
+                    }
+                }
+                return box;
+            }
+        });
+        weeklyPrioritiesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        weeklyPrioritiesList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int index = weeklyPrioritiesList.locationToIndex(e.getPoint());
+                if (index < 0) {
+                    return;
+                }
+                Rectangle cellBounds = weeklyPrioritiesList.getCellBounds(index, index);
+                if (cellBounds == null) {
+                    return;
+                }
+                int relativeX = e.getX() - cellBounds.x;
+                if (relativeX > 28) {
+                    return;
+                }
+                Task task = weeklyPrioritiesListModel.get(index);
+                if (getController() instanceof PlannerController controller) {
+                    try {
+                        controller.toggleTaskCompletionSilently(task.getId());
+                    } catch (IllegalArgumentException ex) {
+                        showError(ex.getMessage());
+                    }
+                }
+            }
+        });
+
+        weeklyPrioritiesPanel.add(new JScrollPane(weeklyPrioritiesList), BorderLayout.CENTER);
+        refreshWeeklyPriorities();
+    }
+
+    private void refreshWeeklyPriorities() {
+        if (weeklyPrioritiesListModel == null) {
+            return;
+        }
+        PlannerModel model = (PlannerModel) getModel();
+        LocalDate today = LocalDate.now();
+        LocalDate weekStart = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate weekEnd = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+
+        weeklyPrioritiesRangeLabel.setText(
+                "Most important tasks due this week (" + weekStart + " to " + weekEnd + ")"
+        );
+
+        List<Task> weeklyTasks = model.getTasks().stream()
+                .filter(task -> {
+                    LocalDate dueDate = task.getDueDate().toLocalDate();
+                    return !dueDate.isBefore(weekStart) && !dueDate.isAfter(weekEnd);
+                })
+                .sorted((a, b) -> {
+                    int prio = Integer.compare(priorityRank(a.getPriority()), priorityRank(b.getPriority()));
+                    if (prio != 0) return prio;
+                    int due = a.getDueDate().compareTo(b.getDueDate());
+                    if (due != 0) return due;
+                    return Boolean.compare(a.isCompleted(), b.isCompleted());
+                })
+                .toList();
+
+        weeklyPrioritiesListModel.clear();
+        for (Task task : weeklyTasks) {
+            weeklyPrioritiesListModel.addElement(task);
+        }
+    }
+
+    private int priorityRank(Task.Priority priority) {
+        if (priority == null) return 3;
+        return switch (priority) {
+            case HIGH -> 0;
+            case MEDIUM -> 1;
+            case LOW -> 2;
+        };
     }
     
     // Event handlers

@@ -10,6 +10,7 @@ A modular MVC-based student planner application built with Java Swing. This appl
 - **Task Color Palette**: Assign color-coded accents to tasks and see the same color in task list and calendar
 - **Study Timer Presets**: One-click timer presets for 30, 60, and 90 minute sessions
 - **Due Date Reminder Popups**: Daily task reminder popups start 7 days before due date for incomplete tasks
+- **Weekly Priorities Checklist**: Dedicated weekly tab with checkbox-style important tasks due this week
 - **Data Persistence**: Automatic saving and loading of all planner data
 - **Modular Architecture**: Clean separation of concerns using the MVC pattern
 
@@ -126,6 +127,13 @@ src/main/java/
 3. Reminder status shows `Due in X days`, `Due tomorrow`, or `Due today`
 4. Each task is shown once per day to avoid popup spam
 5. Marking task complete stops reminder popups for that task
+
+### Weekly Priorities Checklist
+1. Click the `Weekly Priorities` tab
+2. Review the most important tasks due in the current week
+3. Click the checkbox next to a task to mark it complete/incomplete
+4. Completed tasks stay visible and appear checked off automatically
+5. The checklist updates when tasks are added, edited, or completed elsewhere
 
 ## Data Storage
 
