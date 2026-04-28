@@ -27,6 +27,9 @@ public class TimerPanel extends JPanel implements ActionListener {
     private JButton startButton;
     private JButton pauseButton;
     private JButton resetButton;
+    private JButton preset30Button;
+    private JButton preset60Button;
+    private JButton preset90Button;
     private Timer swingTimer;
     
     private int totalSeconds;
@@ -85,6 +88,26 @@ public class TimerPanel extends JPanel implements ActionListener {
         minutesInput.setFont(LABEL_FONT);
         minutesInput.setHorizontalAlignment(JTextField.CENTER);
         centerPanel.add(minutesInput, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        JPanel presetsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 0));
+        presetsPanel.add(new JLabel("Presets:"));
+        preset30Button = new JButton("30 min");
+        preset60Button = new JButton("60 min");
+        preset90Button = new JButton("90 min");
+        preset30Button.setFont(LABEL_FONT);
+        preset60Button.setFont(LABEL_FONT);
+        preset90Button.setFont(LABEL_FONT);
+        preset30Button.addActionListener(e -> applyPresetMinutes(30));
+        preset60Button.addActionListener(e -> applyPresetMinutes(60));
+        preset90Button.addActionListener(e -> applyPresetMinutes(90));
+        presetsPanel.add(preset30Button);
+        presetsPanel.add(preset60Button);
+        presetsPanel.add(preset90Button);
+        centerPanel.add(presetsPanel, gbc);
         
         add(centerPanel, BorderLayout.CENTER);
         
@@ -179,6 +202,25 @@ public class TimerPanel extends JPanel implements ActionListener {
         minutesInput.setEnabled(false);
         
         timeDisplay.setForeground(AppTheme.timerRunning()); // Green when running
+    }
+
+    /**
+     * Applies a preset minute value while timer is idle.
+     * @param minutes preset duration in minutes
+     */
+    private void applyPresetMinutes(int minutes) {
+        if (isRunning) {
+            JOptionPane.showMessageDialog(this,
+                    "Reset or finish the current timer before changing presets.",
+                    "Timer Running", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        minutesInput.setText(String.valueOf(minutes));
+        totalSeconds = minutes * 60;
+        remainingSeconds = totalSeconds;
+        updateDisplay();
+        timeDisplay.setForeground(AppTheme.timerIdle());
     }
     
     /**
