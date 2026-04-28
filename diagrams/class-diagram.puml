@@ -4,18 +4,6 @@ skinparam classAttributeIconSize 0
 
 title Student Planner - Class Diagram
 
-package "util" {
-
-  class Main {
-    + generateClassDiagram(): void
-    + generateMvcDiagram(): void
-    - generateDiagram(): void
-    + generateAllDiagrams(): void
-    + main(): void
-  }
-
-}
-
 package "mvc" {
 
   interface ModelListener {
@@ -37,17 +25,6 @@ package "mvc" {
     + getView(): View
     + setModel(): void
     + setView(): void
-  }
-
-  abstract class JFrameView extends JFrame implements View, ModelListener {
-    - model: Model
-    - controller: Controller
-    ..
-    + registerWithModel(): void
-    + getController(): Controller
-    + setController(): void
-    + getModel(): Model
-    + setModel(): void
   }
 
   class ModelEvent {
@@ -84,42 +61,6 @@ package "mvc" {
 
 package "planner" {
 
-  class PlannerView extends JFrameView {
-    - createTodoPanel(): JPanel
-    - createCalendarPanel(): JPanel
-    - createTimerPanel(): JPanel
-    - editSelectedTask(): void
-    - toggleSelectedTask(): void
-    ...
-  }
-
-  class Priority {
-    - description: String
-    - dueDate: LocalDate
-    - priority: Priority
-    - completed: boolean
-    - title: String
-    - start: LocalDateTime
-    - end: LocalDateTime
-    - description: String
-    ..
-    + getDescription(): String
-    + getDueDate(): LocalDate
-    + getPriority(): Priority
-    + isCompleted(): boolean
-    + getTitle(): String
-    ...
-  }
-
-  class PlannerController extends AbstractController {
-    + addTask(): void
-    + editTask(): void
-    + setTaskCompleted(): void
-    + deleteTask(): void
-    + addEvent(): void
-    ...
-  }
-
   class Main {
     + main(): void
   }
@@ -131,6 +72,8 @@ package "planner.ui" {
   class PlannerView extends AbstractView {
     - frame: JFrame
     - tabbedPane: JTabbedPane
+    - calendarView: CalendarView
+    - timerPanel: TimerPanel
     - studentPanel: JPanel
     - firstNameField: JTextField
     - lastNameField: JTextField
@@ -155,19 +98,29 @@ package "planner.ui" {
     - taskListModel: DefaultListModel<Task>
     - taskTitleField: JTextField
     - taskDescriptionArea: JTextArea
-    - taskDueDateField: JTextField
+    - taskDateSpinner: JSpinner
+    - taskTimeButton: JButton
+    - taskDueTime: LocalTime
     - taskPriorityCombo: JComboBox<Task.Priority>
     - taskCourseCombo: JComboBox<String>
     - addTaskButton: JButton
     - updateTaskButton: JButton
     - removeTaskButton: JButton
     - completeTaskButton: JButton
+    - taskFormAccentHex: String
+    - taskColorPreviewToggle: JToggleButton
+    - resetTaskColorButton: JButton
+    - weeklyPrioritiesPanel: JPanel
+    - weeklyPrioritiesRangeLabel: JLabel
+    - weeklyPrioritiesList: JList<Task>
+    - weeklyPrioritiesListModel: DefaultListModel<Task>
+    - dueReminderTimer: Timer
     ..
     - initializeUI(): void
+    - attachMenuBar(): void
     - createStudentPanel(): void
     - createCoursePanel(): void
-    - createTaskPanel(): void
-    + modelChanged(): void
+    + getListCellRendererComponent(): Component
     ...
   }
 
@@ -197,11 +150,11 @@ package "planner.ui.calendar" {
     - currentYearMonth: YearMonth
     - timelineScrollPane: JScrollPane
     ..
+    + refreshTheme(): void
     + getModel(): Model
     + getController(): Controller
     + setModel(): void
     + setController(): void
-    - initializeUI(): void
     ...
   }
 
@@ -215,6 +168,9 @@ package "planner.ui.timer" {
     - startButton: JButton
     - pauseButton: JButton
     - resetButton: JButton
+    - preset30Button: JButton
+    - preset60Button: JButton
+    - preset90Button: JButton
     - swingTimer: Timer
     - totalSeconds: int
     - remainingSeconds: int
@@ -225,7 +181,7 @@ package "planner.ui.timer" {
     - setupTimer(): void
     + actionPerformed(): void
     - startTimer(): void
-    - pauseTimer(): void
+    - applyPresetMinutes(): void
     ...
   }
 
@@ -298,6 +254,7 @@ package "planner.model" {
     - priority: Priority
     - completed: boolean
     - courseId: String
+    - accentColorHex: String
     ..
     + getId(): String
     + getTitle(): String
@@ -345,13 +302,8 @@ package "planner.service" {
 ' Relationships
 Model <|.. AbstractModel
 Controller <|.. AbstractController
-JFrame <|-- JFrameView
-View <|.. JFrameView
-ModelListener <|.. JFrameView
 View <|.. AbstractView
 ModelListener <|.. AbstractView
-JFrameView <|-- PlannerView
-AbstractController <|-- PlannerController
 AbstractView <|-- PlannerView
 AbstractController <|-- PlannerController
 View <|.. ViewType

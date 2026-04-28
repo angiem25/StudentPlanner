@@ -94,6 +94,14 @@ public class PlannerView extends AbstractView {
     private JLabel weeklyPrioritiesRangeLabel;
     private JList<Task> weeklyPrioritiesList;
     private DefaultListModel<Task> weeklyPrioritiesListModel;
+    
+    // Today tab components
+    private JPanel todayPanel;
+    private JLabel todayDateLabel;
+    private JList<Task> todayTaskList;
+    private DefaultListModel<Task> todayTaskListModel;
+    private JLabel todayTaskCountLabel;
+    
     private Timer dueReminderTimer;
     private final Set<String> shownDailyReminderKeys = new HashSet<>();
     
@@ -122,10 +130,12 @@ public class PlannerView extends AbstractView {
         createCoursePanel();
         createTaskPanel();
         createWeeklyPrioritiesPanel();
+        createTodayPanel();
         
         tabbedPane.addTab("Student Profile", studentPanel);
         tabbedPane.addTab("Courses", coursePanel);
         tabbedPane.addTab("Tasks", taskPanel);
+        tabbedPane.addTab("Today", todayPanel);
         tabbedPane.addTab("Weekly Priorities", weeklyPrioritiesPanel);
         
         // Add Calendar tab
@@ -534,6 +544,7 @@ public class PlannerView extends AbstractView {
                 case "TASK_INCOMPLETED":
                     refreshTaskList();
                     refreshWeeklyPriorities();
+                    refreshTodayTasks();
                     checkDueDateReminders();
                     break;
                 case "PLANNER_CLEARED":
@@ -552,6 +563,7 @@ public class PlannerView extends AbstractView {
         refreshTaskList();
         refreshTaskCourseCombo();
         refreshWeeklyPriorities();
+        refreshTodayTasks();
         checkDueDateReminders();
     }
     
@@ -714,6 +726,119 @@ public class PlannerView extends AbstractView {
             case MEDIUM -> 1;
             case LOW -> 2;
         };
+    }
+    
+    /**
+     * Creates the Today panel showing tasks due today.
+     */
+    private void createTodayPanel() {
+        todayPanel = new JPanel(new BorderLayout());
+        todayPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        
+        // Header with current date
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy");
+        todayDateLabel = new JLabel("Today: " + today.format(dateFormatter), JLabel.LEFT);
+        todayDateLabel.setFont(todayDateLabel.getFont().deriveFont(Font.BOLD, 16f));
+        todayDateLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
+        todayPanel.add(todayDateLabel, BorderLayout.NORTH);
+        
+        // Task count label
+        todayTaskCountLabel = new JLabel("", JLabel.LEFT);
+        todayTaskCountLabel.setBorder(new EmptyBorder(0, 0, 5, 0));
+        todayPanel.add(todayTaskCountLabel, BorderLayout.NORTH);
+        
+        // Today's tasks list
+        todayTaskListModel = new DefaultListModel<>();
+        todayTaskList = new JList<>(todayTaskListModel);
+        todayTaskList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Task task) {
+                    String title = task.getTitle() != null ? task.getTitle().trim() : "";
+                    if (title.isEmpty()) {
+                        title = "(untitled task)";
+                    }
+                    StringBuilder line = new StringBuilder();
+                    if (task.isCompleted()) {
+                        line.append("[Done] ");
+                    }
+                    line.append(title);
+                    
+                    // Add time if available
+                    if (task.getDueDate() != null) {
+                        LocalTime time = task.getDueDate().toLocalTime();
+                        if (!time.equals(LocalTime.MIDNIGHT)) {
+                            line.append(" · ").append(time.format(DateTimeFormatter.ofPattern("h:mm a")));
+                        }
+                    }
+                    
+                    // Add priority
+                    if (task.getPriority() != null) {
+                        line.append(" · ").append(task.getPriority());
+                    }
+                    
+                    // Add course if available
+                    PlannerModel pm = (PlannerModel) PlannerView.this.getModel();
+                    if (task.getCourseId() != null && pm != null) {
+                        for (Course c : pm.getCourses()) {
+                            if (c.getId().equals(task.getCourseId())) {
+                                String code = c.getCode() != null ? c.getCode().trim() : "";
+                                if (!code.isEmpty()) {
+                                    line.append(" · ").append(code);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    
+                    setText(line.toString());
+                    if (!isSelected) {
+                        if (task.isCompleted()) {
+                            setBackground(AppTheme.taskCompletedBg());
+                            setForeground(AppTheme.taskCompletedFg());
+                        } else {
+                            Color accent = AppTheme.colorFromHex(task.getAccentColorHex());
+                            setBackground(AppTheme.taskAccentChipBackground(accent));
+                            setForeground(AppTheme.taskAccentChipForeground(accent));
+                        }
+                    }
+                }
+                return this;
+            }
+        });
+        todayTaskList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        JScrollPane todayScrollPane = new JScrollPane(todayTaskList);
+        todayPanel.add(todayScrollPane, BorderLayout.CENTER);
+        
+        refreshTodayTasks();
+    }
+    
+    /**
+     * Refreshes the Today tab with current day's tasks.
+     */
+    private void refreshTodayTasks() {
+        if (todayTaskListModel == null) {
+            return;
+        }
+        
+        PlannerModel model = (PlannerModel) getModel();
+        List<Task> todayTasks = model.getTasksForToday();
+        
+        // Update task count label
+        int incompleteCount = (int) todayTasks.stream().filter(task -> !task.isCompleted()).count();
+        int totalCount = todayTasks.size();
+        todayTaskCountLabel.setText(String.format("%d task%s due today (%d incomplete)", 
+                totalCount, totalCount != 1 ? "s" : "", incompleteCount));
+        
+        // Update task list
+        todayTaskListModel.clear();
+        for (Task task : todayTasks) {
+            todayTaskListModel.addElement(task);
+        }
     }
     
     // Event handlers

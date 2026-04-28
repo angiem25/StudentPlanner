@@ -1,8 +1,8 @@
 # Diagram Generation Summary
 
-Generated on: 2026-04-21 16:16:12
-Total Java files scanned: 25
-Total classes parsed: 25
+Generated on: 2026-04-28 11:58:38
+Total Java files scanned: 23
+Total classes parsed: 20
 
 ## Files Generated
 
@@ -21,7 +21,6 @@ Total classes parsed: 25
 - `planner.ui`
 - `planner.ui.calendar`
 - `planner.ui.timer`
-- `util`
 
 ## Classes by Package
 
@@ -32,9 +31,6 @@ Total classes parsed: 25
   - Implements: `Model`
 - **AbstractController** (abstract class)
   - Implements: `Controller`
-- **JFrameView** (abstract class)
-  - Extends: `JFrame`
-  - Implements: `View`, `ModelListener`
 - **ModelEvent** (class)
 - **AbstractView** (abstract class)
   - Implements: `View`, `ModelListener`
@@ -44,11 +40,6 @@ Total classes parsed: 25
 
 ### planner
 
-- **PlannerView** (class)
-  - Extends: `JFrameView`
-- **Priority** (class)
-- **PlannerController** (class)
-  - Extends: `AbstractController`
 - **Main** (class)
 
 ### planner.model
@@ -85,10 +76,6 @@ Total classes parsed: 25
 - **TimerPanel** (class)
   - Extends: `JPanel`
   - Implements: `ActionListener`
-
-### util
-
-- **Main** (class)
 
 ## How to View the Diagrams
 

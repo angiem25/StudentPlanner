@@ -30,6 +30,22 @@ public class Event {
         this.endDateTime = endDateTime;
     }
     
+    /**
+     * Creates a new event with a specific ID (for repository loading).
+     * @param id The event ID
+     * @param title The event title
+     * @param description The event description
+     * @param startDateTime The start date and time
+     * @param endDateTime The end date and time
+     */
+    public Event(String id, String title, String description, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+    }
+    
     // Getters
     public String getId() { return id; }
     public String getTitle() { return title; }

@@ -46,6 +46,24 @@ public class Task {
     }
     
     /**
+     * Creates a new task with a specific ID (for repository loading).
+     * @param id The task ID
+     * @param title The task title
+     * @param description The task description
+     * @param dueDate The due date for the task
+     * @param priority The priority level of the task
+     */
+    public Task(String id, String title, String description, LocalDateTime dueDate, Priority priority) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.dueDate = dueDate;
+        this.priority = priority;
+        this.completed = false;
+        this.accentColorHex = DEFAULT_ACCENT_COLOR_HEX;
+    }
+    
+    /**
      * Creates a new task with a generated unique ID and default MEDIUM priority.
      * @param title The task title
      * @param description The task description

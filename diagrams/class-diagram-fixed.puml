@@ -1,0 +1,323 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam backgroundColor white
+skinparam classFontColor black
+skinparam classBorderColor black
+
+title Student Planner - Class Diagram with All Members
+
+package "planner.model" {
+  class Student {
+    -id: String
+    -firstName: String
+    -lastName: String
+    -email: String
+    -studentId: String
+    -year: int
+    -major: String
+    --
+    +Student()
+    +Student(String, String, String, String, String, int, String)
+    +getId(): String
+    +getFirstName(): String
+    +getLastName(): String
+    +getEmail(): String
+    +getStudentId(): String
+    +getYear(): int
+    +getMajor(): String
+    +setFirstName(String): void
+    +setLastName(String): void
+    +setEmail(String): void
+    +setStudentId(String): void
+    +setYear(int): void
+    +setMajor(String): void
+    +toString(): String
+    +equals(Object): boolean
+    +hashCode(): int
+  }
+
+  class Course {
+    -id: String
+    -name: String
+    -code: String
+    -instructor: String
+    -credits: int
+    --
+    +Course()
+    +Course(String, String, String, int)
+    +Course(String, String, String, String, int)
+    +getId(): String
+    +getName(): String
+    +getCode(): String
+    +getInstructor(): String
+    +getCredits(): int
+    +setName(String): void
+    +setCode(String): void
+    +setInstructor(String): void
+    +setCredits(int): void
+    +toString(): String
+    +equals(Object): boolean
+    +hashCode(): int
+  }
+
+  class Task {
+    -id: String
+    -title: String
+    -description: String
+    -dueDate: LocalDateTime
+    -priority: Priority
+    -completed: boolean
+    -courseId: String
+    -accentColorHex: String
+    -DEFAULT_ACCENT_COLOR_HEX: String
+    --
+    +Task()
+    +Task(String, String, LocalDateTime)
+    +Task(String, String, String, LocalDateTime, Priority, String, String)
+    +getId(): String
+    +getTitle(): String
+    +getDescription(): String
+    +getDueDate(): LocalDateTime
+    +getPriority(): Priority
+    +isCompleted(): boolean
+    +getCourseId(): String
+    +getAccentColorHex(): String
+    +setTitle(String): void
+    +setDescription(String): void
+    +setDueDate(LocalDateTime): void
+    +setPriority(Priority): void
+    +setCompleted(boolean): void
+    +setCourseId(String): void
+    +setAccentColorHex(String): void
+    +complete(): void
+    +incomplete(): void
+    +toString(): String
+    +equals(Object): boolean
+    +hashCode(): int
+  }
+
+  class Event {
+    -id: String
+    -title: String
+    -description: String
+    -startDateTime: LocalDateTime
+    -endDateTime: LocalDateTime
+    --
+    +Event()
+    +Event(String, String, String, LocalDateTime, LocalDateTime)
+    +getId(): String
+    +getTitle(): String
+    +getDescription(): String
+    +getStartDateTime(): LocalDateTime
+    +getEndDateTime(): LocalDateTime
+    +setTitle(String): void
+    +setDescription(String): void
+    +setStartDateTime(LocalDateTime): void
+    +setEndDateTime(LocalDateTime): void
+    +overlapsWith(LocalDateTime, LocalDateTime): boolean
+    +occursOn(LocalDate): boolean
+    +toString(): String
+    +equals(Object): boolean
+    +hashCode(): int
+  }
+
+  enum Priority {
+    LOW
+    MEDIUM
+    HIGH
+  }
+
+  class TaskPalette {
+    -HEX_CHOICES: String[]
+    --
+    +TaskPalette()
+    +containsHex(String): boolean
+    +canonicalHex(String): String
+  }
+
+  class PlannerModel {
+    -currentStudent: Student
+    -courses: List<Course>
+    -tasks: List<Task>
+    -events: List<Event>
+    -eventsByDate: Map<LocalDate, List<Event>>
+    --
+    +getCurrentStudent(): Student
+    +setCurrentStudent(Student): void
+    +getCourses(): List<Course>
+    +getCourseById(String): Optional<Course>
+    +getCourseByCode(String): Optional<Course>
+    +addCourse(Course): void
+    +removeCourse(Course): void
+    +updateCourse(Course): void
+    +getTasks(): List<Task>
+    +getTaskById(String): Optional<Task>
+    +getTasksForCourse(String): List<Task>
+    +getCompletedTasks(): List<Task>
+    +getIncompleteTasks(): List<Task>
+    +addTask(Task): void
+    +removeTask(Task): void
+    +updateTask(Task): void
+    +completeTask(Task): void
+    +incompleteTask(Task): void
+    +getEvents(): List<Event>
+    +getEventById(String): Optional<Event>
+    +getEventsForDate(LocalDate): List<Event>
+    +getEventsInRange(LocalDateTime, LocalDateTime): List<Event>
+    +addEvent(Event): void
+    +removeEvent(Event): void
+    +updateEvent(Event): void
+  }
+}
+
+package "planner.service" {
+  class PlannerService {
+    -model: PlannerModel
+    --
+    +PlannerService(PlannerModel)
+    +createStudentProfile(String, String, String, String, int, String): void
+    +updateStudentProfile(String, String, String, String, int, String): void
+    +validateStudentData(String, String, String, String, int, String): void
+    +addCourse(String, String, String, int): Course
+    +updateCourse(String, String, String, String, int): void
+    +removeCourse(String): void
+    +getCourseByCode(String): Optional<Course>
+    +addTask(String, String, LocalDateTime, Priority, String): Task
+    +updateTask(String, String, String, LocalDateTime, Priority, String): void
+    +removeTask(String): void
+    +completeTask(String): void
+    +incompleteTask(String): void
+    +getTasksByPriority(Priority): List<Task>
+    +getOverdueTasks(): List<Task>
+    +getUpcomingTasks(): List<Task>
+    +addEvent(String, String, LocalDateTime, LocalDateTime): Event
+    +updateEvent(String, String, String, LocalDateTime, LocalDateTime): void
+    +removeEvent(String): void
+    +getEventsInRange(LocalDateTime, LocalDateTime): List<Event>
+    +isValidEmail(String): boolean
+    +isValidDueDate(LocalDateTime): boolean
+    +validateCourseData(String, String, String, int): void
+    +validateTaskData(String, String, LocalDateTime, Priority): void
+  }
+}
+
+package "planner.persistence" {
+  class PlannerRepository {
+    -DATA_DIR: String
+    -STUDENT_FILE: String
+    -COURSES_FILE: String
+    -TASKS_FILE: String
+    -EVENTS_FILE: String
+    -DATE_FORMATTER: DateTimeFormatter
+    --
+    +savePlannerData(): void
+    +loadPlannerData(): void
+    -createDataDirectory(): void
+    -saveStudent(): void
+    -loadStudent(): Student
+    -saveCourses(): void
+    -loadCourses(): List<Course>
+    -saveTasks(): void
+    -loadTasks(): List<Task>
+    -saveEvents(): void
+    -loadEvents(): List<Event>
+    -escapeCsv(String): String
+    -unescapeCsv(String): String
+    -parseCsvLine(String): String[]
+  }
+}
+
+package "planner.ui" {
+  class PlannerView {
+    -frame: JFrame
+    -tabbedPane: JTabbedPane
+    -calendarView: CalendarView
+    -timerPanel: TimerPanel
+    -studentPanel: JPanel
+    -firstNameField: JTextField
+    -lastNameField: JTextField
+    -emailField: JTextField
+    -studentIdField: JTextField
+    -yearField: JTextField
+    -majorField: JTextField
+    -saveStudentButton: JButton
+    -studentInfoLabel: JLabel
+    -coursePanel: JPanel
+    -courseList: JList<Course>
+    -courseListModel: DefaultListModel<Course>
+    -courseNameField: JTextField
+    -courseCodeField: JTextField
+    -instructorField: JTextField
+    -creditsField: JTextField
+    -addCourseButton: JButton
+    -updateCourseButton: JButton
+    -removeCourseButton: JButton
+    -taskPanel: JPanel
+    -taskList: JList<Task>
+    -taskListModel: DefaultListModel<Task>
+    -taskTitleField: JTextField
+    -taskDescriptionArea: JTextArea
+    -taskDateSpinner: JSpinner
+    -taskTimeButton: JButton
+    -taskDueTime: LocalTime
+    -taskPriorityCombo: JComboBox<Task.Priority>
+    -taskCourseCombo: JComboBox<String>
+    -addTaskButton: JButton
+    -updateTaskButton: JButton
+    -removeTaskButton: JButton
+    -completeTaskButton: JButton
+    -taskFormAccentHex: String
+    -taskColorPreviewToggle: JToggleButton
+    -resetTaskColorButton: JButton
+    -weeklyPrioritiesPanel: JPanel
+    -weeklyPrioritiesRangeLabel: JLabel
+    -weeklyPrioritiesList: JList<Task>
+    -weeklyPrioritiesListModel: DefaultListModel<Task>
+    -dueReminderTimer: Timer
+    --
+    -initializeUI(): void
+    -attachMenuBar(): void
+    -createStudentPanel(): void
+    -createCoursePanel(): void
+    -createTaskPanel(): void
+    -refreshStudentDisplay(): void
+    -refreshCourseList(): void
+    -refreshTaskList(): void
+    -refreshWeeklyPriorities(): void
+    +modelChanged(ModelEvent): void
+    +getListCellRendererComponent(): Component
+  }
+
+  class PlannerController {
+    -service: PlannerService
+    --
+    +PlannerController()
+    +saveStudentProfile(): void
+    +addCourse(): void
+    +updateCourse(): void
+    +removeCourse(): void
+    +addTask(): void
+    +updateTask(): void
+    +removeTask(): void
+    +completeTask(): void
+    +incompleteTask(): void
+    +addEvent(): void
+    +updateEvent(): void
+    +removeEvent(): void
+    +exportData(): void
+    +importData(): void
+  }
+}
+
+' Relationships
+PlannerModel "1" *-- "1" Student : manages
+PlannerModel "1" *-- "0..*" Course : manages
+PlannerModel "1" *-- "0..*" Task : manages
+PlannerModel "1" *-- "0..*" Event : manages
+Task --> Course : associated with
+Task --> Priority : has
+PlannerService --> PlannerModel : uses
+PlannerController --> PlannerService : delegates
+PlannerRepository --> PlannerModel : persists
+
+@enduml

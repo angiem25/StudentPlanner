@@ -1,6 +1,7 @@
 package planner.model;
 
 import mvc.AbstractModel;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,15 @@ public class PlannerModel extends AbstractModel {
     public List<Task> getIncompleteTasks() {
         return tasks.stream()
                 .filter(task -> !task.isCompleted())
+                .toList();
+    }
+    
+    public List<Task> getTasksForToday() {
+        LocalDate today = LocalDate.now();
+        return tasks.stream()
+                .filter(task -> task.getDueDate() != null)
+                .filter(task -> task.getDueDate().toLocalDate().equals(today))
+                .sorted((t1, t2) -> t1.getDueDate().compareTo(t2.getDueDate()))
                 .toList();
     }
     

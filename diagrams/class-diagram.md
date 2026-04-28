@@ -2,15 +2,6 @@
 classDiagram
     title Student Planner - Class Diagram
 
-    %% Package: util
-    class Main
-    class Main {
-        +generateClassDiagram() void
-        +generateMvcDiagram() void
-        -generateDiagram() void
-        ...
-    }
-
     %% Package: mvc
     class ModelListener<<interface>>
     class AbstractModel<<abstract>>
@@ -28,16 +19,6 @@ classDiagram
         +getModel() Model
         +getView() View
         +setModel() void
-        ...
-    }
-    class JFrameView<<abstract>>
-    class JFrameView {
-        -Model model
-        -Controller controller
-        ..
-        +registerWithModel() void
-        +getController() Controller
-        +setController() void
         ...
     }
     class ModelEvent
@@ -66,36 +47,6 @@ classDiagram
     class Model<<interface>>
 
     %% Package: planner
-    class PlannerView
-    class PlannerView {
-        -createTodoPanel() JPanel
-        -createCalendarPanel() JPanel
-        -createTimerPanel() JPanel
-        ...
-    }
-    class Priority
-    class Priority {
-        -String description
-        -LocalDate dueDate
-        -Priority priority
-        -boolean completed
-        -String title
-        -LocalDateTime start
-        -LocalDateTime end
-        -String description
-        ..
-        +getDescription() String
-        +getDueDate() LocalDate
-        +getPriority() Priority
-        ...
-    }
-    class PlannerController
-    class PlannerController {
-        +addTask() void
-        +editTask() void
-        +setTaskCompleted() void
-        ...
-    }
     class Main
     class Main {
         +main() void
@@ -106,6 +57,8 @@ classDiagram
     class PlannerView {
         -JFrame frame
         -JTabbedPane tabbedPane
+        -CalendarView calendarView
+        -TimerPanel timerPanel
         -JPanel studentPanel
         -JTextField firstNameField
         -JTextField lastNameField
@@ -130,17 +83,27 @@ classDiagram
         -DefaultListModel<Task> taskListModel
         -JTextField taskTitleField
         -JTextArea taskDescriptionArea
-        -JTextField taskDueDateField
+        -JSpinner taskDateSpinner
+        -JButton taskTimeButton
+        -LocalTime taskDueTime
         -JComboBox<Task.Priority> taskPriorityCombo
         -JComboBox<String> taskCourseCombo
         -JButton addTaskButton
         -JButton updateTaskButton
         -JButton removeTaskButton
         -JButton completeTaskButton
+        -String taskFormAccentHex
+        -JToggleButton taskColorPreviewToggle
+        -JButton resetTaskColorButton
+        -JPanel weeklyPrioritiesPanel
+        -JLabel weeklyPrioritiesRangeLabel
+        -JList<Task> weeklyPrioritiesList
+        -DefaultListModel<Task> weeklyPrioritiesListModel
+        -Timer dueReminderTimer
         ..
         -initializeUI() void
+        -attachMenuBar() void
         -createStudentPanel() void
-        -createCoursePanel() void
         ...
     }
     class PlannerController
@@ -166,9 +129,9 @@ classDiagram
         -YearMonth currentYearMonth
         -JScrollPane timelineScrollPane
         ..
+        +refreshTheme() void
         +getModel() Model
         +getController() Controller
-        +setModel() void
         ...
     }
 
@@ -180,6 +143,9 @@ classDiagram
         -JButton startButton
         -JButton pauseButton
         -JButton resetButton
+        -JButton preset30Button
+        -JButton preset60Button
+        -JButton preset90Button
         -Timer swingTimer
         -int totalSeconds
         -int remainingSeconds
@@ -249,6 +215,7 @@ classDiagram
         -Priority priority
         -boolean completed
         -String courseId
+        -String accentColorHex
         ..
         +getId() String
         +getTitle() String
@@ -285,13 +252,8 @@ classDiagram
     %% Inheritance
     Model <|.. AbstractModel : implements
     Controller <|.. AbstractController : implements
-    JFrame <|-- JFrameView
-    View <|.. JFrameView : implements
-    ModelListener <|.. JFrameView : implements
     View <|.. AbstractView : implements
     ModelListener <|.. AbstractView : implements
-    JFrameView <|-- PlannerView
-    AbstractController <|-- PlannerController
     AbstractView <|-- PlannerView
     AbstractController <|-- PlannerController
     View <|.. ViewType : implements

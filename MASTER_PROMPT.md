@@ -419,6 +419,13 @@ User Action → View → Controller → Service → Model → Observer → View 
 - [ ] PROMPT-K2: Add Day/Week/Month calendar views (Outlook-style 24h timeline)
 - [ ] PROMPT-K3: Create Study Timer (countdown with alerts)
 
+### Phase 7: Testing (Quality Assurance)
+- [ ] PROMPT-L: Implement unit tests for PlannerModel
+- [ ] PROMPT-L: Implement unit tests for PlannerService
+- [ ] PROMPT-L: Implement unit tests for PlannerRepository
+- [ ] PROMPT-L: Configure test infrastructure (JUnit 5, test directory structure)
+- [ ] PROMPT-L: Run all tests and verify >80% coverage
+
 ---
 
 ## Verification Protocol

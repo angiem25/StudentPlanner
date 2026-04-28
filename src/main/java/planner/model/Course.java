@@ -29,6 +29,22 @@ public class Course {
     }
     
     /**
+     * Creates a new course with a specific ID (for repository loading).
+     * @param id The course ID
+     * @param name The course name
+     * @param code The course code
+     * @param instructor The instructor name
+     * @param credits The number of credits
+     */
+    public Course(String id, String name, String code, String instructor, int credits) {
+        this.id = id;
+        this.name = name;
+        this.code = code;
+        this.instructor = instructor;
+        this.credits = credits;
+    }
+    
+    /**
      * Creates a new course with a generated unique ID and default 3 credits.
      * @param name The course name
      * @param code The course code
