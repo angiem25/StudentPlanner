@@ -9,6 +9,7 @@ A modular MVC-based student planner application built with Java Swing. This appl
 - **Task Management**: Create, organize, and track tasks with due dates, priorities, and course associations
 - **Task Color Palette**: Assign color-coded accents to tasks and see the same color in task list and calendar
 - **Study Timer Presets**: One-click timer presets for 30, 60, and 90 minute sessions
+- **Due Date Reminder Popups**: Daily task reminder popups start 7 days before due date for incomplete tasks
 - **Data Persistence**: Automatic saving and loading of all planner data
 - **Modular Architecture**: Clean separation of concerns using the MVC pattern
 
@@ -118,6 +119,13 @@ src/main/java/
 3. Click "Start" to begin countdown
 4. Use "Pause/Resume" and "Reset" as needed
 5. On completion, audio + visual alerts are shown
+
+### Due Date Reminder Popups
+1. Keep tasks incomplete to receive reminders
+2. Popups appear daily starting 7 days before each task due date
+3. Reminder status shows `Due in X days`, `Due tomorrow`, or `Due today`
+4. Each task is shown once per day to avoid popup spam
+5. Marking task complete stops reminder popups for that task
 
 ## Data Storage
 

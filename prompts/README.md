@@ -71,8 +71,9 @@ Execute prompts in order. Each builds upon the previous:
 | 15 | [PROMPT-K3](PROMPT-K3-TIMER.md) | Study Timer | 1 file | Countdown timer with alerts |
 | 16 | [PROMPT-K4](PROMPT-K4-TASK-COLOR-PALETTE.md) | Task Color Palette | 1 file | Color-coded tasks with persistence |
 | 17 | [PROMPT-K5](PROMPT-K5-TIMER-PRESETS.md) | Timer Presets | 1 file | One-click timer durations |
+| 18 | [PROMPT-K6](PROMPT-K6-DUE-DATE-REMINDER-POPUPS.md) | Due Date Reminder Popups | 1 file | Daily reminders from 7 days before due |
 
-**Outcome**: Enhanced UI with calendar, events, timer, task colors, and timer presets
+**Outcome**: Enhanced UI with calendar, events, timer, task colors, presets, and reminder popups
 
 ## Total Files Created
 
@@ -87,7 +88,7 @@ Execute prompts in order. Each builds upon the previous:
 **Total: 19 Java files**
 
 **Documentation & Configuration**:
-- 16 prompt files (this documentation)
+- 17 prompt files (this documentation)
 - 2 project documentation files (README, ARCHITECTURE_SUMMARY)
 - 1 build configuration (pom.xml)
 - 2 diagram generation scripts
@@ -193,6 +194,7 @@ Additional prompts for extended functionality:
 - ~~PROMPT-K: Calendar Integration~~ ✅ **COMPLETED**
 - ~~PROMPT-K4: Task Color Palette~~ ✅ **COMPLETED**
 - ~~PROMPT-K5: Timer Presets~~ ✅ **COMPLETED**
+- ~~PROMPT-K6: Due Date Reminder Popups~~ ✅ **COMPLETED**
 - PROMPT-L: Grade Tracking (GPA calculation)
 - PROMPT-M: Notification System (deadline reminders)
 - PROMPT-N: Export/Import Functionality (JSON/Excel)

@@ -213,6 +213,12 @@ Service Exception → Controller → View → User (Dialog)
 - Presets update input and display immediately while timer is idle
 - Running-session guard prevents preset changes mid-countdown
 
+### Due Date Reminder Popups (K-6)
+- Added scheduled popup reminders in `PlannerView` for incomplete tasks
+- Reminder cadence is daily, starting 7 days before due date
+- Reminder keys are tracked by task+due+date to prevent duplicate popups
+- Completed tasks are excluded from reminder checks automatically
+
 ## Design Patterns Used
 
 1. **Model-View-Controller**: Overall architectural pattern

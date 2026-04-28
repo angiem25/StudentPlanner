@@ -150,7 +150,7 @@ public class PlannerController extends AbstractController {
             view.showError(e.getMessage());
         }
     }
-    
+
     /**
      * Removes a task.
      * @param taskId The task ID to remove

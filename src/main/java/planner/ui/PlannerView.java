@@ -20,8 +20,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -84,6 +86,8 @@ public class PlannerView extends AbstractView {
     private final List<JPanel> taskColorSwatchPanels = new ArrayList<>();
     private JToggleButton taskColorPreviewToggle;
     private JButton resetTaskColorButton;
+    private Timer dueReminderTimer;
+    private final Set<String> shownDailyReminderKeys = new HashSet<>();
     
     /**
      * Creates a new PlannerView with the specified model and controller.
@@ -126,6 +130,7 @@ public class PlannerView extends AbstractView {
         frame.add(tabbedPane);
         attachMenuBar();
         frame.setVisible(true);
+        initializeDueReminders();
     }
     
     /**
@@ -518,6 +523,7 @@ public class PlannerView extends AbstractView {
                 case "TASK_COMPLETED":
                 case "TASK_INCOMPLETED":
                     refreshTaskList();
+                    checkDueDateReminders();
                     break;
                 case "PLANNER_CLEARED":
                     refreshAll();
@@ -534,6 +540,7 @@ public class PlannerView extends AbstractView {
         refreshCourseList();
         refreshTaskList();
         refreshTaskCourseCombo();
+        checkDueDateReminders();
     }
     
     /**
@@ -571,6 +578,7 @@ public class PlannerView extends AbstractView {
         for (Task task : model.getTasks()) {
             taskListModel.addElement(task);
         }
+        pruneReminderKeysForRemovedTasks(model.getTasks());
     }
     
     /**
@@ -740,6 +748,93 @@ public class PlannerView extends AbstractView {
         if (taskTimeButton != null && taskDueTime != null) {
             taskTimeButton.setText(TIME_BUTTON_FORMAT.format(taskDueTime));
         }
+    }
+
+    private void initializeDueReminders() {
+        dueReminderTimer = new Timer(60_000, e -> checkDueDateReminders());
+        dueReminderTimer.setInitialDelay(10_000);
+        dueReminderTimer.start();
+        checkDueDateReminders();
+    }
+
+    private void checkDueDateReminders() {
+        PlannerModel model = (PlannerModel) getModel();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate today = now.toLocalDate();
+        for (Task task : model.getTasks()) {
+            if (task.isCompleted()) {
+                continue;
+            }
+            LocalDateTime due = task.getDueDate();
+            LocalDate dueDate = due.toLocalDate();
+            LocalDate reminderStart = dueDate.minusDays(7);
+            boolean shouldRemind = !today.isBefore(reminderStart) && !today.isAfter(dueDate);
+            if (!shouldRemind) {
+                continue;
+            }
+            String reminderKey = task.getId() + "|" + due + "|" + today;
+            if (shownDailyReminderKeys.contains(reminderKey)) {
+                continue;
+            }
+            shownDailyReminderKeys.add(reminderKey);
+            long daysUntilDue = java.time.temporal.ChronoUnit.DAYS.between(today, dueDate);
+            showDueReminderPopup(task, due, daysUntilDue);
+        }
+    }
+
+    private void showDueReminderPopup(Task task, LocalDateTime due, long daysUntilDue) {
+        String status;
+        if (daysUntilDue > 1) {
+            status = "Due in " + daysUntilDue + " days";
+        } else if (daysUntilDue == 1) {
+            status = "Due tomorrow";
+        } else if (daysUntilDue == 0) {
+            status = "Due today";
+        } else {
+            status = "Overdue";
+        }
+
+        JDialog reminderDialog = new JDialog(frame, "Task Reminder", false);
+        reminderDialog.setLayout(new BorderLayout(10, 8));
+        reminderDialog.getRootPane().setBorder(new EmptyBorder(10, 12, 10, 12));
+
+        JLabel title = new JLabel(task.getTitle() != null && !task.getTitle().isBlank()
+                ? task.getTitle()
+                : "(untitled task)");
+        title.setFont(title.getFont().deriveFont(Font.BOLD));
+        JLabel detail = new JLabel(status + " · " + due.format(DATE_FORMATTER));
+        reminderDialog.add(title, BorderLayout.NORTH);
+        reminderDialog.add(detail, BorderLayout.CENTER);
+
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 6, 0));
+        JButton dismiss = new JButton("Dismiss");
+        dismiss.addActionListener(e -> reminderDialog.dispose());
+        actions.add(dismiss);
+        reminderDialog.add(actions, BorderLayout.SOUTH);
+
+        reminderDialog.pack();
+        reminderDialog.setLocationRelativeTo(frame);
+        reminderDialog.setAlwaysOnTop(true);
+        reminderDialog.setVisible(true);
+
+        Timer autoClose = new Timer(10_000, e -> reminderDialog.dispose());
+        autoClose.setRepeats(false);
+        autoClose.start();
+    }
+
+    private void pruneReminderKeysForRemovedTasks(List<Task> currentTasks) {
+        Set<String> activeTaskIds = new HashSet<>();
+        for (Task task : currentTasks) {
+            activeTaskIds.add(task.getId());
+        }
+        shownDailyReminderKeys.removeIf(key -> {
+            int sep = key.indexOf('|');
+            if (sep <= 0) {
+                return true;
+            }
+            String taskId = key.substring(0, sep);
+            return !activeTaskIds.contains(taskId);
+        });
     }
 
     private LocalDateTime getTaskDueDateTime() {

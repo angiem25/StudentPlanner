@@ -441,7 +441,7 @@ public class CalendarView extends JPanel implements View, ModelListener {
         
         return label;
     }
-    
+
     // ============================================
     // VIEW SWITCHING
     // ============================================
