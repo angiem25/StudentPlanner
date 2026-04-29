@@ -258,15 +258,6 @@ public class PlannerView extends AbstractView {
         accountMenu.add(profileLoginMenuItem);
         accountMenu.addSeparator(); // Add separator after Profile/Login
         
-        // Add New Profile button
-        JMenuItem addProfileItem = new JMenuItem("Add New Profile");
-        addProfileItem.addActionListener(e -> onAddNewProfile());
-        accountMenu.add(addProfileItem);
-        
-        JMenuItem switchProfileItem = new JMenuItem("Switch Profile");
-        switchProfileItem.addActionListener(e -> onSwitchProfile());
-        accountMenu.add(switchProfileItem);
-        
         accountMenu.addSeparator(); // Add separator before Logout
         
         // Logout button (only enabled when logged in)
@@ -736,6 +727,7 @@ public class PlannerView extends AbstractView {
                 case "STUDENT_CHANGED":
                     refreshStudentInfo();
                     updateAccountMenu();
+                    refreshProfileDisplay();
                     // Save account state
                     try {
                         if (getController() instanceof PlannerController) {
@@ -773,7 +765,7 @@ public class PlannerView extends AbstractView {
     /**
      * Refreshes all UI components.
      */
-    private void refreshAll() {
+    public void refreshAll() {
         refreshStudentInfo();
         refreshCourseList();
         refreshTaskList();
@@ -781,6 +773,8 @@ public class PlannerView extends AbstractView {
         refreshWeeklyPriorities();
         refreshTodayTasks();
         checkDueDateReminders();
+        updateAccountMenu();
+        refreshProfileDisplay();
     }
     
     /**
@@ -1373,13 +1367,7 @@ public class PlannerView extends AbstractView {
         }
     }
 
-    /**
-     * Handles the Switch Profile action - shows profile selection dialog.
-     */
-    private void onSwitchProfile() {
-        showProfileSelectionDialog();
-    }
-    
+        
     /**
      * Shows the student profile dialog (read-only view).
      */
@@ -1472,6 +1460,10 @@ public class PlannerView extends AbstractView {
         JButton removeButton = new JButton("Remove");
         JButton cancelButton = new JButton("Cancel");
         
+        // Add dedicated buttons for Add New User and Switch Profile
+        JButton addNewUserButton = new JButton("Add New User");
+        JButton switchProfileButton = new JButton("Switch Profile");
+        
         selectButton.addActionListener(e -> {
             String selected = profileList.getSelectedValue();
             if (selected != null) {
@@ -1491,8 +1483,6 @@ public class PlannerView extends AbstractView {
                             refreshAll();
                             refreshProfileDisplay();
                             updateAccountMenu();
-                            
-                            showInfo("Profile loaded: " + selected);
                         }
                     } catch (Exception ex) {
                         showError("Failed to load profile: " + ex.getMessage());
@@ -1530,9 +1520,24 @@ public class PlannerView extends AbstractView {
         
         cancelButton.addActionListener(e -> selectionDialog.dispose());
         
+        // Add action listener for Add New User button
+        addNewUserButton.addActionListener(e -> {
+            selectionDialog.dispose();
+            onAddNewProfile();
+        });
+        
+        // Add action listener for Switch Profile button
+        switchProfileButton.addActionListener(e -> {
+            // Switch Profile functionality is the same as the current dialog
+            // So we just keep the dialog open for profile selection
+            showInfo("Please select a profile from the list above to switch to, or create a new profile.");
+        });
+        
         buttonPanel.add(selectButton);
         buttonPanel.add(removeButton);
         buttonPanel.add(cancelButton);
+        buttonPanel.add(addNewUserButton);
+        buttonPanel.add(switchProfileButton);
         selectionDialog.add(buttonPanel, BorderLayout.SOUTH);
         
         selectionDialog.setVisible(true);
@@ -1543,30 +1548,11 @@ public class PlannerView extends AbstractView {
      */
     private void onLogout() {
         try {
-            // Clear profile-specific data for current student
+            // Save profile data before logging out
             if (getController() instanceof PlannerController) {
                 PlannerController controller = (PlannerController) getController();
-                controller.clearProfileData();
-                int exportChoice = JOptionPane.showConfirmDialog(
-                    frame,
-                    "Would you like to export your data before logging out?",
-                    "Export Data",
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE
-                );
-                
-                if (exportChoice == JOptionPane.YES_OPTION) {
-                    try {
-                        controller.exportData();
-                        showInfo("Data exported successfully.");
-                    } catch (Exception e) {
-                        showError("Failed to export data: " + e.getMessage());
-                    }
-                }
+                controller.logout();
             }
-            
-            // Clear current student
-            ((PlannerModel) getModel()).setCurrentStudent(null);
             
             // Refresh all UI components
             refreshAll();
@@ -1583,6 +1569,7 @@ public class PlannerView extends AbstractView {
      */
     private void refreshProfileDisplay() {
         Student currentStudent = ((PlannerModel) getModel()).getCurrentStudent();
+        
         if (currentStudent != null) {
             profileFirstNameLabel.setText(currentStudent.getFirstName());
             profileLastNameLabel.setText(currentStudent.getLastName());
@@ -1603,6 +1590,11 @@ public class PlannerView extends AbstractView {
             
             // Clear courses when not logged in
             clearProfileCourses();
+        }
+        
+        // Force UI repaint to ensure changes are visible
+        if (profileFirstNameLabel.getParent() != null) {
+            profileFirstNameLabel.getParent().repaint();
         }
     }
     
@@ -1653,7 +1645,8 @@ public class PlannerView extends AbstractView {
         // Update Profile/Login button text and action
         if (profileLoginMenuItem != null) {
             if (isLoggedIn) {
-                profileLoginMenuItem.setText("Profile");
+                String profileName = currentStudent.getFullName();
+                profileLoginMenuItem.setText("Profile: " + profileName);
                 profileLoginMenuItem.removeActionListener(profileLoginMenuItem.getActionListeners()[0]);
                 profileLoginMenuItem.addActionListener(e -> onShowProfile());
             } else {

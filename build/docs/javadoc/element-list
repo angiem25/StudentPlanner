@@ -1,9 +1,0 @@
-mvc
-planner
-planner.model
-planner.persistence
-planner.service
-planner.ui
-planner.ui.calendar
-planner.ui.task
-planner.ui.timer

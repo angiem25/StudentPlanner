@@ -42,8 +42,16 @@ public class Main {
         // Load existing data if available
         PlannerRepository repository = new PlannerRepository();
         try {
-            repository.loadPlannerData(model);
-            LOGGER.info("Planner data loaded successfully");
+            // Load account state first to determine if user should be logged in
+            boolean isLoggedIn = repository.loadAccountState();
+            if (isLoggedIn) {
+                // If user was logged in, load their profile data
+                repository.loadPlannerData(model);
+                LOGGER.info("Planner data loaded successfully");
+            } else {
+                // If user was logged out, start with clean state
+                LOGGER.info("Planner data loaded successfully (clean state)");
+            }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Could not load planner data", e);
         }

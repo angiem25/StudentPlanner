@@ -1,6 +1,8 @@
 package planner.service;
 
 import planner.model.*;
+import planner.ui.PlannerView;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +27,13 @@ public class PlannerService {
                                    String studentId, Student.AcademicYear academicYear, String major) {
         validateStudentData(firstName, lastName, email, studentId, academicYear, major);
         Student student = new Student(firstName, lastName, email, studentId, academicYear, major);
-        model.setCurrentStudent(student);
+        // Save the student profile to repository
+        try {
+            planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+            repository.saveProfile(student);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to save student profile: " + e.getMessage());
+        }
     }
     
     /**
@@ -36,7 +44,13 @@ public class PlannerService {
         validateStudentData(firstName, lastName, email, studentId, year, major);
         Student.AcademicYear academicYear = Student.AcademicYear.fromNumeric(year);
         Student student = new Student(firstName, lastName, email, studentId, academicYear, major);
-        model.setCurrentStudent(student);
+        // Save the student profile to repository
+        try {
+            planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+            repository.saveProfile(student);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to save student profile: " + e.getMessage());
+        }
     }
     
     public void updateStudentProfile(Student student) {

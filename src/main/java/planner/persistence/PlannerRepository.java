@@ -62,7 +62,15 @@ public class PlannerRepository {
             return; // No data to load
         }
         
-        Student student = loadStudent();
+        // Try to load current profile from preferences
+        String currentProfileDisplayName = loadCurrentProfile();
+        Student student = null;
+        
+        if (currentProfileDisplayName != null) {
+            // Load the specific profile
+            student = loadProfile(currentProfileDisplayName);
+        }
+        
         if (student != null) {
             model.setCurrentStudent(student);
             
@@ -649,49 +657,96 @@ public class PlannerRepository {
     }
     
     /**
-     * Saves user preferences including account state.
+     * Saves user preferences including account state and current profile.
      * @param isLoggedIn Whether user is logged into an account
      * @throws IOException If an I/O error occurs
      */
     public void saveAccountState(boolean isLoggedIn) throws IOException {
+        saveAccountState(isLoggedIn, null);
+    }
+    
+    /**
+     * Saves user preferences including account state and current profile.
+     * @param isLoggedIn Whether user is logged into an account
+     * @param currentStudent The current student profile (can be null)
+     * @throws IOException If an I/O error occurs
+     */
+    public void saveAccountState(boolean isLoggedIn, Student currentStudent) throws IOException {
         createDataDirectory();
         Path preferencesPath = Paths.get(DATA_DIR, PREFERENCES_FILE);
         
         // Read existing preferences
-        String existingPreferences = "";
+        List<String> lines = new ArrayList<>();
         if (Files.exists(preferencesPath)) {
             try (BufferedReader reader = Files.newBufferedReader(preferencesPath)) {
-                existingPreferences = String.join("\n", java.util.Arrays.asList(reader.lines().toArray(String[]::new)));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    lines.add(line);
+                }
             }
         }
         
         try (BufferedWriter writer = Files.newBufferedWriter(preferencesPath)) {
-            // Update or add account state line
-            String[] lines = existingPreferences.split("\n");
             boolean accountLineFound = false;
+            boolean profileLineFound = false;
             
-            for (int i = 0; i < lines.length; i++) {
-                if (lines[i].startsWith("ACCOUNT_STATE,")) {
-                    lines[i] = "ACCOUNT_STATE," + (isLoggedIn ? "LOGGED_IN" : "LOGGED_OUT");
+            // Update existing lines
+            for (int i = 0; i < lines.size(); i++) {
+                String line = lines.get(i);
+                if (line.startsWith("ACCOUNT_STATE,")) {
+                    lines.set(i, "ACCOUNT_STATE," + (isLoggedIn ? "LOGGED_IN" : "LOGGED_OUT"));
                     accountLineFound = true;
-                    break;
+                } else if (line.startsWith("CURRENT_PROFILE,")) {
+                    if (isLoggedIn && currentStudent != null) {
+                        String displayName = currentStudent.getFirstName() + " " + currentStudent.getLastName() + " - " + currentStudent.getMajor() + " (" + currentStudent.getAcademicYear().getDisplayName() + ")";
+                        lines.set(i, "CURRENT_PROFILE," + displayName);
+                    } else {
+                        lines.set(i, "CURRENT_PROFILE,");
+                    }
+                    profileLineFound = true;
                 }
+                writer.write(lines.get(i));
+                writer.newLine();
             }
             
-            // If no account state line exists, add it
+            // Add account state line if not found
             if (!accountLineFound) {
-                String[] newLines = new String[lines.length + 1];
-                System.arraycopy(lines, 0, newLines, 0, lines.length);
-                newLines[lines.length] = "ACCOUNT_STATE," + (isLoggedIn ? "LOGGED_IN" : "LOGGED_OUT");
-                lines = newLines;
+                writer.write("ACCOUNT_STATE," + (isLoggedIn ? "LOGGED_IN" : "LOGGED_OUT"));
+                writer.newLine();
             }
             
-            // Write all preferences
-            for (String line : lines) {
-                writer.write(line);
+            // Add current profile line if not found
+            if (!profileLineFound && isLoggedIn && currentStudent != null) {
+                String displayName = currentStudent.getFirstName() + " " + currentStudent.getLastName() + " - " + currentStudent.getMajor() + " (" + currentStudent.getAcademicYear().getDisplayName() + ")";
+                writer.write("CURRENT_PROFILE," + displayName);
                 writer.newLine();
             }
         }
+    }
+    
+    /**
+     * Loads the current profile from preferences.
+     * @return The display name of the current profile, or null if not found
+     * @throws IOException If an I/O error occurs
+     */
+    public String loadCurrentProfile() throws IOException {
+        Path preferencesPath = Paths.get(DATA_DIR, PREFERENCES_FILE);
+        if (!Files.exists(preferencesPath)) {
+            return null;
+        }
+        
+        try (BufferedReader reader = Files.newBufferedReader(preferencesPath)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("CURRENT_PROFILE,")) {
+                    String[] parts = line.split(",", 2);
+                    if (parts.length > 1 && !parts[1].isEmpty()) {
+                        return parts[1];
+                    }
+                }
+            }
+        }
+        return null;
     }
     
     /**

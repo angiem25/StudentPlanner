@@ -257,6 +257,13 @@ public class PlannerController extends AbstractController {
      */
     public void loadProfile(String displayName) throws IOException {
         planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+        
+        // Save current profile data before switching
+        PlannerModel currentModel = (PlannerModel) getModel();
+        if (currentModel.getCurrentStudent() != null) {
+            repository.savePlannerData(currentModel);
+        }
+        
         Student student = repository.loadProfile(displayName);
         if (student != null) {
             PlannerModel model = (PlannerModel) getModel();
@@ -269,7 +276,13 @@ public class PlannerController extends AbstractController {
             repository.loadPlannerData(model);
             
             // Save the current profile state
-            repository.saveAccountState(true);
+            repository.saveAccountState(true, student);
+            
+            // Refresh all UI tabs to show the new profile data
+            if (getView() != null) {
+                PlannerView view = (PlannerView) getView();
+                view.refreshAll();
+            }
         }
     }
     
@@ -334,6 +347,28 @@ public class PlannerController extends AbstractController {
     public boolean loadAccountState() throws IOException {
         planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
         return repository.loadAccountState();
+    }
+    
+    /**
+     * Logs out the current user and saves all data to the current profile.
+     * @throws IOException If an I/O error occurs during logout
+     */
+    public void logout() throws IOException {
+        PlannerModel model = (PlannerModel) getModel();
+        Student currentStudent = model.getCurrentStudent();
+        if (currentStudent != null) {
+            planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+            // Save all data to the current profile before logging out
+            repository.savePlannerData(model);
+            // Clear profile data from repository
+            repository.clearProfileData(currentStudent);
+            // Clear model data
+            model.clearAll();
+            // Set current student to null
+            model.setCurrentStudent(null);
+            // Save account state as logged out and clear current profile
+            repository.saveAccountState(false, null);
+        }
     }
     
     }
