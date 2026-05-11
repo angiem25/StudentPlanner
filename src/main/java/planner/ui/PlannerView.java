@@ -1620,9 +1620,12 @@ public class PlannerView extends AbstractView {
                 Timer timer = new Timer(100, e -> refreshAll());
                 timer.setRepeats(false);
                 timer.start();
+                
+                // Show Select Profile window after logout
+                Timer profileTimer = new Timer(200, e -> showProfileSelectionDialog());
+                profileTimer.setRepeats(false);
+                profileTimer.start();
             });
-            
-            showInfo("Logged out successfully. You can create a new profile or import existing data.");
         } catch (Exception e) {
             showError("Error during logout: " + e.getMessage());
         }
