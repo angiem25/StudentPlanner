@@ -334,9 +334,7 @@ public class PlannerService {
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("Task title cannot be empty");
         }
-        if (description == null || description.trim().isEmpty()) {
-            throw new IllegalArgumentException("Task description cannot be empty");
-        }
+        // Description is now optional - no validation needed
         if (dueDate == null || dueDate.isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException("Due date must be in the future");
         }
