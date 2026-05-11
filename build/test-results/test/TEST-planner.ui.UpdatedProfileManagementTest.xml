@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.ui.UpdatedProfileManagementTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-05-11T02:47:23" hostname="Mac.lan" time="1.422">
+  <properties/>
+  <testcase name="testProfileSelectionWorkflow()" classname="planner.ui.UpdatedProfileManagementTest" time="0.127"/>
+  <testcase name="testSaveProfileAutoClose()" classname="planner.ui.UpdatedProfileManagementTest" time="0.156"/>
+  <testcase name="testLogoutButtonVisibility()" classname="planner.ui.UpdatedProfileManagementTest" time="0.258"/>
+  <testcase name="testReadOnlyProfileView()" classname="planner.ui.UpdatedProfileManagementTest" time="0.07"/>
+  <testcase name="testAccountMenuStructure()" classname="planner.ui.UpdatedProfileManagementTest" time="0.257"/>
+  <testcase name="testAddNewProfileWorkflow()" classname="planner.ui.UpdatedProfileManagementTest" time="0.34"/>
+  <testcase name="testProfileDialogWorkflows()" classname="planner.ui.UpdatedProfileManagementTest" time="0.21"/>
+  <system-out><![CDATA[DEBUG: saveCourses called with 0 courses, profilePrefix: S99999_Auto_Close
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: Current profile from preferences: null
+DEBUG: loadCourses called with profilePrefix: null
+DEBUG: Loading courses from file: planner_data/courses.csv
+DEBUG: File exists: true
+DEBUG: saveCourses called with 0 courses, profilePrefix: S11111_Alice_Wonder
+DEBUG: Current profile from preferences: null
+DEBUG: loadCourses called with profilePrefix: null
+DEBUG: Loading courses from file: planner_data/courses.csv
+DEBUG: File exists: true
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

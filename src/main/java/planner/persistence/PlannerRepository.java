@@ -99,15 +99,9 @@ public class PlannerRepository {
             events.forEach(model::addEvent);
             System.out.println("DEBUG: Added " + events.size() + " events to model");
         } else {
-            // Load global data when no student is logged in
-            List<Course> courses = loadCourses(null);
-            courses.forEach(model::addCourse);
-            
-            List<Task> tasks = loadTasks(null);
-            tasks.forEach(model::addTask);
-            
-            List<Event> events = loadEvents(null);
-            events.forEach(model::addEvent);
+            // When no student is logged in, keep all lists empty
+            // No global data should be loaded
+            System.out.println("DEBUG: No student logged in - keeping lists empty");
         }
     }
     
@@ -178,7 +172,7 @@ public class PlannerRepository {
      * @param student The student to get prefix for
      * @return The profile prefix string
      */
-    private String getProfilePrefix(Student student) {
+    public String getProfilePrefix(Student student) {
         if (student == null) return null;
         return student.getStudentId() + "_" + student.getFirstName() + "_" + student.getLastName();
     }
@@ -220,7 +214,7 @@ public class PlannerRepository {
      * @return The list of loaded courses
      * @throws IOException If an I/O error occurs
      */
-    private List<Course> loadCourses(String profilePrefix) throws IOException {
+    public List<Course> loadCourses(String profilePrefix) throws IOException {
         System.out.println("DEBUG: loadCourses called with profilePrefix: " + profilePrefix);
         List<Course> courses = new ArrayList<>();
         Path coursesFile;
@@ -314,7 +308,7 @@ public class PlannerRepository {
      * @return The list of loaded tasks
      * @throws IOException If an I/O error occurs
      */
-    private List<Task> loadTasks(String profilePrefix) throws IOException {
+    public List<Task> loadTasks(String profilePrefix) throws IOException {
         List<Task> tasks = new ArrayList<>();
         Path tasksFile;
         if (profilePrefix != null) {
@@ -398,7 +392,7 @@ public class PlannerRepository {
      * @return The list of loaded events
      * @throws IOException If an I/O error occurs
      */
-    private List<Event> loadEvents(String profilePrefix) throws IOException {
+    public List<Event> loadEvents(String profilePrefix) throws IOException {
         List<Event> events = new ArrayList<>();
         Path eventsFile;
         if (profilePrefix != null) {

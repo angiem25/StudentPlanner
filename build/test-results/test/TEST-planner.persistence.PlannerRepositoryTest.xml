@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.persistence.PlannerRepositoryTest" tests="19" skipped="0" failures="0" errors="0" timestamp="2026-05-11T02:47:18" hostname="Mac.lan" time="0.063">
+  <properties/>
+  <testcase name="Should handle malformed CSV lines gracefully" classname="planner.persistence.PlannerRepositoryTest" time="0.011"/>
+  <testcase name="Should save and load student data" classname="planner.persistence.PlannerRepositoryTest" time="0.004"/>
+  <testcase name="Should save and load multiple courses" classname="planner.persistence.PlannerRepositoryTest" time="0.003"/>
+  <testcase name="Should handle task descriptions with commas" classname="planner.persistence.PlannerRepositoryTest" time="0.005"/>
+  <testcase name="Should preserve task completion state" classname="planner.persistence.PlannerRepositoryTest" time="0.003"/>
+  <testcase name="Should save and load event data" classname="planner.persistence.PlannerRepositoryTest" time="0.002"/>
+  <testcase name="Should handle empty model save/load" classname="planner.persistence.PlannerRepositoryTest" time="0.001"/>
+  <testcase name="Should delete all data files" classname="planner.persistence.PlannerRepositoryTest" time="0.002"/>
+  <testcase name="Should handle course names with commas" classname="planner.persistence.PlannerRepositoryTest" time="0.003"/>
+  <testcase name="Should handle null student save" classname="planner.persistence.PlannerRepositoryTest" time="0.001"/>
+  <testcase name="Should save and load course data" classname="planner.persistence.PlannerRepositoryTest" time="0.003"/>
+  <testcase name="Should load when data directory doesn't exist" classname="planner.persistence.PlannerRepositoryTest" time="0.001"/>
+  <testcase name="Should handle task with null course ID" classname="planner.persistence.PlannerRepositoryTest" time="0.003"/>
+  <testcase name="Should handle delete when no data exists" classname="planner.persistence.PlannerRepositoryTest" time="0.001"/>
+  <testcase name="Should handle task with accent color" classname="planner.persistence.PlannerRepositoryTest" time="0.002"/>
+  <testcase name="Should save and load multiple tasks" classname="planner.persistence.PlannerRepositoryTest" time="0.003"/>
+  <testcase name="Should handle empty lines in CSV files" classname="planner.persistence.PlannerRepositoryTest" time="0.004"/>
+  <testcase name="Should save and load complete model" classname="planner.persistence.PlannerRepositoryTest" time="0.005"/>
+  <testcase name="Should save and load task data" classname="planner.persistence.PlannerRepositoryTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -5,6 +5,7 @@ import planner.model.*;
 import planner.service.PlannerService;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Controller for the student planner application.
@@ -272,17 +273,22 @@ public class PlannerController extends AbstractController {
             model.clearAll();
             model.setCurrentStudent(student);
             
-            // Load the profile's data
-            repository.loadPlannerData(model);
+            // Load the profile's data directly without calling loadPlannerData 
+            // since that method tries to load from preferences again
+            String profilePrefix = repository.getProfilePrefix(student);
+            List<Course> courses = repository.loadCourses(profilePrefix);
+            courses.forEach(model::addCourse);
+            
+            List<Task> tasks = repository.loadTasks(profilePrefix);
+            tasks.forEach(model::addTask);
+            
+            List<Event> events = repository.loadEvents(profilePrefix);
+            events.forEach(model::addEvent);
             
             // Save the current profile state
             repository.saveAccountState(true, student);
             
-            // Refresh all UI tabs to show the new profile data
-            if (getView() != null) {
-                PlannerView view = (PlannerView) getView();
-                view.refreshAll();
-            }
+            // Note: UI refresh is handled by the view after this method returns
         }
     }
     

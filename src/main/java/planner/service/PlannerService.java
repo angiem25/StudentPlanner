@@ -93,7 +93,8 @@ public class PlannerService {
             
             // Check if new code conflicts with existing course (excluding this one)
             if (!course.getCode().equals(code)) {
-                if (model.getCourseByCode(code).isPresent()) {
+                Optional<Course> existingCourse = model.getCourseByCode(code);
+                if (existingCourse.isPresent() && !existingCourse.get().getId().equals(courseId)) {
                     throw new IllegalArgumentException("Course with code " + code + " already exists");
                 }
             }

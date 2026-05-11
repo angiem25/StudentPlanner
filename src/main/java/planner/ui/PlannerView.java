@@ -803,11 +803,6 @@ public class PlannerView extends AbstractView {
      * Refreshes the course list.
      */
     private void refreshCourseList() {
-        // Prevent duplicate refresh calls
-        if (isRefreshing) {
-            return;
-        }
-        
         PlannerModel model = (PlannerModel) getModel();
         System.out.println("DEBUG: refreshCourseList() called");
         System.out.println("DEBUG: Model has " + model.getCourses().size() + " courses");
@@ -1107,6 +1102,12 @@ public class PlannerView extends AbstractView {
                 instructorField.getText().trim(),
                 creditsField.getText().trim()
             );
+            
+            // Clear input fields after adding course
+            courseNameField.setText("");
+            courseCodeField.setText("");
+            instructorField.setText("");
+            creditsField.setText("");
         }
     }
     
@@ -1121,6 +1122,15 @@ public class PlannerView extends AbstractView {
                 instructorField.getText().trim(),
                 creditsField.getText().trim()
             );
+            
+            // Clear input fields after updating course
+            courseNameField.setText("");
+            courseCodeField.setText("");
+            instructorField.setText("");
+            creditsField.setText("");
+            
+            // Refresh UI to show updated course information
+            refreshAll();
         }
     }
     
@@ -1129,6 +1139,12 @@ public class PlannerView extends AbstractView {
         if (selected != null && getController() instanceof PlannerController) {
             PlannerController controller = (PlannerController) getController();
             controller.removeCourse(selected.getId());
+            
+            // Clear input fields after removing course
+            courseNameField.setText("");
+            courseCodeField.setText("");
+            instructorField.setText("");
+            creditsField.setText("");
         }
     }
     
@@ -1144,6 +1160,12 @@ public class PlannerView extends AbstractView {
                     ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null,
                 taskFormAccentHex
             );
+            
+            // Clear input fields after adding task
+            taskTitleField.setText("");
+            taskDescriptionArea.setText("");
+            taskPriorityCombo.setSelectedIndex(0);
+            setSpinnerToLocalDate(taskDateSpinner, LocalDate.now());
         }
     }
     
@@ -1159,16 +1181,16 @@ public class PlannerView extends AbstractView {
                 (Task.Priority) taskPriorityCombo.getSelectedItem(),
                 taskCourseCombo.getSelectedIndex() > 0 ? 
                     ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getId() : null,
-                taskFormAccentHex
+                taskCourseCombo.getSelectedIndex() > 0 ? 
+                    ((PlannerModel) getModel()).getCourses().get(taskCourseCombo.getSelectedIndex() - 1).getCode() : null
             );
-        }
-    }
-    
-    private void onRemoveTask() {
-        Task selected = taskList.getSelectedValue();
-        if (selected != null && getController() instanceof PlannerController) {
-            PlannerController controller = (PlannerController) getController();
-            controller.removeTask(selected.getId());
+            
+            // Clear input fields after updating task
+            taskTitleField.setText("");
+            taskDescriptionArea.setText("");
+            taskPriorityCombo.setSelectedIndex(0);
+            setSpinnerToLocalDate(taskDateSpinner, LocalDate.now());
+            taskCourseCombo.setSelectedIndex(0);
         }
     }
     
@@ -1179,6 +1201,22 @@ public class PlannerView extends AbstractView {
             controller.toggleTaskCompletion(selected.getId());
         }
     }
+    
+    private void onRemoveTask() {
+        Task selected = taskList.getSelectedValue();
+        if (selected != null && getController() instanceof PlannerController) {
+            PlannerController controller = (PlannerController) getController();
+            controller.removeTask(selected.getId());
+            
+            // Clear input fields after removing task
+            taskTitleField.setText("");
+            taskDescriptionArea.setText("");
+            taskPriorityCombo.setSelectedIndex(0);
+            setSpinnerToLocalDate(taskDateSpinner, LocalDate.now());
+            taskCourseCombo.setSelectedIndex(0);
+        }
+    }
+    
     
     private void onCourseSelected() {
         Course selected = courseList.getSelectedValue();
@@ -1564,15 +1602,24 @@ public class PlannerView extends AbstractView {
      */
     private void onLogout() {
         try {
+            // Clear all input fields first
+            clearAllInputFields();
+            clearStudentForm();
+            
             // Save profile data before logging out
             if (getController() instanceof PlannerController) {
                 PlannerController controller = (PlannerController) getController();
                 controller.logout();
             }
             
-            // Refresh all UI components
-            refreshAll();
-            clearStudentForm();
+            // Force a complete UI refresh after logout
+            SwingUtilities.invokeLater(() -> {
+                refreshAll();
+                // Additional refresh to ensure UI consistency
+                Timer timer = new Timer(100, e -> refreshAll());
+                timer.setRepeats(false);
+                timer.start();
+            });
             
             showInfo("Logged out successfully. You can create a new profile or import existing data.");
         } catch (Exception e) {
@@ -1635,6 +1682,21 @@ public class PlannerView extends AbstractView {
     /**
      * Clears the student form fields.
      */
+    private void clearAllInputFields() {
+        // Clear task input fields
+        taskTitleField.setText("");
+        taskDescriptionArea.setText("");
+        taskPriorityCombo.setSelectedIndex(0);
+        setSpinnerToLocalDate(taskDateSpinner, LocalDate.now());
+        taskCourseCombo.setSelectedIndex(0);
+        
+        // Clear course input fields
+        courseNameField.setText("");
+        courseCodeField.setText("");
+        instructorField.setText("");
+        creditsField.setText("");
+    }
+    
     private void clearStudentForm() {
         firstNameField.setText("");
         lastNameField.setText("");
@@ -1694,6 +1756,17 @@ public class PlannerView extends AbstractView {
             currentDefault = "Tasks"; // Default fallback
         }
         
+        // Find the index of current default, or use 0 if not found
+        int defaultIndex = 0;
+        if (currentDefault != null) {
+            for (int i = 0; i < options.length; i++) {
+                if (options[i].equals(currentDefault)) {
+                    defaultIndex = i;
+                    break;
+                }
+            }
+        }
+        
         String selected = (String) JOptionPane.showInputDialog(
             frame,
             "Select Default Tab:",
@@ -1701,7 +1774,7 @@ public class PlannerView extends AbstractView {
             JOptionPane.QUESTION_MESSAGE,
             null,
             options,
-            options[0]
+            options[defaultIndex]
         );
         
         if (selected != null) {
