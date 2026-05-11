@@ -358,16 +358,25 @@ public class PlannerController extends AbstractController {
         Student currentStudent = model.getCurrentStudent();
         if (currentStudent != null) {
             planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+            System.out.println("DEBUG: Logout - model has " + model.getCourses().size() + " courses before save");
             // Save all data to the current profile before logging out
             repository.savePlannerData(model);
-            // Clear profile data from repository
-            repository.clearProfileData(currentStudent);
+            System.out.println("DEBUG: Logout - saved planner data");
+            
+            // Small delay to ensure data is fully written before clearing model
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            
             // Clear model data
             model.clearAll();
             // Set current student to null
             model.setCurrentStudent(null);
-            // Save account state as logged out and clear current profile
-            repository.saveAccountState(false, null);
+            // Save account state as logged out but keep current profile for easy login
+            repository.saveAccountState(false, currentStudent);
+            System.out.println("DEBUG: Logout - completed");
         }
     }
     

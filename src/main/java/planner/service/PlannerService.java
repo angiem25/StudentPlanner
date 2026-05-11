@@ -71,6 +71,16 @@ public class PlannerService {
         
         Course course = new Course(name, code, instructor, credits);
         model.addCourse(course);
+        
+        // Save data to the logged in profile immediately
+        try {
+            planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+            repository.savePlannerData(model);
+        } catch (IOException e) {
+            // Log error but don't fail the operation
+            System.err.println("Warning: Failed to save course data: " + e.getMessage());
+        }
+        
         return course;
     }
     
@@ -93,6 +103,15 @@ public class PlannerService {
             course.setInstructor(instructor);
             course.setCredits(credits);
             model.updateCourse(course);
+            
+            // Save data to the logged in profile immediately
+            try {
+                planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+                repository.savePlannerData(model);
+            } catch (IOException e) {
+                // Log error but don't fail the operation
+                System.err.println("Warning: Failed to save course data: " + e.getMessage());
+            }
         } else {
             throw new IllegalArgumentException("Course not found: " + courseId);
         }
@@ -102,6 +121,15 @@ public class PlannerService {
         Optional<Course> courseOpt = model.getCourseById(courseId);
         if (courseOpt.isPresent()) {
             model.removeCourse(courseOpt.get());
+            
+            // Save data to the logged in profile immediately
+            try {
+                planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+                repository.savePlannerData(model);
+            } catch (IOException e) {
+                // Log error but don't fail the operation
+                System.err.println("Warning: Failed to save course data: " + e.getMessage());
+            }
         } else {
             throw new IllegalArgumentException("Course not found: " + courseId);
         }
@@ -123,6 +151,16 @@ public class PlannerService {
         task.setCourseId(courseId);
         task.setAccentColorHex(TaskPalette.canonicalHex(accentColorHex));
         model.addTask(task);
+        
+        // Save data to the logged in profile immediately
+        try {
+            planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+            repository.savePlannerData(model);
+        } catch (IOException e) {
+            // Log error but don't fail the operation
+            System.err.println("Warning: Failed to save task data: " + e.getMessage());
+        }
+        
         return task;
     }
     
@@ -154,6 +192,15 @@ public class PlannerService {
             task.setCourseId(courseId);
             task.setAccentColorHex(TaskPalette.canonicalHex(accentColorHex));
             model.updateTask(task);
+            
+            // Save data to the logged in profile immediately
+            try {
+                planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+                repository.savePlannerData(model);
+            } catch (IOException e) {
+                // Log error but don't fail the operation
+                System.err.println("Warning: Failed to save task data: " + e.getMessage());
+            }
         } else {
             throw new IllegalArgumentException("Task not found: " + taskId);
         }
@@ -163,6 +210,15 @@ public class PlannerService {
         Optional<Task> taskOpt = model.getTaskById(taskId);
         if (taskOpt.isPresent()) {
             model.removeTask(taskOpt.get());
+            
+            // Save data to the logged in profile immediately
+            try {
+                planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
+                repository.savePlannerData(model);
+            } catch (IOException e) {
+                // Log error but don't fail the operation
+                System.err.println("Warning: Failed to save task data: " + e.getMessage());
+            }
         } else {
             throw new IllegalArgumentException("Task not found: " + taskId);
         }

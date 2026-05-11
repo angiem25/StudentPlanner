@@ -64,26 +64,40 @@ public class PlannerRepository {
         
         // Try to load current profile from preferences
         String currentProfileDisplayName = loadCurrentProfile();
+        System.out.println("DEBUG: Current profile from preferences: " + currentProfileDisplayName);
         Student student = null;
         
         if (currentProfileDisplayName != null) {
             // Load the specific profile
+            System.out.println("DEBUG: Loading profile: " + currentProfileDisplayName);
             student = loadProfile(currentProfileDisplayName);
         }
         
         if (student != null) {
             model.setCurrentStudent(student);
+            System.out.println("DEBUG: Student set in model: " + student.getFirstName() + " " + student.getLastName());
             
             // Load profile-specific data for logged in student
             String profilePrefix = getProfilePrefix(student);
+            System.out.println("DEBUG: Loading courses from prefix: " + profilePrefix);
             List<Course> courses = loadCourses(profilePrefix);
+            System.out.println("DEBUG: Loaded " + courses.size() + " courses");
+            // Clear existing courses before adding new ones to prevent duplicates
+            model.getCourses().clear();
             courses.forEach(model::addCourse);
+            System.out.println("DEBUG: Added " + courses.size() + " courses to model");
             
+            System.out.println("DEBUG: Loading tasks from prefix: " + profilePrefix);
             List<Task> tasks = loadTasks(profilePrefix);
+            System.out.println("DEBUG: Loaded " + tasks.size() + " tasks");
             tasks.forEach(model::addTask);
+            System.out.println("DEBUG: Added " + tasks.size() + " tasks to model");
             
+            System.out.println("DEBUG: Loading events from prefix: " + profilePrefix);
             List<Event> events = loadEvents(profilePrefix);
+            System.out.println("DEBUG: Loaded " + events.size() + " events");
             events.forEach(model::addEvent);
+            System.out.println("DEBUG: Added " + events.size() + " events to model");
         } else {
             // Load global data when no student is logged in
             List<Course> courses = loadCourses(null);
@@ -176,6 +190,7 @@ public class PlannerRepository {
      * @throws IOException If an I/O error occurs
      */
     private void saveCourses(List<Course> courses, String profilePrefix) throws IOException {
+        System.out.println("DEBUG: saveCourses called with " + courses.size() + " courses, profilePrefix: " + profilePrefix);
         Path coursesFile;
         if (profilePrefix != null) {
             // Save to profile-specific file
@@ -206,6 +221,7 @@ public class PlannerRepository {
      * @throws IOException If an I/O error occurs
      */
     private List<Course> loadCourses(String profilePrefix) throws IOException {
+        System.out.println("DEBUG: loadCourses called with profilePrefix: " + profilePrefix);
         List<Course> courses = new ArrayList<>();
         Path coursesFile;
         if (profilePrefix != null) {
@@ -217,16 +233,26 @@ public class PlannerRepository {
             coursesFile = Paths.get(DATA_DIR, COURSES_FILE);
         }
         
+        System.out.println("DEBUG: Loading courses from file: " + coursesFile);
+        System.out.println("DEBUG: File exists: " + Files.exists(coursesFile));
         if (!Files.exists(coursesFile)) {
+            System.out.println("DEBUG: File does not exist, returning empty list");
             return courses;
         }
         
         try (BufferedReader reader = new BufferedReader(new FileReader(coursesFile.toFile()))) {
             String line;
+            int lineNumber = 0;
             while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty()) continue;
+                lineNumber++;
+                System.out.println("DEBUG: Reading line " + lineNumber + ": '" + line + "'");
+                if (line.trim().isEmpty()) {
+                    System.out.println("DEBUG: Skipping empty line " + lineNumber);
+                    continue;
+                }
                 
                 String[] parts = line.split(",", -1); // -1 to keep empty strings
+                System.out.println("DEBUG: Line " + lineNumber + " has " + parts.length + " parts");
                 if (parts.length >= 5) {
                     String id = parts[0];
                     String name = unescapeCsv(parts[1]);
@@ -236,8 +262,14 @@ public class PlannerRepository {
                     
                     Course course = new Course(name, code, instructor, credits);
                     courses.add(course);
+                    System.out.println("DEBUG: Successfully added course: " + course.getName());
+                } else {
+                    System.out.println("DEBUG: Line " + lineNumber + " has insufficient parts (" + parts.length + "), skipping");
                 }
             }
+        } catch (Exception e) {
+            System.out.println("DEBUG: Exception during course loading: " + e.getMessage());
+            e.printStackTrace();
         }
         
         return courses;
@@ -668,15 +700,19 @@ public class PlannerRepository {
     /**
      * Saves user preferences including account state and current profile.
      * @param isLoggedIn Whether user is logged into an account
-     * @param currentStudent The current student profile (can be null)
+     * @param currentStudent The currently logged in student (if any)
      * @throws IOException If an I/O error occurs
      */
     public void saveAccountState(boolean isLoggedIn, Student currentStudent) throws IOException {
-        createDataDirectory();
         Path preferencesPath = Paths.get(DATA_DIR, PREFERENCES_FILE);
+        createDataDirectory();
+        
+                
+        List<String> lines = new ArrayList<>();
+        boolean accountLineFound = false;
+        boolean profileLineFound = false;
         
         // Read existing preferences
-        List<String> lines = new ArrayList<>();
         if (Files.exists(preferencesPath)) {
             try (BufferedReader reader = Files.newBufferedReader(preferencesPath)) {
                 String line;
@@ -687,25 +723,29 @@ public class PlannerRepository {
         }
         
         try (BufferedWriter writer = Files.newBufferedWriter(preferencesPath)) {
-            boolean accountLineFound = false;
-            boolean profileLineFound = false;
-            
             // Update existing lines
             for (int i = 0; i < lines.size(); i++) {
                 String line = lines.get(i);
                 if (line.startsWith("ACCOUNT_STATE,")) {
-                    lines.set(i, "ACCOUNT_STATE," + (isLoggedIn ? "LOGGED_IN" : "LOGGED_OUT"));
+                    writer.write("ACCOUNT_STATE," + (isLoggedIn ? "LOGGED_IN" : "LOGGED_OUT"));
                     accountLineFound = true;
                 } else if (line.startsWith("CURRENT_PROFILE,")) {
                     if (isLoggedIn && currentStudent != null) {
                         String displayName = currentStudent.getFirstName() + " " + currentStudent.getLastName() + " - " + currentStudent.getMajor() + " (" + currentStudent.getAcademicYear().getDisplayName() + ")";
-                        lines.set(i, "CURRENT_PROFILE," + displayName);
+                                                writer.write("CURRENT_PROFILE," + displayName);
                     } else {
-                        lines.set(i, "CURRENT_PROFILE,");
+                        // Only clear profile if explicitly logged out, not if currentStudent is null during startup
+                        if (!isLoggedIn) {
+                            writer.write("CURRENT_PROFILE,");
+                        } else {
+                            // Keep existing profile when currentStudent is null during startup
+                            writer.write(line);
+                        }
                     }
                     profileLineFound = true;
+                } else {
+                    writer.write(line);
                 }
-                writer.write(lines.get(i));
                 writer.newLine();
             }
             
@@ -718,11 +758,12 @@ public class PlannerRepository {
             // Add current profile line if not found
             if (!profileLineFound && isLoggedIn && currentStudent != null) {
                 String displayName = currentStudent.getFirstName() + " " + currentStudent.getLastName() + " - " + currentStudent.getMajor() + " (" + currentStudent.getAcademicYear().getDisplayName() + ")";
-                writer.write("CURRENT_PROFILE," + displayName);
+                                writer.write("CURRENT_PROFILE," + displayName);
                 writer.newLine();
             }
         }
-    }
+        
+            }
     
     /**
      * Loads the current profile from preferences.

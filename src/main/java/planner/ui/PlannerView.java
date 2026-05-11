@@ -715,9 +715,16 @@ public class PlannerView extends AbstractView {
         taskPanel.add(taskFormPanel, BorderLayout.EAST);
     }
     
+    private volatile boolean isRefreshing = false;
+    
     @Override
     public void modelChanged(ModelEvent event) {
         SwingUtilities.invokeLater(() -> {
+            // Prevent duplicate refresh calls
+            if (isRefreshing) {
+                return;
+            }
+            
             if (event == null) {
                 refreshAll();
                 return;
@@ -766,20 +773,20 @@ public class PlannerView extends AbstractView {
      * Refreshes all UI components.
      */
     public void refreshAll() {
-        refreshStudentInfo();
-        refreshCourseList();
-        refreshTaskList();
-        refreshTaskCourseCombo();
-        refreshWeeklyPriorities();
-        refreshTodayTasks();
-        checkDueDateReminders();
-        updateAccountMenu();
-        refreshProfileDisplay();
+        isRefreshing = true;
+        try {
+            refreshStudentInfo();
+            refreshCourseList();
+            refreshTaskList();
+            refreshTaskCourseCombo();
+            refreshWeeklyPriorities();
+            refreshTodayTasks();
+            refreshProfileDisplay();
+            updateAccountMenu();
+        } finally {
+            isRefreshing = false;
+        }
     }
-    
-    /**
-     * Refreshes the student information display.
-     */
     private void refreshStudentInfo() {
         PlannerModel model = (PlannerModel) getModel();
         Student student = model.getCurrentStudent();
@@ -796,11 +803,20 @@ public class PlannerView extends AbstractView {
      * Refreshes the course list.
      */
     private void refreshCourseList() {
+        // Prevent duplicate refresh calls
+        if (isRefreshing) {
+            return;
+        }
+        
         PlannerModel model = (PlannerModel) getModel();
+        System.out.println("DEBUG: refreshCourseList() called");
+        System.out.println("DEBUG: Model has " + model.getCourses().size() + " courses");
         courseListModel.clear();
         for (Course course : model.getCourses()) {
+            System.out.println("DEBUG: Adding course: " + course.getName() + " - " + course.getCode());
             courseListModel.addElement(course);
         }
+        System.out.println("DEBUG: CourseListModel now has " + courseListModel.getSize() + " items");
     }
     
     /**
