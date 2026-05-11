@@ -10,6 +10,8 @@ import planner.ui.PlannerView;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 /**
  * Main entry point for the Student Planner application.
@@ -52,8 +54,14 @@ public class Main {
                 LOGGER.info("Planner data loaded successfully");
                 System.out.println("DEBUG: Current student after load: " + (model.getCurrentStudent() != null ? model.getCurrentStudent().getFirstName() + " " + model.getCurrentStudent().getLastName() : "null"));
             } else {
-                // If user was logged out, start with clean state
+                // If user was logged out, show profile selection dialog
                 LOGGER.info("Planner data loaded successfully (clean state)");
+                SwingUtilities.invokeLater(() -> {
+                    // Show profile selection dialog after a short delay to ensure UI is ready
+                    Timer timer = new Timer(500, e -> view.showProfileSelectionDialog());
+                    timer.setRepeats(false);
+                    timer.start();
+                });
             }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Could not load planner data", e);

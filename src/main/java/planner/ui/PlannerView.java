@@ -1480,7 +1480,7 @@ public class PlannerView extends AbstractView {
     /**
      * Shows the profile selection dialog.
      */
-    private void showProfileSelectionDialog() {
+    public void showProfileSelectionDialog() {
         JDialog selectionDialog = new JDialog(frame, "Select Profile", true);
         selectionDialog.setLayout(new BorderLayout());
         selectionDialog.setSize(450, 350);
