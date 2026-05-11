@@ -77,7 +77,7 @@ public class PlannerView extends AbstractView {
     private JTextField courseNameField;
     private JTextField courseCodeField;
     private JTextField instructorField;
-    private JTextField creditsField;
+    private JComboBox<String> creditsField;
     private JButton addCourseButton;
     private JButton updateCourseButton;
     private JButton removeCourseButton;
@@ -494,21 +494,22 @@ public class PlannerView extends AbstractView {
         courseFormPanel.add(courseNameField, gbc);
         
         gbc.gridx = 0; gbc.gridy = 1;
-        courseFormPanel.add(new JLabel("Code:"), gbc);
+        courseFormPanel.add(new JLabel("Course Code:"), gbc);
         gbc.gridx = 1;
-        courseCodeField = new JTextField(20);
+        courseCodeField = new JTextField("N/A", 20);
         courseFormPanel.add(courseCodeField, gbc);
         
         gbc.gridx = 0; gbc.gridy = 2;
         courseFormPanel.add(new JLabel("Instructor:"), gbc);
         gbc.gridx = 1;
-        instructorField = new JTextField(20);
+        instructorField = new JTextField("N/A", 20);
         courseFormPanel.add(instructorField, gbc);
         
         gbc.gridx = 0; gbc.gridy = 3;
         courseFormPanel.add(new JLabel("Credits:"), gbc);
         gbc.gridx = 1;
-        creditsField = new JTextField(20);
+        creditsField = new JComboBox<>(new String[]{" - ", "1", "2", "3", "4"});
+        creditsField.setSelectedIndex(0); // Default to " - "
         courseFormPanel.add(creditsField, gbc);
         
         // Buttons
@@ -1100,14 +1101,14 @@ public class PlannerView extends AbstractView {
                 courseNameField.getText().trim(),
                 courseCodeField.getText().trim(),
                 instructorField.getText().trim(),
-                creditsField.getText().trim()
+                (String) creditsField.getSelectedItem()
             );
             
             // Clear input fields after adding course
             courseNameField.setText("");
-            courseCodeField.setText("");
-            instructorField.setText("");
-            creditsField.setText("");
+            courseCodeField.setText("N/A");
+            instructorField.setText("N/A");
+            creditsField.setSelectedIndex(0);
         }
     }
     
@@ -1120,14 +1121,14 @@ public class PlannerView extends AbstractView {
                 courseNameField.getText().trim(),
                 courseCodeField.getText().trim(),
                 instructorField.getText().trim(),
-                creditsField.getText().trim()
+                (String) creditsField.getSelectedItem()
             );
             
             // Clear input fields after updating course
             courseNameField.setText("");
-            courseCodeField.setText("");
-            instructorField.setText("");
-            creditsField.setText("");
+            courseCodeField.setText("N/A");
+            instructorField.setText("N/A");
+            creditsField.setSelectedIndex(0);
             
             // Refresh UI to show updated course information
             refreshAll();
@@ -1142,9 +1143,9 @@ public class PlannerView extends AbstractView {
             
             // Clear input fields after removing course
             courseNameField.setText("");
-            courseCodeField.setText("");
-            instructorField.setText("");
-            creditsField.setText("");
+            courseCodeField.setText("N/A");
+            instructorField.setText("N/A");
+            creditsField.setSelectedIndex(0);
         }
     }
     
@@ -1224,7 +1225,7 @@ public class PlannerView extends AbstractView {
             courseNameField.setText(selected.getName());
             courseCodeField.setText(selected.getCode());
             instructorField.setText(selected.getInstructor());
-            creditsField.setText(String.valueOf(selected.getCredits()));
+            creditsField.setSelectedItem(String.valueOf(selected.getCredits()));
         }
     }
     
@@ -1692,9 +1693,9 @@ public class PlannerView extends AbstractView {
         
         // Clear course input fields
         courseNameField.setText("");
-        courseCodeField.setText("");
-        instructorField.setText("");
-        creditsField.setText("");
+        courseCodeField.setText("N/A");
+        instructorField.setText("N/A");
+        creditsField.setSelectedIndex(0);
     }
     
     private void clearStudentForm() {
