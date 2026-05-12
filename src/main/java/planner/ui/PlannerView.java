@@ -247,6 +247,30 @@ public class PlannerView extends AbstractView {
             }
         });
         viewMenu.add(darkItem);
+        viewMenu.addSeparator();
+        
+        // Tasks menu item
+        JMenuItem tasksItem = new JMenuItem("Tasks");
+        tasksItem.addActionListener(e -> {
+            tabbedPane.setSelectedIndex(1); // Switch to Tasks tab
+            taskTitleField.requestFocus(); // Focus on task title field
+        });
+        viewMenu.add(tasksItem);
+        
+        // Add courses menu item
+        JMenuItem coursesItem = new JMenuItem("Courses");
+        coursesItem.addActionListener(e -> {
+            tabbedPane.setSelectedIndex(0); // Switch to Courses tab
+        });
+        viewMenu.add(coursesItem);
+        
+        // Add calendar menu item
+        JMenuItem calendarItem = new JMenuItem("Calendar");
+        calendarItem.addActionListener(e -> {
+            tabbedPane.setSelectedIndex(4); // Switch to Calendar tab
+        });
+        viewMenu.add(calendarItem);
+        
         menuBar.add(viewMenu);
         
         // Account menu
@@ -263,6 +287,13 @@ public class PlannerView extends AbstractView {
         accountMenu.add(checkCoursesMenuItem);
         
         accountMenu.addSeparator(); // Add separator after Profile/Login
+        
+        // Add Check Courses option under Profile
+        JMenuItem checkCoursesItem = new JMenuItem("Check Courses");
+        checkCoursesItem.addActionListener(e -> {
+            tabbedPane.setSelectedIndex(0); // Switch to Courses tab
+        });
+        accountMenu.add(checkCoursesItem);
         
         accountMenu.addSeparator(); // Add separator before Logout
         
@@ -626,11 +657,23 @@ public class PlannerView extends AbstractView {
         gbc.gridx = 0; gbc.gridy = 2;
         taskFormPanel.add(new JLabel("Due date:"), gbc);
         gbc.gridx = 1;
+        
+        // Create panel for date spinner and calendar button
+        JPanel datePanel = new JPanel(new BorderLayout());
         Calendar today = Calendar.getInstance();
         SpinnerDateModel taskDateModel = new SpinnerDateModel(today.getTime(), null, null, Calendar.DAY_OF_MONTH);
         taskDateSpinner = new JSpinner(taskDateModel);
         taskDateSpinner.setEditor(new JSpinner.DateEditor(taskDateSpinner, "MMMM d, yyyy"));
-        taskFormPanel.add(taskDateSpinner, gbc);
+        datePanel.add(taskDateSpinner, BorderLayout.CENTER);
+        
+        // Add calendar button
+        JButton calendarButton = new JButton("📅");
+        calendarButton.setToolTipText("Select date from calendar");
+        calendarButton.setPreferredSize(new Dimension(30, 25));
+        calendarButton.addActionListener(e -> showCalendarDialog());
+        datePanel.add(calendarButton, BorderLayout.EAST);
+        
+        taskFormPanel.add(datePanel, gbc);
 
         gbc.gridx = 0; gbc.gridy = 3;
         taskFormPanel.add(new JLabel("Due time:"), gbc);
@@ -1712,6 +1755,88 @@ public class PlannerView extends AbstractView {
         courseCodeField.setText("N/A");
         instructorField.setText("N/A");
         creditsField.setSelectedIndex(0);
+    }
+    
+    /**
+     * Shows a calendar dialog for selecting due date.
+     */
+    private void showCalendarDialog() {
+        // Get current date from spinner
+        LocalDate currentDate = localDateFromSpinner(taskDateSpinner);
+        
+        // Create calendar dialog
+        JDialog calendarDialog = new JDialog(frame, "Select Due Date", true);
+        calendarDialog.setLayout(new BorderLayout());
+        calendarDialog.setSize(350, 300);
+        calendarDialog.setLocationRelativeTo(frame);
+        
+        // Create month/year panel
+        JPanel monthYearPanel = new JPanel(new FlowLayout());
+        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        JComboBox<String> monthCombo = new JComboBox<>(months);
+        monthCombo.setSelectedIndex(currentDate.getMonthValue() - 1);
+        
+        SpinnerNumberModel yearModel = new SpinnerNumberModel(currentDate.getYear(), 2020, 2100, 1);
+        JSpinner yearSpinner = new JSpinner(yearModel);
+        
+        // Set custom formatter to remove comma from year display
+        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(yearSpinner);
+        editor.getFormat().setGroupingUsed(false);
+        yearSpinner.setEditor(editor);
+        
+        monthYearPanel.add(new JLabel("Month:"));
+        monthYearPanel.add(monthCombo);
+        monthYearPanel.add(new JLabel("Year:"));
+        monthYearPanel.add(yearSpinner);
+        
+        // Create day panel
+        JPanel dayPanel = new JPanel(new GridLayout(0, 7, 2, 2));
+        String[] dayHeaders = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+        for (String header : dayHeaders) {
+            dayPanel.add(new JLabel(header, SwingConstants.CENTER));
+        }
+        
+        // Add day buttons
+        LocalDate firstOfMonth = currentDate.withDayOfMonth(1);
+        int firstDayOfWeek = firstOfMonth.getDayOfWeek().getValue() % 7;
+        int daysInMonth = currentDate.lengthOfMonth();
+        
+        // Add empty cells for days before month starts
+        for (int i = 0; i < firstDayOfWeek; i++) {
+            dayPanel.add(new JLabel(""));
+        }
+        
+        // Add day buttons
+        for (int day = 1; day <= daysInMonth; day++) {
+            JButton dayButton = new JButton(String.valueOf(day));
+            final int selectedDay = day;
+            dayButton.addActionListener(e -> {
+                LocalDate selectedDate = LocalDate.of(yearModel.getNumber().intValue(), 
+                    monthCombo.getSelectedIndex() + 1, selectedDay);
+                setSpinnerToLocalDate(taskDateSpinner, selectedDate);
+                calendarDialog.dispose();
+            });
+            
+            // Highlight current date
+            if (day == currentDate.getDayOfMonth()) {
+                dayButton.setBackground(Color.LIGHT_GRAY);
+            }
+            
+            dayPanel.add(dayButton);
+        }
+        
+        // Add buttons
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(e -> calendarDialog.dispose());
+        buttonPanel.add(cancelButton);
+        
+        calendarDialog.add(monthYearPanel, BorderLayout.NORTH);
+        calendarDialog.add(dayPanel, BorderLayout.CENTER);
+        calendarDialog.add(buttonPanel, BorderLayout.SOUTH);
+        
+        calendarDialog.setVisible(true);
     }
     
     private void clearStudentForm() {
