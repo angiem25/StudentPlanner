@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.model.PlannerModelTest" tests="28" skipped="0" failures="0" errors="0" timestamp="2026-05-11T02:47:18" hostname="Mac.lan" time="0.02">
+<testsuite name="planner.model.PlannerModelTest" tests="28" skipped="0" failures="0" errors="0" timestamp="2026-05-12T07:17:29" hostname="Mac.lan" time="0.018">
   <properties/>
-  <testcase name="Should not add duplicate course" classname="planner.model.PlannerModelTest" time="0.001"/>
-  <testcase name="Should get events in date range" classname="planner.model.PlannerModelTest" time="0.001"/>
+  <testcase name="Should not add duplicate course" classname="planner.model.PlannerModelTest" time="0.0"/>
+  <testcase name="Should get events in date range" classname="planner.model.PlannerModelTest" time="0.002"/>
   <testcase name="Should find course by code (case insensitive)" classname="planner.model.PlannerModelTest" time="0.001"/>
   <testcase name="Should return defensive copy of tasks list" classname="planner.model.PlannerModelTest" time="0.0"/>
   <testcase name="Should add task successfully" classname="planner.model.PlannerModelTest" time="0.0"/>
-  <testcase name="Should update event" classname="planner.model.PlannerModelTest" time="0.0"/>
+  <testcase name="Should update event" classname="planner.model.PlannerModelTest" time="0.001"/>
   <testcase name="Should mark task as incomplete" classname="planner.model.PlannerModelTest" time="0.0"/>
   <testcase name="Should get completed tasks" classname="planner.model.PlannerModelTest" time="0.001"/>
-  <testcase name="Should update task" classname="planner.model.PlannerModelTest" time="0.001"/>
+  <testcase name="Should update task" classname="planner.model.PlannerModelTest" time="0.0"/>
   <testcase name="Should remove event" classname="planner.model.PlannerModelTest" time="0.0"/>
-  <testcase name="Should not add null course" classname="planner.model.PlannerModelTest" time="0.001"/>
-  <testcase name="Should add event successfully" classname="planner.model.PlannerModelTest" time="0.0"/>
-  <testcase name="Should update existing course" classname="planner.model.PlannerModelTest" time="0.0"/>
+  <testcase name="Should not add null course" classname="planner.model.PlannerModelTest" time="0.0"/>
+  <testcase name="Should add event successfully" classname="planner.model.PlannerModelTest" time="0.001"/>
+  <testcase name="Should update existing course" classname="planner.model.PlannerModelTest" time="0.001"/>
   <testcase name="Should get events for specific date" classname="planner.model.PlannerModelTest" time="0.001"/>
   <testcase name="Should remove course and associated tasks" classname="planner.model.PlannerModelTest" time="0.0"/>
-  <testcase name="Should find course by ID" classname="planner.model.PlannerModelTest" time="0.0"/>
+  <testcase name="Should find course by ID" classname="planner.model.PlannerModelTest" time="0.001"/>
   <testcase name="Should not add duplicate event" classname="planner.model.PlannerModelTest" time="0.0"/>
   <testcase name="Should add course successfully" classname="planner.model.PlannerModelTest" time="0.0"/>
   <testcase name="Should remove task" classname="planner.model.PlannerModelTest" time="0.0"/>
   <testcase name="Should allow setting student to null" classname="planner.model.PlannerModelTest" time="0.001"/>
   <testcase name="Should mark task as completed" classname="planner.model.PlannerModelTest" time="0.0"/>
-  <testcase name="Should get tasks for specific course" classname="planner.model.PlannerModelTest" time="0.0"/>
-  <testcase name="Should return defensive copy of events list" classname="planner.model.PlannerModelTest" time="0.001"/>
+  <testcase name="Should get tasks for specific course" classname="planner.model.PlannerModelTest" time="0.001"/>
+  <testcase name="Should return defensive copy of events list" classname="planner.model.PlannerModelTest" time="0.0"/>
   <testcase name="Should clear all data" classname="planner.model.PlannerModelTest" time="0.0"/>
-  <testcase name="Should return defensive copy of courses list" classname="planner.model.PlannerModelTest" time="0.001"/>
-  <testcase name="Should set current student and fire notification" classname="planner.model.PlannerModelTest" time="0.0"/>
-  <testcase name="Should get incomplete tasks" classname="planner.model.PlannerModelTest" time="0.001"/>
+  <testcase name="Should return defensive copy of courses list" classname="planner.model.PlannerModelTest" time="0.0"/>
+  <testcase name="Should set current student and fire notification" classname="planner.model.PlannerModelTest" time="0.001"/>
+  <testcase name="Should get incomplete tasks" classname="planner.model.PlannerModelTest" time="0.0"/>
   <testcase name="Should not add duplicate task" classname="planner.model.PlannerModelTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

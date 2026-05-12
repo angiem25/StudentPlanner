@@ -71,6 +71,21 @@ public class PlannerRepository {
             // Load the specific profile
             System.out.println("DEBUG: Loading profile: " + currentProfileDisplayName);
             student = loadProfile(currentProfileDisplayName);
+        } else {
+            // No profile selected, try to load the first available profile
+            System.out.println("DEBUG: No profile selected, loading first available profile");
+            try {
+                List<String> profileNames = loadProfileNames();
+                if (!profileNames.isEmpty()) {
+                    String firstProfile = profileNames.get(0);
+                    System.out.println("DEBUG: Loading first available profile: " + firstProfile);
+                    student = loadProfile(firstProfile);
+                    // Update preferences to remember this profile
+                    saveAccountState(true, student);
+                }
+            } catch (IOException e) {
+                System.out.println("DEBUG: Failed to load profile names: " + e.getMessage());
+            }
         }
         
         if (student != null) {
@@ -551,6 +566,13 @@ public class PlannerRepository {
         
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(profilesDir, "*.csv")) {
             for (Path profileFile : stream) {
+                String fileName = profileFile.getFileName().toString();
+                
+                // Skip course, task, and event files - only look for student profile files
+                if (fileName.contains("_courses") || fileName.contains("_tasks") || fileName.contains("_events")) {
+                    continue;
+                }
+                
                 try (BufferedReader reader = Files.newBufferedReader(profileFile)) {
                     String line = reader.readLine(); // Skip STUDENT header
                     if (line != null && line.equals("STUDENT")) {
@@ -587,6 +609,13 @@ public class PlannerRepository {
         
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(profilesDir, "*.csv")) {
             for (Path profileFile : stream) {
+                String fileName = profileFile.getFileName().toString();
+                
+                // Skip course, task, and event files - only look for student profile files
+                if (fileName.contains("_courses") || fileName.contains("_tasks") || fileName.contains("_events")) {
+                    continue;
+                }
+                
                 try (BufferedReader reader = Files.newBufferedReader(profileFile)) {
                     String line = reader.readLine(); // Skip STUDENT header
                     if (line != null && line.equals("STUDENT")) {

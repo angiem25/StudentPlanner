@@ -256,6 +256,12 @@ public class PlannerView extends AbstractView {
         profileLoginMenuItem = new JMenuItem("Login"); // Default to Login
         profileLoginMenuItem.addActionListener(e -> onProfileLoginAction());
         accountMenu.add(profileLoginMenuItem);
+        
+        // Check Courses menu item
+        JMenuItem checkCoursesMenuItem = new JMenuItem("Check Courses");
+        checkCoursesMenuItem.addActionListener(e -> onCheckCourses());
+        accountMenu.add(checkCoursesMenuItem);
+        
         accountMenu.addSeparator(); // Add separator after Profile/Login
         
         accountMenu.addSeparator(); // Add separator before Logout
@@ -1423,6 +1429,13 @@ public class PlannerView extends AbstractView {
     }
 
         
+    /**
+     * Handles the Check Courses action - navigates to the Courses tab.
+     */
+    private void onCheckCourses() {
+        tabbedPane.setSelectedIndex(0); // Courses tab is at index 0
+    }
+
     /**
      * Shows the student profile dialog (read-only view).
      */

@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.ui.AccountMenuTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-11T02:47:18" hostname="Mac.lan" time="1.784">
+<testsuite name="planner.ui.AccountMenuTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T07:17:29" hostname="Mac.lan" time="1.033">
   <properties/>
-  <testcase name="testProfileSwitchClearsData()" classname="planner.ui.AccountMenuTest" time="0.822"/>
-  <testcase name="testExportData()" classname="planner.ui.AccountMenuTest" time="0.229"/>
-  <testcase name="testLogoutClearsAllData()" classname="planner.ui.AccountMenuTest" time="0.254"/>
-  <testcase name="testImportData()" classname="planner.ui.AccountMenuTest" time="0.343"/>
-  <testcase name="testAccountMenuComponents()" classname="planner.ui.AccountMenuTest" time="0.133"/>
-  <system-out><![CDATA[DEBUG: saveCourses called with 0 courses, profilePrefix: S12345_John_Doe
+  <testcase name="testProfileSwitchClearsData()" classname="planner.ui.AccountMenuTest" time="0.13"/>
+  <testcase name="testExportData()" classname="planner.ui.AccountMenuTest" time="0.248"/>
+  <testcase name="testLogoutClearsAllData()" classname="planner.ui.AccountMenuTest" time="0.1"/>
+  <testcase name="testImportData()" classname="planner.ui.AccountMenuTest" time="0.289"/>
+  <testcase name="testAccountMenuComponents()" classname="planner.ui.AccountMenuTest" time="0.263"/>
+  <system-out><![CDATA[DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: saveCourses called with 0 courses, profilePrefix: S12345_John_Doe
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
 DEBUG: Current profile from preferences: null
-DEBUG: loadCourses called with profilePrefix: null
-DEBUG: Loading courses from file: planner_data/courses.csv
-DEBUG: File exists: true
+DEBUG: No student logged in - keeping lists empty
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
 DEBUG: saveCourses called with 0 courses, profilePrefix: null
 DEBUG: Current profile from preferences: null
-DEBUG: loadCourses called with profilePrefix: null
-DEBUG: Loading courses from file: planner_data/courses.csv
-DEBUG: File exists: true
+DEBUG: No student logged in - keeping lists empty
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

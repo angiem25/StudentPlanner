@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.model.CourseTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-05-11T02:47:18" hostname="Mac.lan" time="0.02">
+<testsuite name="planner.model.CourseTest" tests="11" skipped="0" failures="0" errors="0" timestamp="2026-05-12T07:17:29" hostname="Mac.lan" time="0.012">
   <properties/>
-  <testcase name="Should not equal different type" classname="planner.model.CourseTest" time="0.01"/>
-  <testcase name="Should handle toString correctly" classname="planner.model.CourseTest" time="0.002"/>
+  <testcase name="Should not equal different type" classname="planner.model.CourseTest" time="0.001"/>
+  <testcase name="Should handle toString correctly" classname="planner.model.CourseTest" time="0.004"/>
   <testcase name="Should equal itself" classname="planner.model.CourseTest" time="0.001"/>
   <testcase name="Should create course with valid data" classname="planner.model.CourseTest" time="0.001"/>
-  <testcase name="Should generate unique IDs for different courses" classname="planner.model.CourseTest" time="0.0"/>
+  <testcase name="Should generate unique IDs for different courses" classname="planner.model.CourseTest" time="0.001"/>
   <testcase name="Should implement hashCode based on ID" classname="planner.model.CourseTest" time="0.0"/>
-  <testcase name="Should create course with default credits" classname="planner.model.CourseTest" time="0.0"/>
-  <testcase name="Should not equal null" classname="planner.model.CourseTest" time="0.001"/>
+  <testcase name="Should create course with default credits" classname="planner.model.CourseTest" time="0.001"/>
+  <testcase name="Should not equal null" classname="planner.model.CourseTest" time="0.0"/>
   <testcase name="Should implement equals based on ID" classname="planner.model.CourseTest" time="0.0"/>
-  <testcase name="Should handle course with ID constructor" classname="planner.model.CourseTest" time="0.0"/>
-  <testcase name="Should update course information" classname="planner.model.CourseTest" time="0.001"/>
+  <testcase name="Should handle course with ID constructor" classname="planner.model.CourseTest" time="0.001"/>
+  <testcase name="Should update course information" classname="planner.model.CourseTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

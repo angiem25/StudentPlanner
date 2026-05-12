@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.service.PlannerServiceTest" tests="26" skipped="0" failures="1" errors="0" timestamp="2026-05-11T02:47:18" hostname="Mac.lan" time="0.041">
+<testsuite name="planner.service.PlannerServiceTest" tests="26" skipped="0" failures="1" errors="0" timestamp="2026-05-12T07:17:27" hostname="Mac.lan" time="0.072">
   <properties/>
-  <testcase name="Should get upcoming tasks within date range" classname="planner.service.PlannerServiceTest" time="0.006"/>
-  <testcase name="Should reject year outside valid range" classname="planner.service.PlannerServiceTest" time="0.001"/>
+  <testcase name="Should get upcoming tasks within date range" classname="planner.service.PlannerServiceTest" time="0.022"/>
+  <testcase name="Should reject year outside valid range" classname="planner.service.PlannerServiceTest" time="0.002"/>
   <testcase name="Should reject empty task title" classname="planner.service.PlannerServiceTest" time="0.001"/>
-  <testcase name="Should add task with valid data" classname="planner.service.PlannerServiceTest" time="0.001"/>
-  <testcase name="Should reject past due date" classname="planner.service.PlannerServiceTest" time="0.001"/>
-  <testcase name="Should update existing task" classname="planner.service.PlannerServiceTest" time="0.003"/>
-  <testcase name="Should reject null priority" classname="planner.service.PlannerServiceTest" time="0.0"/>
-  <testcase name="Should accept whitespace-only strings as empty" classname="planner.service.PlannerServiceTest" time="0.0"/>
-  <testcase name="Should get tasks by priority" classname="planner.service.PlannerServiceTest" time="0.002"/>
-  <testcase name="Should reject credits outside valid range" classname="planner.service.PlannerServiceTest" time="0.001"/>
-  <testcase name="Should update existing course" classname="planner.service.PlannerServiceTest" time="0.002"/>
+  <testcase name="Should add task with valid data" classname="planner.service.PlannerServiceTest" time="0.003"/>
+  <testcase name="Should reject past due date" classname="planner.service.PlannerServiceTest" time="0.0"/>
+  <testcase name="Should update existing task" classname="planner.service.PlannerServiceTest" time="0.005"/>
+  <testcase name="Should reject null priority" classname="planner.service.PlannerServiceTest" time="0.001"/>
+  <testcase name="Should accept whitespace-only strings as empty" classname="planner.service.PlannerServiceTest" time="0.001"/>
+  <testcase name="Should get tasks by priority" classname="planner.service.PlannerServiceTest" time="0.003"/>
+  <testcase name="Should reject credits outside valid range" classname="planner.service.PlannerServiceTest" time="0.0"/>
+  <testcase name="Should update existing course" classname="planner.service.PlannerServiceTest" time="0.001"/>
   <testcase name="Should remove course by ID" classname="planner.service.PlannerServiceTest" time="0.001"/>
   <testcase name="Should reject empty course name" classname="planner.service.PlannerServiceTest" time="0.0"/>
-  <testcase name="Should create student profile with valid data" classname="planner.service.PlannerServiceTest" time="0.005">
+  <testcase name="Should create student profile with valid data" classname="planner.service.PlannerServiceTest" time="0.008">
     <failure message="org.opentest4j.AssertionFailedError: expected: not &lt;null&gt;" type="org.opentest4j.AssertionFailedError">org.opentest4j.AssertionFailedError: expected: not &lt;null&gt;
 	at app//org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:152)
 	at app//org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
@@ -107,16 +107,16 @@
   </testcase>
   <testcase name="Should reject task with non-existent course" classname="planner.service.PlannerServiceTest" time="0.001"/>
   <testcase name="Should add course with valid data" classname="planner.service.PlannerServiceTest" time="0.001"/>
-  <testcase name="Should remove task by ID" classname="planner.service.PlannerServiceTest" time="0.002"/>
+  <testcase name="Should remove task by ID" classname="planner.service.PlannerServiceTest" time="0.003"/>
   <testcase name="Should reject duplicate course code" classname="planner.service.PlannerServiceTest" time="0.001"/>
-  <testcase name="Should get overdue tasks" classname="planner.service.PlannerServiceTest" time="0.001"/>
+  <testcase name="Should get overdue tasks" classname="planner.service.PlannerServiceTest" time="0.002"/>
   <testcase name="Should reject removing non-existent course" classname="planner.service.PlannerServiceTest" time="0.0"/>
-  <testcase name="Should reject updating with duplicate code" classname="planner.service.PlannerServiceTest" time="0.003"/>
+  <testcase name="Should reject updating with duplicate code" classname="planner.service.PlannerServiceTest" time="0.001"/>
   <testcase name="Should reject empty first name" classname="planner.service.PlannerServiceTest" time="0.0"/>
   <testcase name="Should reject null task description" classname="planner.service.PlannerServiceTest" time="0.001"/>
-  <testcase name="Should add task without course" classname="planner.service.PlannerServiceTest" time="0.001"/>
-  <testcase name="Should toggle task completion" classname="planner.service.PlannerServiceTest" time="0.002"/>
-  <testcase name="Should reject invalid email" classname="planner.service.PlannerServiceTest" time="0.0"/>
+  <testcase name="Should add task without course" classname="planner.service.PlannerServiceTest" time="0.002"/>
+  <testcase name="Should toggle task completion" classname="planner.service.PlannerServiceTest" time="0.001"/>
+  <testcase name="Should reject invalid email" classname="planner.service.PlannerServiceTest" time="0.001"/>
   <system-out><![CDATA[DEBUG: saveCourses called with 0 courses, profilePrefix: null
 DEBUG: saveCourses called with 0 courses, profilePrefix: null
 DEBUG: saveCourses called with 0 courses, profilePrefix: null

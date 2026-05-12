@@ -44,18 +44,19 @@ public class Main {
         // Load existing data if available
         PlannerRepository repository = new PlannerRepository();
         try {
-            // Load account state first to determine if user should be logged in
+            // Always load planner data to allow auto-loading of first available profile
+            System.out.println("DEBUG: Loading planner data");
+            repository.loadPlannerData(model);
+            LOGGER.info("Planner data loaded successfully");
+            System.out.println("DEBUG: Current student after load: " + (model.getCurrentStudent() != null ? model.getCurrentStudent().getFirstName() + " " + model.getCurrentStudent().getLastName() : "null"));
+            
+            // Load account state to determine if we should show profile selection
             boolean isLoggedIn = repository.loadAccountState();
             System.out.println("DEBUG: Account state loaded, isLoggedIn = " + isLoggedIn);
-                        if (isLoggedIn) {
-                // If user was logged in, load their profile data
-                System.out.println("DEBUG: Loading planner data for logged in user");
-                repository.loadPlannerData(model);
-                LOGGER.info("Planner data loaded successfully");
-                System.out.println("DEBUG: Current student after load: " + (model.getCurrentStudent() != null ? model.getCurrentStudent().getFirstName() + " " + model.getCurrentStudent().getLastName() : "null"));
-            } else {
-                // If user was logged out, show profile selection dialog
-                LOGGER.info("Planner data loaded successfully (clean state)");
+            
+            // If no student was loaded (either logged out or no profile selected), show profile selection dialog
+            if (model.getCurrentStudent() == null) {
+                LOGGER.info("No student loaded - showing profile selection dialog");
                 SwingUtilities.invokeLater(() -> {
                     // Show profile selection dialog after a short delay to ensure UI is ready
                     Timer timer = new Timer(500, e -> view.showProfileSelectionDialog());
