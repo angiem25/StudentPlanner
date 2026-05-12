@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import planner.model.*;
 import planner.service.PlannerService;
-import java.io.IOException;
+
 import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,6 +43,25 @@ class PlannerControllerTest {
         assertNotNull(controller);
         assertEquals(model, controller.getModel());
         assertEquals(view, controller.getView());
+    }
+    
+    @Test
+    void testMockPlannerViewMessageCapture() {
+        // Test that MockPlannerView properly captures messages
+        MockPlannerView mockView = (MockPlannerView) view;
+        
+        // Clear any existing messages
+        mockView.clearMessages();
+        assertNull(mockView.getLastInfoMessage());
+        assertNull(mockView.getLastErrorMessage());
+        
+        // Create a student to trigger info message
+        controller.saveStudentProfile("Test", "User", "test@example.com", 
+                                    "S12345", Student.AcademicYear.FRESHMAN, "Test Major");
+        
+        // Verify info message was captured
+        assertNotNull(mockView.getLastInfoMessage());
+        assertTrue(mockView.getLastInfoMessage().contains("successfully"));
     }
     
     @Test
@@ -106,7 +125,14 @@ class PlannerControllerTest {
         // Note: The current implementation may create a student with default year
         // This test verifies the method doesn't crash with invalid input
         Student student = model.getCurrentStudent();
-        // Student might be created with default academic year, so we just verify no exception
+        // Student might be created with default academic year, so we verify the state
+        // The actual behavior depends on validation implementation
+        if (student != null) {
+            // If student was created, verify it has the expected basic properties
+            assertEquals(firstName, student.getFirstName());
+            assertEquals(lastName, student.getLastName());
+            assertEquals(studentId, student.getStudentId());
+        }
     }
     
     @Test
@@ -126,7 +152,15 @@ class PlannerControllerTest {
         // Note: The current implementation may not validate email format strictly
         // This test verifies the method doesn't crash with invalid input
         Student student = model.getCurrentStudent();
-        // Student might be created even with invalid email, so we just verify no exception
+        // Student might be created even with invalid email, so we verify the state
+        // The actual behavior depends on validation implementation
+        if (student != null) {
+            // If student was created, verify it has the expected basic properties
+            assertEquals(firstName, student.getFirstName());
+            assertEquals(lastName, student.getLastName());
+            assertEquals(studentId, student.getStudentId());
+            // Email validation is not strict, so we don't assert on email format
+        }
     }
     
     @Test

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.ui.ProfileLoadingTest" tests="4" skipped="0" failures="0" errors="0" timestamp="2026-05-12T14:01:27" hostname="Mac.lan" time="0.039">
+  <properties/>
+  <testcase name="testLoadPeterParkerProfile()" classname="planner.ui.ProfileLoadingTest" time="0.006"/>
+  <testcase name="testLoadProfileNames()" classname="planner.ui.ProfileLoadingTest" time="0.003"/>
+  <testcase name="testLoadPaulAtreidesProfile()" classname="planner.ui.ProfileLoadingTest" time="0.003"/>
+  <testcase name="testProfileDataIntegrity()" classname="planner.ui.ProfileLoadingTest" time="0.027"/>
+  <system-out><![CDATA[DEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+DEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+DEBUG: File exists: true
+DEBUG: loadCourses called with profilePrefix: S12345_John_Doe
+DEBUG: Loading courses from file: planner_data/profiles/S12345_John_Doe_courses.csv
+DEBUG: File exists: true
+DEBUG: loadCourses called with profilePrefix: S54321_Jane_Smith
+DEBUG: Loading courses from file: planner_data/profiles/S54321_Jane_Smith_courses.csv
+DEBUG: File exists: false
+DEBUG: File does not exist, returning empty list
+DEBUG: loadCourses called with profilePrefix: S12345_Test_Student
+DEBUG: Loading courses from file: planner_data/profiles/S12345_Test_Student_courses.csv
+DEBUG: File exists: true
+DEBUG: Reading line 1: '427db0d9-17e7-4d2d-8071-c769668691c1,Test Course,TEST101,Dr. Test,3'
+DEBUG: Line 1 has 5 parts
+DEBUG: Successfully added course: Test Course
+DEBUG: loadCourses called with profilePrefix: S33333_Charlie_Brown
+DEBUG: Loading courses from file: planner_data/profiles/S33333_Charlie_Brown_courses.csv
+DEBUG: File exists: true
+DEBUG: loadCourses called with profilePrefix: S99999_Invalid_User
+DEBUG: Loading courses from file: planner_data/profiles/S99999_Invalid_User_courses.csv
+DEBUG: File exists: false
+DEBUG: File does not exist, returning empty list
+DEBUG: loadCourses called with profilePrefix: S12345_Test_User
+DEBUG: Loading courses from file: planner_data/profiles/S12345_Test_User_courses.csv
+DEBUG: File exists: false
+DEBUG: File does not exist, returning empty list
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

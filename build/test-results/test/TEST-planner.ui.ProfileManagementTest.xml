@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.ui.ProfileManagementTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:37" hostname="Mac.lan" time="1.2">
+<testsuite name="planner.ui.ProfileManagementTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T14:01:27" hostname="Mac.lan" time="0.902">
   <properties/>
-  <testcase name="testProfileSelectionWorkflow()" classname="planner.ui.ProfileManagementTest" time="0.265"/>
-  <testcase name="testProfileDialogComponents()" classname="planner.ui.ProfileManagementTest" time="0.256"/>
-  <testcase name="testProfileDataPersistence()" classname="planner.ui.ProfileManagementTest" time="0.184"/>
-  <testcase name="testAccountMenuIntegration()" classname="planner.ui.ProfileManagementTest" time="0.178"/>
-  <testcase name="testStudentPanelRemovalFromTabs()" classname="planner.ui.ProfileManagementTest" time="0.316"/>
+  <testcase name="testProfileSelectionWorkflow()" classname="planner.ui.ProfileManagementTest" time="0.194"/>
+  <testcase name="testProfileDialogComponents()" classname="planner.ui.ProfileManagementTest" time="0.191"/>
+  <testcase name="testProfileDataPersistence()" classname="planner.ui.ProfileManagementTest" time="0.133"/>
+  <testcase name="testAccountMenuIntegration()" classname="planner.ui.ProfileManagementTest" time="0.214"/>
+  <testcase name="testStudentPanelRemovalFromTabs()" classname="planner.ui.ProfileManagementTest" time="0.168"/>
   <system-out><![CDATA[DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items
@@ -29,12 +29,12 @@ DEBUG: Added 0 tasks to model
 DEBUG: Loading events from prefix: S77777_Grace_Second
 DEBUG: Loaded 0 events
 DEBUG: Added 0 events to model
-DEBUG: saveCourses called with 0 courses, profilePrefix: null
-DEBUG: Current profile from preferences: Grace Second - Art (Senior)
-DEBUG: Loading profile: Grace Second - Art (Senior)
 DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: Current profile from preferences: Grace Second - Art (Senior)
+DEBUG: Loading profile: Grace Second - Art (Senior)
 DEBUG: Student set in model: Grace Second
 DEBUG: Loading courses from prefix: S77777_Grace_Second
 DEBUG: loadCourses called with profilePrefix: S77777_Grace_Second

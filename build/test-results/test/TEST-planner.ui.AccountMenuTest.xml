@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.ui.AccountMenuTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:27" hostname="Mac.lan" time="1.952">
+<testsuite name="planner.ui.AccountMenuTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T14:01:17" hostname="Mac.lan" time="1.87">
   <properties/>
-  <testcase name="testProfileSwitchClearsData()" classname="planner.ui.AccountMenuTest" time="0.684"/>
-  <testcase name="testExportData()" classname="planner.ui.AccountMenuTest" time="0.429"/>
-  <testcase name="testLogoutClearsAllData()" classname="planner.ui.AccountMenuTest" time="0.267"/>
-  <testcase name="testImportData()" classname="planner.ui.AccountMenuTest" time="0.265"/>
-  <testcase name="testAccountMenuComponents()" classname="planner.ui.AccountMenuTest" time="0.305"/>
+  <testcase name="testProfileSwitchClearsData()" classname="planner.ui.AccountMenuTest" time="0.64"/>
+  <testcase name="testExportData()" classname="planner.ui.AccountMenuTest" time="0.494"/>
+  <testcase name="testLogoutClearsAllData()" classname="planner.ui.AccountMenuTest" time="0.271"/>
+  <testcase name="testImportData()" classname="planner.ui.AccountMenuTest" time="0.31"/>
+  <testcase name="testAccountMenuComponents()" classname="planner.ui.AccountMenuTest" time="0.153"/>
   <system-out><![CDATA[DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items

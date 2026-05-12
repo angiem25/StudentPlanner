@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.ui.PlannerControllerTest" tests="31" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:30" hostname="Mac.lan" time="6.612">
+<testsuite name="planner.ui.PlannerControllerTest" tests="32" skipped="0" failures="0" errors="0" timestamp="2026-05-12T14:01:20" hostname="Mac.lan" time="6.516">
   <properties/>
-  <testcase name="testSaveAccountState()" classname="planner.ui.PlannerControllerTest" time="0.181"/>
-  <testcase name="testAddTask()" classname="planner.ui.PlannerControllerTest" time="0.202"/>
-  <testcase name="testRemoveProfile()" classname="planner.ui.PlannerControllerTest" time="0.3"/>
-  <testcase name="testAddCourseWithNegativeCredits()" classname="planner.ui.PlannerControllerTest" time="0.176"/>
-  <testcase name="testSaveStudentProfileWithInvalidYear()" classname="planner.ui.PlannerControllerTest" time="0.289"/>
-  <testcase name="testSavePreferences()" classname="planner.ui.PlannerControllerTest" time="0.178"/>
-  <testcase name="testSaveStudentProfileWithString()" classname="planner.ui.PlannerControllerTest" time="0.188"/>
-  <testcase name="testUpdateTask()" classname="planner.ui.PlannerControllerTest" time="0.296"/>
-  <testcase name="testToggleTaskCompletionSilently()" classname="planner.ui.PlannerControllerTest" time="0.297"/>
-  <testcase name="testClearProfileDataWithNoStudent()" classname="planner.ui.PlannerControllerTest" time="0.12"/>
-  <testcase name="testExportData()" classname="planner.ui.PlannerControllerTest" time="0.186"/>
-  <testcase name="testUpdateCourse()" classname="planner.ui.PlannerControllerTest" time="0.163"/>
-  <testcase name="testLoadAccountState()" classname="planner.ui.PlannerControllerTest" time="0.232"/>
-  <testcase name="testRemoveCourse()" classname="planner.ui.PlannerControllerTest" time="0.332"/>
-  <testcase name="testSaveProfile()" classname="planner.ui.PlannerControllerTest" time="0.102"/>
-  <testcase name="testLoadProfileNames()" classname="planner.ui.PlannerControllerTest" time="0.163"/>
-  <testcase name="testUpdateCourseWithInvalidCredits()" classname="planner.ui.PlannerControllerTest" time="0.299"/>
-  <testcase name="testLoadPreferences()" classname="planner.ui.PlannerControllerTest" time="0.277"/>
-  <testcase name="testAddCourse()" classname="planner.ui.PlannerControllerTest" time="0.241"/>
-  <testcase name="testRemoveTask()" classname="planner.ui.PlannerControllerTest" time="0.199"/>
-  <testcase name="testSaveStudentProfileWithInvalidEmail()" classname="planner.ui.PlannerControllerTest" time="0.117"/>
-  <testcase name="testSaveProfileWithNoStudent()" classname="planner.ui.PlannerControllerTest" time="0.202"/>
-  <testcase name="testClearProfileData()" classname="planner.ui.PlannerControllerTest" time="0.215"/>
-  <testcase name="testAddCourseWithInvalidCredits()" classname="planner.ui.PlannerControllerTest" time="0.303"/>
-  <testcase name="testAddTaskWithCourse()" classname="planner.ui.PlannerControllerTest" time="0.16"/>
-  <testcase name="testImportData()" classname="planner.ui.PlannerControllerTest" time="0.138"/>
-  <testcase name="testLogout()" classname="planner.ui.PlannerControllerTest" time="0.318"/>
-  <testcase name="testLogoutWithNoStudent()" classname="planner.ui.PlannerControllerTest" time="0.175"/>
-  <testcase name="testSaveStudentProfileWithEnum()" classname="planner.ui.PlannerControllerTest" time="0.119"/>
-  <testcase name="testToggleTaskCompletion()" classname="planner.ui.PlannerControllerTest" time="0.297"/>
-  <testcase name="testConstructor()" classname="planner.ui.PlannerControllerTest" time="0.133"/>
+  <testcase name="testSaveAccountState()" classname="planner.ui.PlannerControllerTest" time="0.253"/>
+  <testcase name="testAddTask()" classname="planner.ui.PlannerControllerTest" time="0.12"/>
+  <testcase name="testRemoveProfile()" classname="planner.ui.PlannerControllerTest" time="0.199"/>
+  <testcase name="testAddCourseWithNegativeCredits()" classname="planner.ui.PlannerControllerTest" time="0.168"/>
+  <testcase name="testSaveStudentProfileWithInvalidYear()" classname="planner.ui.PlannerControllerTest" time="0.259"/>
+  <testcase name="testSavePreferences()" classname="planner.ui.PlannerControllerTest" time="0.118"/>
+  <testcase name="testSaveStudentProfileWithString()" classname="planner.ui.PlannerControllerTest" time="0.241"/>
+  <testcase name="testUpdateTask()" classname="planner.ui.PlannerControllerTest" time="0.193"/>
+  <testcase name="testToggleTaskCompletionSilently()" classname="planner.ui.PlannerControllerTest" time="0.136"/>
+  <testcase name="testClearProfileDataWithNoStudent()" classname="planner.ui.PlannerControllerTest" time="0.276"/>
+  <testcase name="testExportData()" classname="planner.ui.PlannerControllerTest" time="0.103"/>
+  <testcase name="testUpdateCourse()" classname="planner.ui.PlannerControllerTest" time="0.2"/>
+  <testcase name="testLoadAccountState()" classname="planner.ui.PlannerControllerTest" time="0.164"/>
+  <testcase name="testRemoveCourse()" classname="planner.ui.PlannerControllerTest" time="0.214"/>
+  <testcase name="testSaveProfile()" classname="planner.ui.PlannerControllerTest" time="0.16"/>
+  <testcase name="testLoadProfileNames()" classname="planner.ui.PlannerControllerTest" time="0.196"/>
+  <testcase name="testUpdateCourseWithInvalidCredits()" classname="planner.ui.PlannerControllerTest" time="0.152"/>
+  <testcase name="testLoadPreferences()" classname="planner.ui.PlannerControllerTest" time="0.246"/>
+  <testcase name="testAddCourse()" classname="planner.ui.PlannerControllerTest" time="0.207"/>
+  <testcase name="testRemoveTask()" classname="planner.ui.PlannerControllerTest" time="0.117"/>
+  <testcase name="testMockPlannerViewMessageCapture()" classname="planner.ui.PlannerControllerTest" time="0.385"/>
+  <testcase name="testSaveStudentProfileWithInvalidEmail()" classname="planner.ui.PlannerControllerTest" time="0.24"/>
+  <testcase name="testSaveProfileWithNoStudent()" classname="planner.ui.PlannerControllerTest" time="0.133"/>
+  <testcase name="testClearProfileData()" classname="planner.ui.PlannerControllerTest" time="0.253"/>
+  <testcase name="testAddCourseWithInvalidCredits()" classname="planner.ui.PlannerControllerTest" time="0.171"/>
+  <testcase name="testAddTaskWithCourse()" classname="planner.ui.PlannerControllerTest" time="0.211"/>
+  <testcase name="testImportData()" classname="planner.ui.PlannerControllerTest" time="0.273"/>
+  <testcase name="testLogout()" classname="planner.ui.PlannerControllerTest" time="0.306"/>
+  <testcase name="testLogoutWithNoStudent()" classname="planner.ui.PlannerControllerTest" time="0.135"/>
+  <testcase name="testSaveStudentProfileWithEnum()" classname="planner.ui.PlannerControllerTest" time="0.241"/>
+  <testcase name="testToggleTaskCompletion()" classname="planner.ui.PlannerControllerTest" time="0.109"/>
+  <testcase name="testConstructor()" classname="planner.ui.PlannerControllerTest" time="0.33"/>
   <system-out><![CDATA[DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items

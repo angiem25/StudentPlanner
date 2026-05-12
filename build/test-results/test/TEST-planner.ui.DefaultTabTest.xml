@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.ui.DefaultTabTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:29" hostname="Mac.lan" time="1.447">
+<testsuite name="planner.ui.DefaultTabTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T14:01:19" hostname="Mac.lan" time="1.219">
   <properties/>
-  <testcase name="testDefaultTabEdgeCases()" classname="planner.ui.DefaultTabTest" time="0.317"/>
-  <testcase name="testDefaultTabIntegration()" classname="planner.ui.DefaultTabTest" time="0.361"/>
-  <testcase name="testDefaultTabFallback()" classname="planner.ui.DefaultTabTest" time="0.201"/>
-  <testcase name="testDefaultTabPersistence()" classname="planner.ui.DefaultTabTest" time="0.317"/>
-  <testcase name="testDefaultTabValidation()" classname="planner.ui.DefaultTabTest" time="0.25"/>
+  <testcase name="testDefaultTabEdgeCases()" classname="planner.ui.DefaultTabTest" time="0.191"/>
+  <testcase name="testDefaultTabIntegration()" classname="planner.ui.DefaultTabTest" time="0.318"/>
+  <testcase name="testDefaultTabFallback()" classname="planner.ui.DefaultTabTest" time="0.263"/>
+  <testcase name="testDefaultTabPersistence()" classname="planner.ui.DefaultTabTest" time="0.105"/>
+  <testcase name="testDefaultTabValidation()" classname="planner.ui.DefaultTabTest" time="0.34"/>
   <system-out><![CDATA[DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items
 DEBUG: refreshCourseList() called

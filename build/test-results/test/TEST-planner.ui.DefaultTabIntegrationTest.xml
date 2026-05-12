@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.ui.DefaultTabIntegrationTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:29" hostname="Mac.lan" time="0.04">
+<testsuite name="planner.ui.DefaultTabIntegrationTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-05-12T14:01:19" hostname="Mac.lan" time="0.024">
   <properties/>
-  <testcase name="testDefaultTabWithTasks()" classname="planner.ui.DefaultTabIntegrationTest" time="0.005"/>
-  <testcase name="testDefaultTabWithToday()" classname="planner.ui.DefaultTabIntegrationTest" time="0.005"/>
-  <testcase name="testDefaultTabWithInvalidTab()" classname="planner.ui.DefaultTabIntegrationTest" time="0.005"/>
-  <testcase name="testDefaultTabWithCalendar()" classname="planner.ui.DefaultTabIntegrationTest" time="0.004"/>
-  <testcase name="testDefaultTabWithEmptyInput()" classname="planner.ui.DefaultTabIntegrationTest" time="0.004"/>
-  <testcase name="testDefaultTabFallbackToTasks()" classname="planner.ui.DefaultTabIntegrationTest" time="0.001"/>
-  <testcase name="testDefaultTabWithWeeklyPriorities()" classname="planner.ui.DefaultTabIntegrationTest" time="0.006"/>
-  <testcase name="testDefaultTabWithNullInput()" classname="planner.ui.DefaultTabIntegrationTest" time="0.005"/>
-  <system-out><![CDATA[DEBUG: refreshCourseList() called
-DEBUG: Model has 0 courses
-DEBUG: CourseListModel now has 0 items
-]]></system-out>
+  <testcase name="testDefaultTabWithTasks()" classname="planner.ui.DefaultTabIntegrationTest" time="0.003"/>
+  <testcase name="testDefaultTabWithToday()" classname="planner.ui.DefaultTabIntegrationTest" time="0.004"/>
+  <testcase name="testDefaultTabWithInvalidTab()" classname="planner.ui.DefaultTabIntegrationTest" time="0.004"/>
+  <testcase name="testDefaultTabWithCalendar()" classname="planner.ui.DefaultTabIntegrationTest" time="0.003"/>
+  <testcase name="testDefaultTabWithEmptyInput()" classname="planner.ui.DefaultTabIntegrationTest" time="0.002"/>
+  <testcase name="testDefaultTabFallbackToTasks()" classname="planner.ui.DefaultTabIntegrationTest" time="0.0"/>
+  <testcase name="testDefaultTabWithWeeklyPriorities()" classname="planner.ui.DefaultTabIntegrationTest" time="0.003"/>
+  <testcase name="testDefaultTabWithNullInput()" classname="planner.ui.DefaultTabIntegrationTest" time="0.003"/>
+  <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

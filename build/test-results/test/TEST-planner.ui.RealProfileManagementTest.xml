@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.ui.RealProfileManagementTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:38" hostname="Mac.lan" time="1.07">
+<testsuite name="planner.ui.RealProfileManagementTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T14:01:28" hostname="Mac.lan" time="1.165">
   <properties/>
-  <testcase name="testRemoveProfile()" classname="planner.ui.RealProfileManagementTest" time="0.174"/>
-  <testcase name="testSaveAndLoadProfiles()" classname="planner.ui.RealProfileManagementTest" time="0.28"/>
-  <testcase name="testProfilePersistenceAcrossSessions()" classname="planner.ui.RealProfileManagementTest" time="0.192"/>
-  <testcase name="testProfileManagementIntegration()" classname="planner.ui.RealProfileManagementTest" time="0.219"/>
-  <testcase name="testLoadSpecificProfile()" classname="planner.ui.RealProfileManagementTest" time="0.204"/>
+  <testcase name="testRemoveProfile()" classname="planner.ui.RealProfileManagementTest" time="0.299"/>
+  <testcase name="testSaveAndLoadProfiles()" classname="planner.ui.RealProfileManagementTest" time="0.169"/>
+  <testcase name="testProfilePersistenceAcrossSessions()" classname="planner.ui.RealProfileManagementTest" time="0.227"/>
+  <testcase name="testProfileManagementIntegration()" classname="planner.ui.RealProfileManagementTest" time="0.374"/>
+  <testcase name="testLoadSpecificProfile()" classname="planner.ui.RealProfileManagementTest" time="0.094"/>
   <system-out><![CDATA[DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items
@@ -19,6 +19,9 @@ DEBUG: loadCourses called with profilePrefix: S55555_Eve_Persistent
 DEBUG: Loading courses from file: planner_data/profiles/S55555_Eve_Persistent_courses.csv
 DEBUG: File exists: false
 DEBUG: File does not exist, returning empty list
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
 DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items

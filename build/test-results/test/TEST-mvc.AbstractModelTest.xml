@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="mvc.AbstractModelTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:26" hostname="Mac.lan" time="0.008">
+<testsuite name="mvc.AbstractModelTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-05-12T14:01:17" hostname="Mac.lan" time="0.005">
   <properties/>
-  <testcase name="Should handle null listener gracefully" classname="mvc.AbstractModelTest" time="0.003"/>
+  <testcase name="Should handle null listener gracefully" classname="mvc.AbstractModelTest" time="0.001"/>
   <testcase name="Should add and remove listeners" classname="mvc.AbstractModelTest" time="0.0"/>
   <testcase name="Should handle adding same listener multiple times" classname="mvc.AbstractModelTest" time="0.0"/>
   <testcase name="Should handle multiple events" classname="mvc.AbstractModelTest" time="0.0"/>
   <testcase name="Should notify listeners when event occurs" classname="mvc.AbstractModelTest" time="0.0"/>
   <testcase name="Should handle removing non-existent listener" classname="mvc.AbstractModelTest" time="0.0"/>
-  <testcase name="Should handle null event gracefully" classname="mvc.AbstractModelTest" time="0.001"/>
+  <testcase name="Should handle null event gracefully" classname="mvc.AbstractModelTest" time="0.0"/>
   <testcase name="Should not notify removed listeners" classname="mvc.AbstractModelTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>

@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="planner.ui.UpdatedProfileManagementTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:39" hostname="Mac.lan" time="1.6">
+<testsuite name="planner.ui.UpdatedProfileManagementTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-05-12T14:01:29" hostname="Mac.lan" time="1.297">
   <properties/>
-  <testcase name="testProfileSelectionWorkflow()" classname="planner.ui.UpdatedProfileManagementTest" time="0.134"/>
-  <testcase name="testSaveProfileAutoClose()" classname="planner.ui.UpdatedProfileManagementTest" time="0.17"/>
-  <testcase name="testLogoutButtonVisibility()" classname="planner.ui.UpdatedProfileManagementTest" time="0.339"/>
-  <testcase name="testReadOnlyProfileView()" classname="planner.ui.UpdatedProfileManagementTest" time="0.284"/>
-  <testcase name="testAccountMenuStructure()" classname="planner.ui.UpdatedProfileManagementTest" time="0.304"/>
-  <testcase name="testAddNewProfileWorkflow()" classname="planner.ui.UpdatedProfileManagementTest" time="0.244"/>
-  <testcase name="testProfileDialogWorkflows()" classname="planner.ui.UpdatedProfileManagementTest" time="0.122"/>
+  <testcase name="testProfileSelectionWorkflow()" classname="planner.ui.UpdatedProfileManagementTest" time="0.211"/>
+  <testcase name="testSaveProfileAutoClose()" classname="planner.ui.UpdatedProfileManagementTest" time="0.101"/>
+  <testcase name="testLogoutButtonVisibility()" classname="planner.ui.UpdatedProfileManagementTest" time="0.253"/>
+  <testcase name="testReadOnlyProfileView()" classname="planner.ui.UpdatedProfileManagementTest" time="0.08"/>
+  <testcase name="testAccountMenuStructure()" classname="planner.ui.UpdatedProfileManagementTest" time="0.354"/>
+  <testcase name="testAddNewProfileWorkflow()" classname="planner.ui.UpdatedProfileManagementTest" time="0.168"/>
+  <testcase name="testProfileDialogWorkflows()" classname="planner.ui.UpdatedProfileManagementTest" time="0.129"/>
   <system-out><![CDATA[DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items
 DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items
-DEBUG: refreshCourseList() called
-DEBUG: Model has 0 courses
-DEBUG: CourseListModel now has 0 items
-DEBUG: refreshCourseList() called
-DEBUG: Model has 0 courses
-DEBUG: CourseListModel now has 0 items
 DEBUG: saveCourses called with 0 courses, profilePrefix: S99999_Auto_Close
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
 DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items
@@ -47,9 +44,6 @@ DEBUG: Added 0 tasks to model
 DEBUG: Loading events from prefix: S77777_Grace_Second
 DEBUG: Loaded 0 events
 DEBUG: Added 0 events to model
-DEBUG: refreshCourseList() called
-DEBUG: Model has 0 courses
-DEBUG: CourseListModel now has 0 items
 DEBUG: refreshCourseList() called
 DEBUG: Model has 0 courses
 DEBUG: CourseListModel now has 0 items

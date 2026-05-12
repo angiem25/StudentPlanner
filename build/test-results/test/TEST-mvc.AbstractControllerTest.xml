@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="mvc.AbstractControllerTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:26" hostname="Mac.lan" time="0.015">
+<testsuite name="mvc.AbstractControllerTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-05-12T14:01:17" hostname="Mac.lan" time="0.013">
   <properties/>
   <testcase name="testGetModel()" classname="mvc.AbstractControllerTest" time="0.007"/>
-  <testcase name="testSetModelWithNull()" classname="mvc.AbstractControllerTest" time="0.0"/>
-  <testcase name="testGetView()" classname="mvc.AbstractControllerTest" time="0.0"/>
+  <testcase name="testSetModelWithNull()" classname="mvc.AbstractControllerTest" time="0.001"/>
+  <testcase name="testGetView()" classname="mvc.AbstractControllerTest" time="0.001"/>
   <testcase name="testSetViewWithNull()" classname="mvc.AbstractControllerTest" time="0.001"/>
-  <testcase name="testSetView()" classname="mvc.AbstractControllerTest" time="0.0"/>
-  <testcase name="testConstructor()" classname="mvc.AbstractControllerTest" time="0.0"/>
-  <testcase name="testSetModel()" classname="mvc.AbstractControllerTest" time="0.001"/>
+  <testcase name="testSetView()" classname="mvc.AbstractControllerTest" time="0.001"/>
+  <testcase name="testConstructor()" classname="mvc.AbstractControllerTest" time="0.001"/>
+  <testcase name="testSetModel()" classname="mvc.AbstractControllerTest" time="0.0"/>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
