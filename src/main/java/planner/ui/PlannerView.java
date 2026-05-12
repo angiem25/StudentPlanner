@@ -288,6 +288,9 @@ public class PlannerView extends AbstractView {
         
         accountMenu.addSeparator(); // Add separator before Logout
         
+        // Initially hide Check Courses - only visible when logged in
+        checkCoursesMenuItem.setVisible(false);
+        
         // Logout button (only enabled when logged in)
         logoutMenuItem = new JMenuItem("Logout");
         logoutMenuItem.addActionListener(e -> onLogout());
