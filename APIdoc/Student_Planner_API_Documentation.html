@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Planner API Documentation</title>
+    <style>
+        body { 
+            font-family: 'Helvetica Neue', Arial, sans-serif; 
+            line-height: 1.6; 
+            margin: 40px; 
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 { 
+            color: #2c3e50; 
+            border-bottom: 3px solid #3498db; 
+            padding-bottom: 15px; 
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        h2 { 
+            color: #34495e; 
+            margin-top: 40px; 
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 8px;
+            font-size: 22px;
+        }
+        h3 { 
+            color: #7f8c8d; 
+            margin-top: 25px;
+            font-size: 18px;
+        }
+        h4 { 
+            color: #95a5a6; 
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        code { 
+            background-color: #f8f9fa; 
+            padding: 3px 6px; 
+            border-radius: 4px; 
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 14px;
+            border: 1px solid #e9ecef;
+        }
+        pre { 
+            background-color: #f8f9fa; 
+            padding: 20px; 
+            border-radius: 8px; 
+            overflow-x: auto;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+            border: none;
+        }
+        ul, ol { 
+            margin-left: 25px; 
+            margin-bottom: 15px;
+        }
+        li { 
+            margin: 8px 0; 
+        }
+        .highlight { 
+            background-color: #fff3cd; 
+            padding: 15px; 
+            border-left: 4px solid #ffc107; 
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .class-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .method {
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            color: #d63384;
+            font-weight: 500;
+        }
+        .property {
+            color: #0d6efd;
+            font-weight: 500;
+        }
+        .toc {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .toc li {
+            margin: 8px 0;
+        }
+        .toc a {
+            color: #495057;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            color: #007bff;
+            text-decoration: underline;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+        @media print {
+            body { margin: 20px; }
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Planner API Documentation</h1>
+    
+    <div class="toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#overview">1. Overview</a></li>
+            <li><a href="#core-mvc-framework">2. Core MVC Framework</a></li>
+            <li><a href="#application-package">3. Application Package</a></li>
+            <li><a href="#class-index">4. Class Index</a></li>
+            <li><a href="#package-index">5. Package Index</a></li>
+            <li><a href="#design-patterns">6. Key Design Patterns</a></li>
+            <li><a href="#data-flow">7. Data Flow</a></li>
+            <li><a href="#error-handling">8. Error Handling</a></li>
+            <li><a href="#thread-safety">9. Thread Safety</a></li>
+            <li><a href="#extension-points">10. Extension Points</a></li>
+        </ul>
+    </div>
+
+    <h2 id="overview">Overview</h2>
+    <p>This document provides comprehensive API documentation for Student Planner application, generated from Javadoc and converted to Markdown format for easy reading and reference.</p>
+
+    <div class="page-break"></div>
+
+    <h2 id="core-mvc-framework">Core MVC Framework</h2>
+    <p>The MVC framework provides foundational architecture for the application.</p>
+
+    <h3>Model Interfaces</h3>
+    <div class="class-box">
+        <h4>Model</h4>
+        <p>The core model interface that defines the contract for all model components.</p>
+    </div>
+
+    <div class="class-box">
+        <h4>ModelListener</h4>
+        <p>Interface for objects that want to receive notifications when model data changes.</p>
+    </div>
+
+    <div class="class-box">
+        <h4>ModelEvent</h4>
+        <p>Encapsulates information about model changes, including the type of change and affected data.</p>
+    </div>
+
+    <h3>Abstract Classes</h3>
+    <div class="class-box">
+        <h4>AbstractModel</h4>
+        <p>Base implementation of Model interface that provides:</p>
+        <ul>
+            <li>Listener management functionality</li>
+            <li>Event firing capabilities</li>
+            <li>Observer pattern implementation</li>
+        </ul>
+        <p><strong>Key methods:</strong></p>
+        <ul>
+            <li><span class="method">addModelListener(ModelListener listener)</span> - Register a listener</li>
+            <li><span class="method">removeModelListener(ModelListener listener)</span> - Unregister a listener</li>
+            <li><span class="method">fireModelChanged(String eventType, Object data)</span> - Notify listeners of changes</li>
+        </ul>
+    </div>
+
+    <div class="class-box">
+        <h4>AbstractView</h4>
+        <p>Base implementation of View interface that provides:</p>
+        <ul>
+            <li>Automatic model listener registration</li>
+            <li>Model and controller reference management</li>
+        </ul>
+    </div>
+
+    <div class="class-box">
+        <h4>AbstractController</h4>
+        <p>Base implementation of Controller interface that provides:</p>
+        <ul>
+            <li>Model and view reference management</li>
+            <li>Basic controller functionality</li>
+        </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h2 id="application-package">Application Package</h2>
+    <p>The <code>planner</code> package contains the main application components.</p>
+
+    <h3>Main Application</h3>
+    <div class="class-box">
+        <h4>Main</h4>
+        <p>The main entry point of the Student Planner application.</p>
+        <p><strong>Key responsibilities:</strong></p>
+        <ul>
+            <li>Application bootstrap and initialization</li>
+            <li>MVC component wiring</li>
+            <li>Application lifecycle management</li>
+        </ul>
+    </div>
+
+    <h3>Domain Models</h3>
+    <div class="class-box">
+        <h4>Student</h4>
+        <p>Represents a student profile with academic information.</p>
+        <p><strong>Key properties:</strong></p>
+        <ul>
+            <li><span class="property">firstName</span>, <span class="property">lastName</span> - Student name</li>
+            <li><span class="property">email</span> - Contact email</li>
+            <li><span class="property">studentId</span> - Unique identifier</li>
+            <li><span class="property">academicYear</span> - Academic year enumeration</li>
+            <li><span class="property">major</span> - Field of study</li>
+        </ul>
+    </div>
+
+    <div class="class-box">
+        <h4>Course</h4>
+        <p>Represents an academic course with instructor and credit information.</p>
+        <p><strong>Key properties:</strong></p>
+        <ul>
+            <li><span class="property">name</span> - Course name</li>
+            <li><span class="property">code</span> - Unique course code</li>
+            <li><span class="property">instructor</span> - Course instructor</li>
+            <li><span class="property">credits</span> - Credit hours</li>
+        </ul>
+    </div>
+
+    <div class="class-box">
+        <h4>Task</h4>
+        <p>Represents a task with priority, due date, and color coding.</p>
+        <p><strong>Key properties:</strong></p>
+        <ul>
+            <li><span class="property">title</span> - Task title</li>
+            <li><span class="property">description</span> - Detailed description</li>
+            <li><span class="property">dueDate</span> - Due date and time</li>
+            <li><span class="property">priority</span> - Priority level (LOW, MEDIUM, HIGH)</li>
+            <li><span class="property">courseId</span> - Associated course identifier</li>
+            <li><span class="property">accentColorHex</span> - Color hex code for visual identification</li>
+        </ul>
+        <p><strong>Key methods:</strong></p>
+        <ul>
+            <li><span class="method">complete()</span> - Mark task as completed</li>
+            <li><span class="method">incomplete()</span> - Mark task as incomplete</li>
+            <li><span class="method">isCompleted()</span> - Check completion status</li>
+        </ul>
+    </div>
+
+    <div class="class-box">
+        <h4>Event</h4>
+        <p>Represents calendar events with time ranges.</p>
+        <p><strong>Key properties:</strong></p>
+        <ul>
+            <li><span class="property">title</span> - Event title</li>
+            <li><span class="property">description</span> - Event description</li>
+            <li><span class="property">startDateTime</span> - Event start time</li>
+            <li><span class="property">endDateTime</span> - Event end time</li>
+        </ul>
+    </div>
+
+    <div class="class-box">
+        <h4>PlannerModel</h4>
+        <p>Central model that coordinates all domain entities.</p>
+        <p><strong>Key responsibilities:</strong></p>
+        <ul>
+            <li>Managing collections of students, courses, tasks, and events</li>
+            <li>Providing query methods for data access</li>
+            <li>Firing model change notifications</li>
+        </ul>
+        <p><strong>Key methods:</strong></p>
+        <ul>
+            <li><span class="method">addCourse(Course course)</span> - Add a new course</li>
+            <li><span class="method">addTask(Task task)</span> - Add a new task</li>
+            <li><span class="method">getTasksForToday()</span> - Get tasks due today</li>
+            <li><span class="method">getIncompleteTasks()</span> - Get incomplete tasks</li>
+            <li><span class="method">completeTask(Task task)</span> - Mark task as complete</li>
+        </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h3>Service Layer</h3>
+    <div class="class-box">
+        <h4>PlannerService</h4>
+        <p>Encapsulates business logic and validation rules.</p>
+        <p><strong>Key responsibilities:</strong></p>
+        <ul>
+            <li>Data validation and business rule enforcement</li>
+            <li>Complex operation coordination</li>
+            <li>Error handling and user feedback</li>
+        </ul>
+        <p><strong>Key methods:</strong></p>
+        <ul>
+            <li><span class="method">createStudentProfile(...)</span> - Create and validate student profile</li>
+            <li><span class="method">addCourse(...)</span> - Add course with duplicate checking</li>
+            <li><span class="method">addTask(...)</span> - Add task with validation</li>
+            <li><span class="method">updateTask(...)</span> - Update existing task</li>
+            <li><span class="method">removeTask(...)</span> - Remove task and associated data</li>
+        </ul>
+    </div>
+
+    <h3>User Interface Layer</h3>
+    <div class="class-box">
+        <h4>PlannerView</h4>
+        <p>Main view component with tabbed interface.</p>
+        <p><strong>Key features:</strong></p>
+        <ul>
+            <li>Tab-based organization (Profile, Courses, Tasks, Calendar, Timer, Weekly)</li>
+            <li>Automatic UI updates via model listener</li>
+            <li>Form validation and user feedback</li>
+            <li>Theme-aware visual design</li>
+        </ul>
+    </div>
+
+    <div class="class-box">
+        <h4>PlannerController</h4>
+        <p>Main controller coordinating user interactions.</p>
+        <p><strong>Key responsibilities:</strong></p>
+        <ul>
+            <li>Event handling and user input processing</li>
+            <li>View-model coordination</li>
+            <li>Business logic invocation</li>
+            <li>Error handling and user notifications</li>
+        </ul>
+    </div>
+
+    <div class="class-box">
+        <h4>CalendarView</h4>
+        <p>Multi-view calendar component (Day/Week/Month).</p>
+        <p><strong>Key features:</strong></p>
+        <ul>
+            <li>24-hour timeline rendering</li>
+            <li>Event overlap detection</li>
+            <li>Date navigation</li>
+            <li>Task integration with color coding</li>
+        </ul>
+    </div>
+
+    <div class="class-box">
+        <h4>TimerPanel</h4>
+        <p>Study timer with preset functionality.</p>
+        <p><strong>Key features:</strong></p>
+        <ul>
+            <li>Countdown timer with visual feedback</li>
+            <li>Preset buttons (30/60/90 minutes)</li>
+            <li>Audio alerts on completion</li>
+            <li>State management (idle/running/paused)</li>
+        </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <h3>Persistence Layer</h3>
+    <div class="class-box">
+        <h4>PlannerRepository</h4>
+        <p>File-based data storage with CSV format.</p>
+        <p><strong>Key responsibilities:</strong></p>
+        <ul>
+            <li>Profile-based data isolation</li>
+            <li>CSV file reading and writing</li>
+            <li>Data directory management</li>
+            <li>Error handling and recovery</li>
+        </ul>
+        <p><strong>Key methods:</strong></p>
+        <ul>
+            <li><span class="method">savePlannerData(PlannerModel model)</span> - Save all data</li>
+            <li><span class="method">loadPlannerData(PlannerModel model)</span> - Load data into model</li>
+            <li><span class="method">saveProfile(Student student)</span> - Save student profile</li>
+            <li><span class="method">loadProfile(String profileName)</span> - Load specific profile</li>
+        </ul>
+    </div>
+
+    <h2 id="class-index">Class Index</h2>
+
+    <h3>Core MVC Classes</h3>
+    <ul>
+        <li><strong>AbstractModel</strong> - Base model with observer support</li>
+        <li><strong>AbstractView</strong> - Base view with automatic listener registration</li>
+        <li><strong>AbstractController</strong> - Base controller implementation</li>
+        <li><strong>Model</strong> - Model interface</li>
+        <li><strong>View</strong> - View interface</li>
+        <li><strong>Controller</strong> - Controller interface</li>
+        <li><strong>ModelListener</strong> - Observer interface</li>
+        <li><strong>ModelEvent</strong> - Event objects for model changes</li>
+    </ul>
+
+    <h3>Domain Model Classes</h3>
+    <ul>
+        <li><strong>Student</strong> - Student profile entity</li>
+        <li><strong>Course</strong> - Course entity</li>
+        <li><strong>Task</strong> - Task entity with priority and color</li>
+        <li><strong>Event</strong> - Calendar event entity</li>
+        <li><strong>PlannerModel</strong> - Main model implementation</li>
+        <li><strong>TaskPalette</strong> - Color management system</li>
+    </ul>
+
+    <h3>Service Classes</h3>
+    <ul>
+        <li><strong>PlannerService</strong> - Business logic and validation</li>
+    </ul>
+
+    <h3>UI Classes</h3>
+    <ul>
+        <li><strong>PlannerView</strong> - Main tabbed interface</li>
+        <li><strong>PlannerController</strong> - Event handling coordination</li>
+        <li><strong>CalendarView</strong> - Multi-view calendar</li>
+        <li><strong>TimerPanel</strong> - Study timer component</li>
+        <li><strong>AppTheme</strong> - Theme management</li>
+    </ul>
+
+    <h3>Persistence Classes</h3>
+    <ul>
+        <li><strong>PlannerRepository</strong> - File-based data storage</li>
+    </ul>
+
+    <h3>Application Classes</h3>
+    <ul>
+        <li><strong>Main</strong> - Application entry point</li>
+    </ul>
+
+    <div class="page-break"></div>
+
+    <h2 id="package-index">Package Index</h2>
+
+    <h3>mvc Package</h3>
+    <p>Contains core MVC framework components that are reusable across different applications.</p>
+    <p><strong>Classes:</strong></p>
+    <ul>
+        <li>Abstract classes providing base functionality</li>
+        <li>Interface definitions for MVC contracts</li>
+        <li>Event and listener support classes</li>
+    </ul>
+
+    <h3>planner Package</h3>
+    <p>Contains main application-specific components.</p>
+    <p><strong>Subpackages:</strong></p>
+    <ul>
+        <li><strong>planner.model</strong> - Domain entities and main model</li>
+        <li><strong>planner.service</strong> - Business logic layer</li>
+        <li><strong>planner.ui</strong> - User interface components</li>
+        <li><strong>planner.persistence</strong> - Data storage layer</li>
+        <li><strong>planner.ui.calendar</strong> - Calendar-specific UI</li>
+        <li><strong>planner.ui.timer</strong> - Timer-specific UI</li>
+    </ul>
+
+    <h2 id="design-patterns">Key Design Patterns</h2>
+
+    <h3>Observer Pattern</h3>
+    <ul>
+        <li><strong>Implementation:</strong> ModelListener interface and AbstractModel</li>
+        <li><strong>Purpose:</strong> Automatic UI updates when model data changes</li>
+        <li><strong>Usage:</strong> All views register as listeners to model changes</li>
+    </ul>
+
+    <h3>Repository Pattern</h3>
+    <ul>
+        <li><strong>Implementation:</strong> PlannerRepository class</li>
+        <li><strong>Purpose:</strong> Abstract data access layer</li>
+        <li><strong>Usage:</strong> All data operations go through repository</li>
+    </ul>
+
+    <h3>Service Pattern</h3>
+    <ul>
+        <li><strong>Implementation:</strong> PlannerService class</li>
+        <li><strong>Purpose:</strong> Business logic encapsulation</li>
+        <li><strong>Usage:</strong> Controllers use service for all business operations</li>
+    </ul>
+
+    <h3>MVC Pattern</h3>
+    <ul>
+        <li><strong>Implementation:</strong> Complete framework with abstract classes</li>
+        <li><strong>Purpose:</strong> Separation of concerns</li>
+        <li><strong>Usage:</strong> Throughout application architecture</li>
+    </ul>
+
+    <div class="page-break"></div>
+
+    <h2 id="data-flow">Data Flow</h2>
+    <div class="highlight">
+        <p><code>User Action → View → Controller → Service → Model → Observer Notification → View Update</code></p>
+    </div>
+
+    <h3>Example: Adding a Task</h3>
+    <ol>
+        <li>User fills task form in PlannerView</li>
+        <li>PlannerController receives action and validates input</li>
+        <li>PlannerService validates business rules and creates Task</li>
+        <li>PlannerModel adds task and fires ModelEvent</li>
+        <li>Observer pattern notifies all registered views</li>
+        <li>UI components update automatically</li>
+    </ol>
+
+    <h2 id="error-handling">Error Handling</h2>
+
+    <h3>Validation Layers</h3>
+    <ol>
+        <li><strong>UI Layer:</strong> Basic format validation</li>
+        <li><strong>Service Layer:</strong> Business rule validation</li>
+        <li><strong>Model Layer:</strong> Data integrity validation</li>
+    </ol>
+
+    <h3>Error Propagation</h3>
+    <div class="highlight">
+        <p><code>Service Exception → Controller → View → User (Dialog)</code></p>
+    </div>
+
+    <h2 id="thread-safety">Thread Safety</h2>
+
+    <h3>EDT (Event Dispatch Thread)</h3>
+    <ul>
+        <li>All UI updates occur on EDT</li>
+        <li>Timer operations use Swing Timer for thread safety</li>
+        <li>Model events are fired from appropriate threads</li>
+    </ul>
+
+    <h3>Data Synchronization</h3>
+    <ul>
+        <li>Collections use defensive copying</li>
+        <li>Model operations are atomic where possible</li>
+        <li>Repository operations handle concurrent access</li>
+    </ul>
+
+    <h2 id="extension-points">Extension Points</h2>
+
+    <h3>Adding New Entity Types</h3>
+    <ol>
+        <li>Create domain model class extending appropriate patterns</li>
+        <li>Add service methods in PlannerService</li>
+        <li>Update repository for persistence</li>
+        <li>Add UI components as needed</li>
+    </ol>
+
+    <h3>Adding New Views</h3>
+    <ol>
+        <li>Extend AbstractView or implement View interface</li>
+        <li>Create corresponding controller</li>
+        <li>Register as model listener</li>
+        <li>Add to main application</li>
+    </ol>
+
+    <h3>Changing Persistence</h3>
+    <ol>
+        <li>Implement new repository class</li>
+        <li>Maintain same interface as PlannerRepository</li>
+        <li>Update dependency injection in Main</li>
+    </ol>
+
+    <hr>
+    <p><em>Generated from Javadoc API documentation</em></p>
+    <p><small>Generated with <a href="https://cli.devin.ai/docs">Devin</a></small></p>
+</body>
+</html>

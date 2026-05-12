@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Planner - System Architecture & Algorithm Documentation</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #34495e; margin-top: 30px; }
+        h3 { color: #7f8c8d; }
+        code { background-color: #f8f9fa; padding: 2px 4px; border-radius: 3px; font-family: 'Courier New', monospace; }
+        pre { background-color: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        ul, ol { margin-left: 20px; }
+        li { margin: 5px 0; }
+        .highlight { background-color: #fff3cd; padding: 10px; border-left: 4px solid #ffc107; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Student Planner - System Architecture & Algorithm Documentation</h1>
+    
+    <h2>System Architecture Overview</h2>
+    <p>The Student Planner follows a <strong>modular MVC (Model-View-Controller)</strong> architecture with clear separation of concerns across six distinct layers:</p>
+    
+    <h3>1. Core MVC Framework (Infrastructure Layer)</h3>
+    <ul>
+        <li><strong>AbstractModel</strong>: Base class implementing the Observer pattern with listener management</li>
+        <li><strong>AbstractView</strong>: Base view with automatic model listener registration</li>
+        <li><strong>AbstractController</strong>: Base controller with reference management</li>
+        <li><strong>ModelEvent/ModelListener</strong>: Event-driven communication system</li>
+    </ul>
+    
+    <h3>2. Domain Model Layer</h3>
+    <ul>
+        <li><strong>Student</strong>: Student profile with academic year enumeration and validation</li>
+        <li><strong>Course</strong>: Course entities with unique code validation</li>
+        <li><strong>Task</strong>: Task entities with priority enumeration, due dates, and color accents</li>
+        <li><strong>Event</strong>: Calendar events with time range management</li>
+        <li><strong>PlannerModel</strong>: Central model coordinating all domain entities</li>
+    </ul>
+    
+    <h3>3. Service Layer (Business Logic)</h3>
+    <ul>
+        <li><strong>PlannerService</strong>: Encapsulates validation rules, business logic, and data operations</li>
+        <li>Handles complex operations like duplicate checking and data integrity</li>
+    </ul>
+    
+    <h3>4. Persistence Layer</h3>
+    <ul>
+        <li><strong>PlannerRepository</strong>: File-based CSV storage with profile management</li>
+        <li>Supports multi-profile data isolation and automatic data directory creation</li>
+    </ul>
+    
+    <h3>5. User Interface Layer</h3>
+    <ul>
+        <li><strong>PlannerView</strong>: Main tabbed interface with automatic model updates</li>
+        <li><strong>CalendarView</strong>: Multi-view calendar (Day/Week/Month) with timeline rendering</li>
+        <li><strong>TimerPanel</strong>: Countdown timer with preset functionality and audio alerts</li>
+    </ul>
+    
+    <h3>6. Application Entry Point</h3>
+    <ul>
+        <li><strong>Main</strong>: Dependency injection and application lifecycle management</li>
+    </ul>
+    
+    <h2>Critical Implemented Algorithms</h2>
+    
+    <h3>1. Observer Pattern Implementation</h3>
+    <pre><code>// Event-driven UI updates
+fireModelChanged("TASK_ADDED", task);
+// Automatic listener registration in AbstractView
+// Real-time UI synchronization across all components</code></pre>
+    
+    <h3>2. Profile-Based Data Isolation Algorithm</h3>
+    <p>The repository implements a sophisticated profile management system:</p>
+    <ul>
+        <li><strong>Profile Prefix Generation</strong>: <code>studentId + "_" + firstName + "_" + lastName</code></li>
+        <li><strong>Data Isolation</strong>: Separate CSV files per profile (<code>{prefix}_courses.csv</code>, <code>{prefix}_tasks.csv</code>)</li>
+        <li><strong>Automatic Profile Loading</strong>: Preference-based profile selection with fallback to first available</li>
+        <li><strong>Data Migration</strong>: Seamless switching between profiles with isolated data sets</li>
+    </ul>
+    
+    <h3>3. Calendar Rendering Algorithm</h3>
+    <p><strong>CalendarView</strong> implements complex calendar logic:</p>
+    <ul>
+        <li><strong>Month Grid Calculation</strong>: 6x7 grid generation with proper date placement</li>
+        <li><strong>Timeline Rendering</strong>: 24-hour timeline with configurable hour height (50px)</li>
+        <li><strong>Event Overlap Detection</strong>: Time-based event positioning in day/week views</li>
+        <li><strong>Date Navigation</strong>: YearMonth-based navigation with boundary checking</li>
+    </ul>
+    
+    <h3>4. Timer State Management Algorithm</h3>
+    <p><strong>TimerPanel</strong> implements a robust countdown system:</p>
+    <ul>
+        <li><strong>State Machine</strong>: Idle → Running → Paused → Complete transitions</li>
+        <li><strong>Preset Management</strong>: 30/60/90 minute presets with running-session guards</li>
+        <li><strong>Audio Alert System</strong>: WAV file playback on timer completion</li>
+        <li><strong>Visual State Indication</strong>: Color-coded display based on timer state</li>
+    </ul>
+    
+    <h3>5. Task Color Palette System</h3>
+    <p><strong>TaskPalette</strong> provides canonical color management:</p>
+    <ul>
+        <li><strong>Color Canonicalization</strong>: Hex color validation and normalization</li>
+        <li><strong>Default Color Fallback</strong>: Red (<code>#E53935</code>) as default accent color</li>
+        <li><strong>Consistent Rendering</strong>: Color synchronization across task list and calendar views</li>
+    </ul>
+    
+    <h3>6. Due Date Reminder Algorithm</h3>
+    <p><strong>PlannerView</strong> implements intelligent reminder scheduling:</p>
+    <ul>
+        <li><strong>Daily Reminder Cadence</strong>: Popups starting 7 days before due date</li>
+        <li><strong>Duplicate Prevention</strong>: Task+due+date key tracking to prevent spam</li>
+        <li><strong>Completion Filtering</strong>: Automatic exclusion of completed tasks</li>
+        <li><strong>Dynamic Status Display</strong>: "Due in X days", "Due tomorrow", "Due today"</li>
+    </ul>
+    
+    <h3>7. Weekly Priority Algorithm</h3>
+    <p>Dedicated weekly tab with intelligent task filtering:</p>
+    <ul>
+        <li><strong>Date Range Calculation</strong>: Current week boundaries (Sunday-Saturday)</li>
+        <li><strong>Priority Filtering</strong>: High-priority tasks due within the week</li>
+        <li><strong>Checkbox State Management</strong>: Direct completion toggling with model synchronization</li>
+        <li><strong>Real-time Updates</strong>: Automatic checklist refresh when tasks change elsewhere</li>
+    </ul>
+    
+    <h3>8. CSV Persistence Algorithm</h3>
+    <p><strong>PlannerRepository</strong> implements robust file-based storage:</p>
+    <ul>
+        <li><strong>CSV Escaping</strong>: Proper handling of special characters in data fields</li>
+        <li><strong>Atomic Operations</strong>: File writing with error handling and rollback</li>
+        <li><strong>Backward Compatibility</strong>: Graceful handling of missing fields during data loading</li>
+        <li><strong>Directory Management</strong>: Automatic creation of data directories and profile subdirectories</li>
+    </ul>
+    
+    <h2>Data Flow Architecture</h2>
+    <div class="highlight">
+        <p><code>User Action → View → Controller → Service → Model → Observer Notification → View Update</code></p>
+    </div>
+    
+    <p><strong>Example: Task Addition Flow:</strong></p>
+    <ol>
+        <li><strong>View</strong>: User fills task form and clicks "Add Task"</li>
+        <li><strong>Controller</strong>: Receives action, validates input format</li>
+        <li><strong>Service</strong>: Validates business rules, creates Task entity with canonical color</li>
+        <li><strong>Model</strong>: Adds task to collection, fires ModelEvent</li>
+        <li><strong>Observer</strong>: View receives event, updates task list display</li>
+        <li><strong>Persistence</strong>: Repository saves data to profile-specific CSV file</li>
+    </ol>
+    
+    <h2>Key Design Patterns</h2>
+    <ol>
+        <li><strong>Observer Pattern</strong>: Automatic UI updates via ModelListener interface</li>
+        <li><strong>Repository Pattern</strong>: Abstracted data access layer</li>
+        <li><strong>Service Pattern</strong>: Business logic encapsulation</li>
+        <li><strong>Factory Pattern</strong>: View component creation</li>
+        <li><strong>Strategy Pattern</strong>: Different calendar view types (Day/Week/Month)</li>
+    </ol>
+    
+    <h2>Complex Algorithm Characteristics</h2>
+    <p>The system implements several sophisticated algorithms that are critical for its behavior:</p>
+    <ul>
+        <li><strong>Multi-threaded Timer</strong>: Swing Timer integration with EDT-safe UI updates</li>
+        <li><strong>Date Arithmetic</strong>: Complex date calculations for calendar rendering and reminder scheduling</li>
+        <li><strong>Color Management</strong>: Hex color parsing and canonicalization</li>
+        <li><strong>File I/O with Error Recovery</strong>: Robust CSV parsing with graceful degradation</li>
+        <li><strong>State Management</strong>: Complex UI state synchronization across multiple tabs and components</li>
+    </ul>
+    
+    <h2>Technology Stack</h2>
+    
+    <h3>Core Technologies</h3>
+    <ul>
+        <li><strong>Java 21</strong> - Primary programming language</li>
+        <li><strong>Java Swing</strong> - GUI framework for the desktop application</li>
+        <li><strong>Gradle</strong> - Build tool and dependency management</li>
+    </ul>
+    
+    <h3>Key Dependencies</h3>
+    <ul>
+        <li><strong>FlatLaf 3.4.1</strong> - Modern Look and Feel for Swing applications</li>
+        <li><strong>JUnit Jupiter 5.9.2</strong> - Unit testing framework</li>
+        <li><strong>Mockito 5.1.1</strong> - Mocking framework for testing</li>
+    </ul>
+    
+    <h3>Data Storage</h3>
+    <ul>
+        <li><strong>CSV files</strong> - File-based persistence for student, course, and task data</li>
+        <li><strong>Local file system</strong> - Data stored in <code>planner_data</code> directory</li>
+    </ul>
+    
+    <h2>Architecture Benefits</h2>
+    
+    <h3>1. Maintainability</h3>
+    <ul>
+        <li>Each module has clear boundaries</li>
+        <li>Changes in one module don't affect others</li>
+        <li>Easy to locate and fix issues</li>
+    </ul>
+    
+    <h3>2. Testability</h3>
+    <ul>
+        <li>Models can be tested independently</li>
+        <li>Service layer can be unit tested with mocks</li>
+        <li>UI components can be tested with stub controllers</li>
+    </ul>
+    
+    <h3>3. Extensibility</h3>
+    <ul>
+        <li>New entity types can be added to domain model</li>
+        <li>Additional views can be created for different use cases</li>
+        <li>New persistence mechanisms can be implemented</li>
+    </ul>
+    
+    <h3>4. Reusability</h3>
+    <ul>
+        <li>MVC framework can be used for other applications</li>
+        <li>Service layer can be exposed via different interfaces</li>
+        <li>Persistence layer can be swapped for databases</li>
+    </ul>
+    
+    <h2>Error Handling Strategy</h2>
+    
+    <h3>Validation Layers</h3>
+    <ol>
+        <li><strong>UI Layer</strong>: Basic format validation (dates, numbers)</li>
+        <li><strong>Service Layer</strong>: Business rule validation (duplicates, ranges)</li>
+        <li><strong>Model Layer</strong>: Data integrity validation (null checks, constraints)</li>
+    </ol>
+    
+    <h3>Error Propagation</h3>
+    <div class="highlight">
+        <p><code>Service Exception → Controller → View → User (Dialog)</code></p>
+    </div>
+    
+    <h2>Future Enhancement Points</h2>
+    
+    <h3>Architectural Extensions</h3>
+    <ul>
+        <li><strong>Repository Pattern</strong>: Abstract persistence for database support</li>
+        <li><strong>Command Pattern</strong>: Undo/redo functionality</li>
+        <li><strong>Factory Pattern</strong>: Different view types (web, mobile)</li>
+        <li><strong>Observer Extensions</strong>: Real-time synchronization</li>
+    </ul>
+    
+    <h3>Feature Extensions</h3>
+    <ul>
+        <li><strong>Palette Extension</strong>: User-defined custom hex colors and saved favorites</li>
+        <li><strong>Timer Session Analytics</strong>: Track completed study sessions and streaks</li>
+        <li><strong>Grade Module</strong>: GPA calculation and tracking</li>
+        <li><strong>Notification Module</strong>: Deadline reminders</li>
+        <li><strong>Export Module</strong>: Data export in multiple formats</li>
+    </ul>
+    
+    <hr>
+    <p><em>This architecture demonstrates enterprise-level software design with proper separation of concerns, comprehensive error handling, and extensible modular structure.</em></p>
+    <p><small>Generated with <a href="https://cli.devin.ai/docs">Devin</a></small></p>
+</body>
+</html>
