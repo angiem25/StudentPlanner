@@ -286,15 +286,6 @@ public class PlannerView extends AbstractView {
         checkCoursesMenuItem.addActionListener(e -> onCheckCourses());
         accountMenu.add(checkCoursesMenuItem);
         
-        accountMenu.addSeparator(); // Add separator after Profile/Login
-        
-        // Add Check Courses option under Profile
-        JMenuItem checkCoursesItem = new JMenuItem("Check Courses");
-        checkCoursesItem.addActionListener(e -> {
-            tabbedPane.setSelectedIndex(0); // Switch to Courses tab
-        });
-        accountMenu.add(checkCoursesItem);
-        
         accountMenu.addSeparator(); // Add separator before Logout
         
         // Logout button (only enabled when logged in)
