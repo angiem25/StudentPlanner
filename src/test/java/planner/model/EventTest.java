@@ -5,12 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test suite for Event class.
- * Tests event data management and time-based operations.
+ * Tests event data management, time overlap detection, and date operations.
  */
 class EventTest {
     
@@ -20,16 +21,16 @@ class EventTest {
     
     @BeforeEach
     void setUp() {
-        testStartTime = LocalDateTime.now().plusDays(1).withHour(14).withMinute(0);
-        testEndTime = testStartTime.plusHours(2);
-        event = new Event("Study Group", "Group meeting for CS101", testStartTime, testEndTime);
+        testStartTime = LocalDateTime.of(2024, 1, 15, 10, 0);
+        testEndTime = LocalDateTime.of(2024, 1, 15, 11, 0);
+        event = new Event("Study Session", "Math homework review", testStartTime, testEndTime);
     }
     
     @Test
     @DisplayName("Should create event with valid data")
     void testEventCreation() {
-        assertEquals("Study Group", event.getTitle());
-        assertEquals("Group meeting for CS101", event.getDescription());
+        assertEquals("Study Session", event.getTitle());
+        assertEquals("Math homework review", event.getDescription());
         assertEquals(testStartTime, event.getStartDateTime());
         assertEquals(testEndTime, event.getEndDateTime());
         assertNotNull(event.getId());
@@ -45,8 +46,8 @@ class EventTest {
     @Test
     @DisplayName("Should update event information")
     void testSetters() {
-        LocalDateTime newStart = testStartTime.plusDays(1);
-        LocalDateTime newEnd = newStart.plusHours(3);
+        LocalDateTime newStart = LocalDateTime.of(2024, 1, 16, 14, 0);
+        LocalDateTime newEnd = LocalDateTime.of(2024, 1, 16, 15, 0);
         
         event.setTitle("Updated Event");
         event.setDescription("Updated description");
@@ -60,52 +61,71 @@ class EventTest {
     }
     
     @Test
-    @DisplayName("Should check if event occurs on specific date")
-    void testOccursOn() {
-        java.time.LocalDate eventDate = testStartTime.toLocalDate();
-        assertTrue(event.occursOn(eventDate));
+    @DisplayName("Should detect overlapping events correctly")
+    void testOverlapsWith() {
+        // Test overlapping range
+        assertTrue(event.overlapsWith(
+            LocalDateTime.of(2024, 1, 15, 10, 30),
+            LocalDateTime.of(2024, 1, 15, 11, 30)
+        ));
         
-        java.time.LocalDate differentDate = eventDate.plusDays(1);
-        assertFalse(event.occursOn(differentDate));
+        // Test non-overlapping range (before)
+        assertFalse(event.overlapsWith(
+            LocalDateTime.of(2024, 1, 15, 8, 0),
+            LocalDateTime.of(2024, 1, 15, 9, 0)
+        ));
+        
+        // Test non-overlapping range (after)
+        assertFalse(event.overlapsWith(
+            LocalDateTime.of(2024, 1, 15, 12, 0),
+            LocalDateTime.of(2024, 1, 15, 13, 0)
+        ));
+        
+        // Test exact boundary overlap
+        assertTrue(event.overlapsWith(
+            LocalDateTime.of(2024, 1, 15, 11, 0),
+            LocalDateTime.of(2024, 1, 15, 12, 0)
+        ));
+        
+        assertTrue(event.overlapsWith(
+            LocalDateTime.of(2024, 1, 15, 9, 0),
+            LocalDateTime.of(2024, 1, 15, 10, 0)
+        ));
     }
     
     @Test
-    @DisplayName("Should check if event overlaps with time range")
-    void testOverlapsWith() {
-        LocalDateTime rangeStart = testStartTime.minusHours(1);
-        LocalDateTime rangeEnd = testEndTime.plusHours(1);
+    @DisplayName("Should check if event occurs on specific date")
+    void testOccursOn() {
+        LocalDate eventDate = LocalDate.of(2024, 1, 15);
+        LocalDate differentDate = LocalDate.of(2024, 1, 16);
         
-        assertTrue(event.overlapsWith(rangeStart, rangeEnd));
+        assertTrue(event.occursOn(eventDate));
+        assertFalse(event.occursOn(differentDate));
         
-        // Non-overlapping range before event
-        LocalDateTime beforeStart = testStartTime.minusHours(2);
-        LocalDateTime beforeEnd = testStartTime.minusHours(1);
-        assertFalse(event.overlapsWith(beforeStart, beforeEnd));
+        // Test multi-day event
+        LocalDateTime multiDayStart = LocalDateTime.of(2024, 1, 15, 20, 0);
+        LocalDateTime multiDayEnd = LocalDateTime.of(2024, 1, 16, 2, 0);
+        Event multiDayEvent = new Event("Late Study", "Multi-day session", multiDayStart, multiDayEnd);
         
-        // Non-overlapping range after event
-        LocalDateTime afterStart = testEndTime.plusHours(1);
-        LocalDateTime afterEnd = testEndTime.plusHours(2);
-        assertFalse(event.overlapsWith(afterStart, afterEnd));
-        
-        // Range that starts exactly when event starts
-        assertTrue(event.overlapsWith(testStartTime, testStartTime.plusHours(1)));
-        
-        // Range that ends exactly when event ends
-        assertTrue(event.overlapsWith(testEndTime.minusHours(1), testEndTime));
+        assertTrue(multiDayEvent.occursOn(LocalDate.of(2024, 1, 15)));
+        assertTrue(multiDayEvent.occursOn(LocalDate.of(2024, 1, 16)));
+        assertFalse(multiDayEvent.occursOn(LocalDate.of(2024, 1, 17)));
     }
     
     @Test
     @DisplayName("Should handle toString correctly")
     void testToString() {
         String toString = event.toString();
-        assertTrue(toString.contains("Study Group"));
-        assertTrue(toString.contains("Group meeting for CS101"));
+        assertTrue(toString.contains("Study Session"));
+        assertTrue(toString.contains("Math homework review"));
+        assertTrue(toString.contains("startDateTime=" + testStartTime));
+        assertTrue(toString.contains("endDateTime=" + testEndTime));
     }
     
     @Test
     @DisplayName("Should implement equals based on ID")
     void testEquals() {
-        Event sameEvent = new Event("Study Group", "Group meeting for CS101", testStartTime, testEndTime);
+        Event sameEvent = new Event("Study Session", "Math homework review", testStartTime, testEndTime);
         assertNotEquals(event, sameEvent); // Different IDs
         
         // Create an event with the same ID using the constructor that accepts ID
@@ -116,7 +136,7 @@ class EventTest {
     @Test
     @DisplayName("Should implement hashCode based on ID")
     void testHashCode() {
-        Event sameEvent = new Event("Study Group", "Group meeting for CS101", testStartTime, testEndTime);
+        Event sameEvent = new Event("Study Session", "Math homework review", testStartTime, testEndTime);
         assertNotEquals(event.hashCode(), sameEvent.hashCode()); // Different IDs
         
         Event sameIdEvent = new Event(event.getId(), "Different", "Description", testStartTime, testEndTime);
@@ -145,51 +165,37 @@ class EventTest {
     @DisplayName("Should handle event with ID constructor")
     void testEventWithIdConstructor() {
         String testId = "test-event-id-123";
-        LocalDateTime newStart = testStartTime.plusDays(2);
-        LocalDateTime newEnd = newStart.plusHours(1);
-        Event eventWithId = new Event(testId, "Test Event", "Test Description", newStart, newEnd);
+        LocalDateTime start = LocalDateTime.of(2024, 2, 1, 9, 0);
+        LocalDateTime end = LocalDateTime.of(2024, 2, 1, 10, 0);
+        Event eventWithId = new Event(testId, "Test Event", "Test Description", start, end);
         
         assertEquals(testId, eventWithId.getId());
         assertEquals("Test Event", eventWithId.getTitle());
         assertEquals("Test Description", eventWithId.getDescription());
-        assertEquals(newStart, eventWithId.getStartDateTime());
-        assertEquals(newEnd, eventWithId.getEndDateTime());
+        assertEquals(start, eventWithId.getStartDateTime());
+        assertEquals(end, eventWithId.getEndDateTime());
     }
     
     @Test
-    @DisplayName("Should handle multi-day events")
-    void testMultiDayEvents() {
-        LocalDateTime multiDayStart = testStartTime;
-        LocalDateTime multiDayEnd = multiDayStart.plusDays(2).withHour(18);
-        Event multiDayEvent = new Event("Conference", "Multi-day conference", multiDayStart, multiDayEnd);
+    @DisplayName("Should handle edge cases for overlap detection")
+    void testOverlapEdgeCases() {
+        // Test same time event
+        assertTrue(event.overlapsWith(testStartTime, testEndTime));
         
-        // Should occur on both days
-        assertTrue(multiDayEvent.occursOn(multiDayStart.toLocalDate()));
-        assertTrue(multiDayEvent.occursOn(multiDayStart.toLocalDate().plusDays(1)));
-        assertTrue(multiDayEvent.occursOn(multiDayEnd.toLocalDate()));
+        // Test containing event
+        assertTrue(event.overlapsWith(
+            LocalDateTime.of(2024, 1, 15, 9, 0),
+            LocalDateTime.of(2024, 1, 15, 12, 0)
+        ));
         
-        // Should not occur on other days
-        assertFalse(multiDayEvent.occursOn(multiDayStart.toLocalDate().minusDays(1)));
-        assertFalse(multiDayEvent.occursOn(multiDayEnd.toLocalDate().plusDays(1)));
-    }
-    
-    @Test
-    @DisplayName("Should handle edge case overlapping")
-    void testEdgeCaseOverlapping() {
-        // Event from 14:00 to 16:00
-        LocalDateTime rangeStart = testStartTime.withHour(16).withMinute(0); // Exactly when event ends
-        LocalDateTime rangeEnd = testStartTime.withHour(18).withMinute(0); // After event ends
+        // Test contained event
+        assertTrue(event.overlapsWith(
+            LocalDateTime.of(2024, 1, 15, 10, 15),
+            LocalDateTime.of(2024, 1, 15, 10, 45)
+        ));
         
-        assertTrue(event.overlapsWith(rangeStart, rangeEnd)); // Should overlap (end boundary inclusive)
-        
-        // Range that starts exactly when event starts
-        rangeStart = testStartTime;
-        rangeEnd = testStartTime.withHour(15).withMinute(0);
-        assertTrue(event.overlapsWith(rangeStart, rangeEnd)); // Should overlap
-        
-        // Range that ends exactly when event starts (should overlap due to boundary conditions)
-        rangeStart = testStartTime.withHour(12).withMinute(0);
-        rangeEnd = testStartTime;
-        assertTrue(event.overlapsWith(rangeStart, rangeEnd)); // Should overlap
+        // Test zero-duration event
+        LocalDateTime sameTime = LocalDateTime.of(2024, 1, 15, 10, 30);
+        assertTrue(event.overlapsWith(sameTime, sameTime));
     }
 }

@@ -25,10 +25,15 @@ class DefaultTabIntegrationTest {
     void testDefaultTabWithToday() throws IOException {
         // Test setting "Today" as default and verifying it opens correctly
         
-        // 1. Create a temporary preferences file with "Today" as default
-        Path dataDir = tempDir.resolve("planner_data");
+        // 1. Create a preferences file with "Today" as default in the correct directory
+        Path dataDir = Path.of("planner_data");
         Files.createDirectories(dataDir);
         Path preferencesFile = dataDir.resolve("preferences.csv");
+        
+        // Clean up any existing file
+        if (Files.exists(preferencesFile)) {
+            Files.delete(preferencesFile);
+        }
         
         String preferencesContent = "DEFAULT_TAB,Today";
         Files.write(preferencesFile, preferencesContent.getBytes());
@@ -38,20 +43,28 @@ class DefaultTabIntegrationTest {
         String savedContent = Files.readString(preferencesFile);
         assertEquals(preferencesContent, savedContent);
         
-        // 3. Load preference using repository with temp directory override
+        // 3. Load preference using repository
         PlannerRepository repository = new PlannerRepository();
         String loadedDefault = repository.loadPreferences();
         assertEquals("Today", loadedDefault);
+        
+        // 4. Clean up
+        Files.deleteIfExists(preferencesFile);
     }
     
     @Test
     void testDefaultTabWithWeeklyPriorities() throws IOException {
         // Test setting "Weekly Priorities" as default and verifying it opens correctly
         
-        // 1. Create a temporary preferences file with "Weekly Priorities" as default
-        Path dataDir = tempDir.resolve("planner_data");
+        // 1. Create a preferences file with "Weekly Priorities" as default in the correct directory
+        Path dataDir = Path.of("planner_data");
         Files.createDirectories(dataDir);
         Path preferencesFile = dataDir.resolve("preferences.csv");
+        
+        // Clean up any existing file
+        if (Files.exists(preferencesFile)) {
+            Files.delete(preferencesFile);
+        }
         
         String preferencesContent = "DEFAULT_TAB,Weekly Priorities";
         Files.write(preferencesFile, preferencesContent.getBytes());
@@ -65,16 +78,24 @@ class DefaultTabIntegrationTest {
         PlannerRepository repository = new PlannerRepository();
         String loadedDefault = repository.loadPreferences();
         assertEquals("Weekly Priorities", loadedDefault);
+        
+        // 4. Clean up
+        Files.deleteIfExists(preferencesFile);
     }
     
     @Test
     void testDefaultTabWithCalendar() throws IOException {
         // Test setting "Calendar" as default and verifying it opens correctly
         
-        // 1. Create a temporary preferences file with "Calendar" as default
-        Path dataDir = tempDir.resolve("planner_data");
+        // 1. Create a preferences file with "Calendar" as default in the correct directory
+        Path dataDir = Path.of("planner_data");
         Files.createDirectories(dataDir);
         Path preferencesFile = dataDir.resolve("preferences.csv");
+        
+        // Clean up any existing file
+        if (Files.exists(preferencesFile)) {
+            Files.delete(preferencesFile);
+        }
         
         String preferencesContent = "DEFAULT_TAB,Calendar";
         Files.write(preferencesFile, preferencesContent.getBytes());
@@ -88,16 +109,24 @@ class DefaultTabIntegrationTest {
         PlannerRepository repository = new PlannerRepository();
         String loadedDefault = repository.loadPreferences();
         assertEquals("Calendar", loadedDefault);
+        
+        // 4. Clean up
+        Files.deleteIfExists(preferencesFile);
     }
     
     @Test
     void testDefaultTabWithTasks() throws IOException {
         // Test setting "Tasks" as default and verifying it opens correctly
         
-        // 1. Create a temporary preferences file with "Tasks" as default
-        Path dataDir = tempDir.resolve("planner_data");
+        // 1. Create a preferences file with "Tasks" as default in the correct directory
+        Path dataDir = Path.of("planner_data");
         Files.createDirectories(dataDir);
         Path preferencesFile = dataDir.resolve("preferences.csv");
+        
+        // Clean up any existing file
+        if (Files.exists(preferencesFile)) {
+            Files.delete(preferencesFile);
+        }
         
         String preferencesContent = "DEFAULT_TAB,Tasks";
         Files.write(preferencesFile, preferencesContent.getBytes());
@@ -111,16 +140,23 @@ class DefaultTabIntegrationTest {
         PlannerRepository repository = new PlannerRepository();
         String loadedDefault = repository.loadPreferences();
         assertEquals("Tasks", loadedDefault);
+        
+        // 4. Clean up
+        Files.deleteIfExists(preferencesFile);
     }
     
     @Test
     void testDefaultTabFallbackToTasks() throws IOException {
         // Test that when no preferences exist, it defaults to "Tasks"
         
-        // 1. Ensure no preferences file exists
-        Path dataDir = tempDir.resolve("planner_data");
-        Files.createDirectories(dataDir);
+        // 1. Ensure no preferences file exists in the correct directory
+        Path dataDir = Path.of("planner_data");
         Path preferencesFile = dataDir.resolve("preferences.csv");
+        
+        // Delete preferences file if it exists
+        if (Files.exists(preferencesFile)) {
+            Files.delete(preferencesFile);
+        }
         
         // 2. Load preference using repository (should fallback to "Tasks")
         PlannerRepository repository = new PlannerRepository();
@@ -132,10 +168,15 @@ class DefaultTabIntegrationTest {
     void testDefaultTabWithInvalidTab() throws IOException {
         // Test that invalid tab names fall back to "Tasks"
         
-        // 1. Create a temporary preferences file with invalid tab
-        Path dataDir = tempDir.resolve("planner_data");
+        // 1. Create a preferences file with invalid tab in the correct directory
+        Path dataDir = Path.of("planner_data");
         Files.createDirectories(dataDir);
         Path preferencesFile = dataDir.resolve("preferences.csv");
+        
+        // Clean up any existing file
+        if (Files.exists(preferencesFile)) {
+            Files.delete(preferencesFile);
+        }
         
         String preferencesContent = "DEFAULT_TAB,InvalidTab";
         Files.write(preferencesFile, preferencesContent.getBytes());
@@ -144,16 +185,24 @@ class DefaultTabIntegrationTest {
         PlannerRepository repository = new PlannerRepository();
         String loadedDefault = repository.loadPreferences();
         assertEquals("Tasks", loadedDefault);
+        
+        // 3. Clean up
+        Files.deleteIfExists(preferencesFile);
     }
     
     @Test
     void testDefaultTabWithNullInput() throws IOException {
         // Test that null input falls back to "Tasks"
         
-        // 1. Create a temporary preferences file with null
-        Path dataDir = tempDir.resolve("planner_data");
+        // 1. Create a preferences file with null in the correct directory
+        Path dataDir = Path.of("planner_data");
         Files.createDirectories(dataDir);
         Path preferencesFile = dataDir.resolve("preferences.csv");
+        
+        // Clean up any existing file
+        if (Files.exists(preferencesFile)) {
+            Files.delete(preferencesFile);
+        }
         
         String preferencesContent = "DEFAULT_TAB,null";
         Files.write(preferencesFile, preferencesContent.getBytes());
@@ -162,16 +211,24 @@ class DefaultTabIntegrationTest {
         PlannerRepository repository = new PlannerRepository();
         String loadedDefault = repository.loadPreferences();
         assertEquals("Tasks", loadedDefault);
+        
+        // 3. Clean up
+        Files.deleteIfExists(preferencesFile);
     }
     
     @Test
     void testDefaultTabWithEmptyInput() throws IOException {
         // Test that empty input falls back to "Tasks"
         
-        // 1. Create a temporary preferences file with empty string
-        Path dataDir = tempDir.resolve("planner_data");
+        // 1. Create a preferences file with empty string in the correct directory
+        Path dataDir = Path.of("planner_data");
         Files.createDirectories(dataDir);
         Path preferencesFile = dataDir.resolve("preferences.csv");
+        
+        // Clean up any existing file
+        if (Files.exists(preferencesFile)) {
+            Files.delete(preferencesFile);
+        }
         
         String preferencesContent = "DEFAULT_TAB,";
         Files.write(preferencesFile, preferencesContent.getBytes());
@@ -180,5 +237,8 @@ class DefaultTabIntegrationTest {
         PlannerRepository repository = new PlannerRepository();
         String loadedDefault = repository.loadPreferences();
         assertEquals("Tasks", loadedDefault);
+        
+        // 3. Clean up
+        Files.deleteIfExists(preferencesFile);
     }
 }
