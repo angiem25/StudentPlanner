@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.service.PlannerServiceBasicTest" tests="14" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:27" hostname="Mac.lan" time="0.059">
+  <properties/>
+  <testcase name="Should get upcoming tasks" classname="planner.service.PlannerServiceBasicTest" time="0.008"/>
+  <testcase name="Should add task successfully" classname="planner.service.PlannerServiceBasicTest" time="0.003"/>
+  <testcase name="Should update task successfully" classname="planner.service.PlannerServiceBasicTest" time="0.003"/>
+  <testcase name="Should get tasks by priority" classname="planner.service.PlannerServiceBasicTest" time="0.005"/>
+  <testcase name="Should update course successfully" classname="planner.service.PlannerServiceBasicTest" time="0.004"/>
+  <testcase name="Should remove course successfully" classname="planner.service.PlannerServiceBasicTest" time="0.003"/>
+  <testcase name="Should add course successfully" classname="planner.service.PlannerServiceBasicTest" time="0.002"/>
+  <testcase name="Should validate task due date" classname="planner.service.PlannerServiceBasicTest" time="0.003"/>
+  <testcase name="Should prevent duplicate course codes" classname="planner.service.PlannerServiceBasicTest" time="0.002"/>
+  <testcase name="Should remove task successfully" classname="planner.service.PlannerServiceBasicTest" time="0.005"/>
+  <testcase name="Should get overdue tasks" classname="planner.service.PlannerServiceBasicTest" time="0.006"/>
+  <testcase name="Should add task with course" classname="planner.service.PlannerServiceBasicTest" time="0.003"/>
+  <testcase name="Should add task without course" classname="planner.service.PlannerServiceBasicTest" time="0.002"/>
+  <testcase name="Should toggle task completion" classname="planner.service.PlannerServiceBasicTest" time="0.001"/>
+  <system-out><![CDATA[DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 1 courses, profilePrefix: null
+DEBUG: saveCourses called with 1 courses, profilePrefix: null
+DEBUG: saveCourses called with 1 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 1 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 1 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 1 courses, profilePrefix: null
+DEBUG: saveCourses called with 1 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

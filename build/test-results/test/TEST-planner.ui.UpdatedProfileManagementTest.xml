@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.ui.UpdatedProfileManagementTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:39" hostname="Mac.lan" time="1.6">
+  <properties/>
+  <testcase name="testProfileSelectionWorkflow()" classname="planner.ui.UpdatedProfileManagementTest" time="0.134"/>
+  <testcase name="testSaveProfileAutoClose()" classname="planner.ui.UpdatedProfileManagementTest" time="0.17"/>
+  <testcase name="testLogoutButtonVisibility()" classname="planner.ui.UpdatedProfileManagementTest" time="0.339"/>
+  <testcase name="testReadOnlyProfileView()" classname="planner.ui.UpdatedProfileManagementTest" time="0.284"/>
+  <testcase name="testAccountMenuStructure()" classname="planner.ui.UpdatedProfileManagementTest" time="0.304"/>
+  <testcase name="testAddNewProfileWorkflow()" classname="planner.ui.UpdatedProfileManagementTest" time="0.244"/>
+  <testcase name="testProfileDialogWorkflows()" classname="planner.ui.UpdatedProfileManagementTest" time="0.122"/>
+  <system-out><![CDATA[DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: saveCourses called with 0 courses, profilePrefix: S99999_Auto_Close
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: Current profile from preferences: null
+DEBUG: No profile selected, loading first available profile
+DEBUG: Loading first available profile: Grace Second - Art (Senior)
+DEBUG: Student set in model: Grace Second
+DEBUG: Loading courses from prefix: S77777_Grace_Second
+DEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+DEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+DEBUG: File exists: true
+DEBUG: Loaded 0 courses
+DEBUG: Added 0 courses to model
+DEBUG: Loading tasks from prefix: S77777_Grace_Second
+DEBUG: Loaded 0 tasks
+DEBUG: Added 0 tasks to model
+DEBUG: Loading events from prefix: S77777_Grace_Second
+DEBUG: Loaded 0 events
+DEBUG: Added 0 events to model
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: saveCourses called with 0 courses, profilePrefix: S11111_Alice_Wonder
+DEBUG: Current profile from preferences: Grace Second - Art (Senior)
+DEBUG: Loading profile: Grace Second - Art (Senior)
+DEBUG: Student set in model: Grace Second
+DEBUG: Loading courses from prefix: S77777_Grace_Second
+DEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+DEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+DEBUG: File exists: true
+DEBUG: Loaded 0 courses
+DEBUG: Added 0 courses to model
+DEBUG: Loading tasks from prefix: S77777_Grace_Second
+DEBUG: Loaded 0 tasks
+DEBUG: Added 0 tasks to model
+DEBUG: Loading events from prefix: S77777_Grace_Second
+DEBUG: Loaded 0 events
+DEBUG: Added 0 events to model
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

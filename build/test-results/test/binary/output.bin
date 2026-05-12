@@ -1,28 +1,270 @@
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
-
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
-
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
-
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
->DEBUG: saveCourses called with 1 courses, profilePrefix: null
->DEBUG: saveCourses called with 2 courses, profilePrefix: null
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
->DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž‘>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž‘>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž‘>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž’>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+Ž’>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+Ž“>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+Ž“>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž”>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+Ž•>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž–>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+Ž—>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž—>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž˜>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž™>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+Ž™>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+Žš>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+Ž›>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+œ>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+œ>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+œ>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+ >DEBUG: saveCourses called with 1 courses, profilePrefix: null
+ >DEBUG: saveCourses called with 1 courses, profilePrefix: null
+¢>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+¢>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+¢>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+¥>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+¥>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+¥>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+§>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+§>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+¨>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+¨>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+¬>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+­>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+­>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+®>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+¯>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+±>DEBUG: saveCourses called with 1 courses, profilePrefix: null
+±>DEBUG: saveCourses called with 2 courses, profilePrefix: null
+³>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+´>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+µ>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+¸¹"DEBUG: refreshCourseList() called
+¸¹DEBUG: Model has 0 courses
+¸¹'DEBUG: CourseListModel now has 0 items
+¸¹IDEBUG: saveCourses called with 0 courses, profilePrefix: S12345_John_Doe
+¸º"DEBUG: refreshCourseList() called
+¸ºDEBUG: Model has 0 courses
+¸º'DEBUG: CourseListModel now has 0 items
+¸»"DEBUG: refreshCourseList() called
+¸»DEBUG: Model has 0 courses
+¸»'DEBUG: CourseListModel now has 0 items
+¸».DEBUG: Current profile from preferences: null
+¸»<DEBUG: No profile selected, loading first available profile
+¸»DDEBUG: Loading first available profile: Grace Second - Art (Senior)
+¸»*DEBUG: Student set in model: Grace Second
+¸»8DEBUG: Loading courses from prefix: S77777_Grace_Second
+¸»BDEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+¸»XDEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+¸»DEBUG: File exists: true
+¸»DEBUG: Loaded 0 courses
+¸» DEBUG: Added 0 courses to model
+¸»6DEBUG: Loading tasks from prefix: S77777_Grace_Second
+¸»DEBUG: Loaded 0 tasks
+¸»DEBUG: Added 0 tasks to model
+¸»7DEBUG: Loading events from prefix: S77777_Grace_Second
+¸»DEBUG: Loaded 0 events
+¸»DEBUG: Added 0 events to model
+¸¼"DEBUG: refreshCourseList() called
+¸¼DEBUG: Model has 0 courses
+¸¼'DEBUG: CourseListModel now has 0 items
+¸¼>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+¸¼EDEBUG: Current profile from preferences: Grace Second - Art (Senior)
+¸¼4DEBUG: Loading profile: Grace Second - Art (Senior)
+¸¼*DEBUG: Student set in model: Grace Second
+¸¼8DEBUG: Loading courses from prefix: S77777_Grace_Second
+¸¼BDEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+¸¼XDEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+¸¼DEBUG: File exists: true
+¸¼DEBUG: Loaded 0 courses
+¸¼ DEBUG: Added 0 courses to model
+¸¼6DEBUG: Loading tasks from prefix: S77777_Grace_Second
+¸¼DEBUG: Loaded 0 tasks
+¸¼DEBUG: Added 0 tasks to model
+¸¼7DEBUG: Loading events from prefix: S77777_Grace_Second
+¸¼DEBUG: Loaded 0 events
+¸¼DEBUG: Added 0 events to model
+ÅÌ"DEBUG: refreshCourseList() called
+ÅÌDEBUG: Model has 0 courses
+ÅÌ'DEBUG: CourseListModel now has 0 items
+ÎÏ"DEBUG: refreshCourseList() called
+ÎÏDEBUG: Model has 0 courses
+ÎÏ'DEBUG: CourseListModel now has 0 items
+ÎÐ"DEBUG: refreshCourseList() called
+ÎÐDEBUG: Model has 0 courses
+ÎÐ'DEBUG: CourseListModel now has 0 items
+ÎÑ"DEBUG: refreshCourseList() called
+ÎÑDEBUG: Model has 0 courses
+ÎÑ'DEBUG: CourseListModel now has 0 items
+ÎÒ"DEBUG: refreshCourseList() called
+ÎÒDEBUG: Model has 0 courses
+ÎÒ'DEBUG: CourseListModel now has 0 items
+ÔÓ"DEBUG: refreshCourseList() called
+ÔÓDEBUG: Model has 0 courses
+ÔÓ'DEBUG: CourseListModel now has 0 items
+ÔÕMDEBUG: saveCourses called with 0 courses, profilePrefix: S12345_Test_Student
+ÔÛMDEBUG: saveCourses called with 0 courses, profilePrefix: S12345_Test_Student
+ÔÞMDEBUG: saveCourses called with 1 courses, profilePrefix: S12345_Test_Student
+ÔßMDEBUG: saveCourses called with 1 courses, profilePrefix: S12345_Test_Student
+ÔáMDEBUG: saveCourses called with 0 courses, profilePrefix: S12345_Test_Student
+ÔæMDEBUG: saveCourses called with 1 courses, profilePrefix: S12345_Test_Student
+ÔçMDEBUG: saveCourses called with 0 courses, profilePrefix: S12345_Test_Student
+ÔìMDEBUG: saveCourses called with 1 courses, profilePrefix: S12345_Test_Student
+Ôí.DEBUG: Current profile from preferences: null
+Ôí<DEBUG: No profile selected, loading first available profile
+ÔíDDEBUG: Loading first available profile: Grace Second - Art (Senior)
+Ôí*DEBUG: Student set in model: Grace Second
+Ôí8DEBUG: Loading courses from prefix: S77777_Grace_Second
+ÔíBDEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+ÔíXDEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+ÔíDEBUG: File exists: true
+ÔíDEBUG: Loaded 0 courses
+Ôí DEBUG: Added 0 courses to model
+Ôí6DEBUG: Loading tasks from prefix: S77777_Grace_Second
+ÔíDEBUG: Loaded 0 tasks
+ÔíDEBUG: Added 0 tasks to model
+Ôí7DEBUG: Loading events from prefix: S77777_Grace_Second
+ÔíDEBUG: Loaded 0 events
+ÔíDEBUG: Added 0 events to model
+Ôî0DEBUG: Logout - model has 1 courses before save
+ÔîMDEBUG: saveCourses called with 1 courses, profilePrefix: S12345_Test_Student
+Ôî#DEBUG: Logout - saved planner data
+ÔîDEBUG: Logout - completed
+ôõ"DEBUG: refreshCourseList() called
+ôõDEBUG: Model has 0 courses
+ôõ'DEBUG: CourseListModel now has 0 items
+ôö"DEBUG: refreshCourseList() called
+ôöDEBUG: Model has 0 courses
+ôö'DEBUG: CourseListModel now has 0 items
+ôöMDEBUG: saveCourses called with 0 courses, profilePrefix: S11111_Alice_Wonder
+ôö.DEBUG: Current profile from preferences: null
+ôö<DEBUG: No profile selected, loading first available profile
+ôöDDEBUG: Loading first available profile: Grace Second - Art (Senior)
+ôö*DEBUG: Student set in model: Grace Second
+ôö8DEBUG: Loading courses from prefix: S77777_Grace_Second
+ôöBDEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+ôöXDEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+ôöDEBUG: File exists: true
+ôöDEBUG: Loaded 0 courses
+ôö DEBUG: Added 0 courses to model
+ôö6DEBUG: Loading tasks from prefix: S77777_Grace_Second
+ôöDEBUG: Loaded 0 tasks
+ôöDEBUG: Added 0 tasks to model
+ôö7DEBUG: Loading events from prefix: S77777_Grace_Second
+ôöDEBUG: Loaded 0 events
+ôöDEBUG: Added 0 events to model
+ô÷>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+ô÷EDEBUG: Current profile from preferences: Grace Second - Art (Senior)
+ô÷4DEBUG: Loading profile: Grace Second - Art (Senior)
+ô÷"DEBUG: refreshCourseList() called
+ô÷DEBUG: Model has 0 courses
+ô÷'DEBUG: CourseListModel now has 0 items
+ô÷*DEBUG: Student set in model: Grace Second
+ô÷8DEBUG: Loading courses from prefix: S77777_Grace_Second
+ô÷BDEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+ô÷XDEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+ô÷DEBUG: File exists: true
+ô÷DEBUG: Loaded 0 courses
+ô÷ DEBUG: Added 0 courses to model
+ô÷6DEBUG: Loading tasks from prefix: S77777_Grace_Second
+ô÷DEBUG: Loaded 0 tasks
+ô÷DEBUG: Added 0 tasks to model
+ô÷7DEBUG: Loading events from prefix: S77777_Grace_Second
+ô÷DEBUG: Loaded 0 events
+ô÷DEBUG: Added 0 events to model
+ôø"DEBUG: refreshCourseList() called
+ôøDEBUG: Model has 0 courses
+ôø'DEBUG: CourseListModel now has 0 items
+úù"DEBUG: refreshCourseList() called
+úùDEBUG: Model has 0 courses
+úù'DEBUG: CourseListModel now has 0 items
+úû"DEBUG: refreshCourseList() called
+úûDEBUG: Model has 0 courses
+úû'DEBUG: CourseListModel now has 0 items
+úü"DEBUG: refreshCourseList() called
+úüDEBUG: Model has 0 courses
+úü'DEBUG: CourseListModel now has 0 items
+úüDDEBUG: loadCourses called with profilePrefix: S55555_Eve_Persistent
+úüZDEBUG: Loading courses from file: planner_data/profiles/S55555_Eve_Persistent_courses.csv
+úüDEBUG: File exists: false
+úü1DEBUG: File does not exist, returning empty list
+úý"DEBUG: refreshCourseList() called
+úýDEBUG: Model has 0 courses
+úý'DEBUG: CourseListModel now has 0 items
+úýMDEBUG: saveCourses called with 0 courses, profilePrefix: S77777_Grace_Second
+úýBDEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+úýXDEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+úýDEBUG: File exists: true
+úþ"DEBUG: refreshCourseList() called
+úþDEBUG: Model has 0 courses
+úþ'DEBUG: CourseListModel now has 0 items
+úþCDEBUG: loadCourses called with profilePrefix: S33333_Charlie_Brown
+úþYDEBUG: Loading courses from file: planner_data/profiles/S33333_Charlie_Brown_courses.csv
+úþDEBUG: File exists: true
+€ÿ"DEBUG: refreshCourseList() called
+€ÿDEBUG: Model has 0 courses
+€ÿ'DEBUG: CourseListModel now has 0 items
+€"DEBUG: refreshCourseList() called
+€DEBUG: Model has 0 courses
+€'DEBUG: CourseListModel now has 0 items
+€"DEBUG: refreshCourseList() called
+€DEBUG: Model has 0 courses
+€'DEBUG: CourseListModel now has 0 items
+€"DEBUG: refreshCourseList() called
+€DEBUG: Model has 0 courses
+€'DEBUG: CourseListModel now has 0 items
+€KDEBUG: saveCourses called with 0 courses, profilePrefix: S99999_Auto_Close
+€‚"DEBUG: refreshCourseList() called
+€‚DEBUG: Model has 0 courses
+€‚'DEBUG: CourseListModel now has 0 items
+€ƒ"DEBUG: refreshCourseList() called
+€ƒDEBUG: Model has 0 courses
+€ƒ'DEBUG: CourseListModel now has 0 items
+€„"DEBUG: refreshCourseList() called
+€„DEBUG: Model has 0 courses
+€„'DEBUG: CourseListModel now has 0 items
+€„>DEBUG: saveCourses called with 0 courses, profilePrefix: null
+€„.DEBUG: Current profile from preferences: null
+€„<DEBUG: No profile selected, loading first available profile
+€„DDEBUG: Loading first available profile: Grace Second - Art (Senior)
+€„*DEBUG: Student set in model: Grace Second
+€„8DEBUG: Loading courses from prefix: S77777_Grace_Second
+€„BDEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+€„XDEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+€„DEBUG: File exists: true
+€„DEBUG: Loaded 0 courses
+€„ DEBUG: Added 0 courses to model
+€„6DEBUG: Loading tasks from prefix: S77777_Grace_Second
+€„DEBUG: Loaded 0 tasks
+€„DEBUG: Added 0 tasks to model
+€„7DEBUG: Loading events from prefix: S77777_Grace_Second
+€„DEBUG: Loaded 0 events
+€„DEBUG: Added 0 events to model
+€…"DEBUG: refreshCourseList() called
+€…DEBUG: Model has 0 courses
+€…'DEBUG: CourseListModel now has 0 items
+€†"DEBUG: refreshCourseList() called
+€†DEBUG: Model has 0 courses
+€†'DEBUG: CourseListModel now has 0 items
+€†MDEBUG: saveCourses called with 0 courses, profilePrefix: S11111_Alice_Wonder
+€†EDEBUG: Current profile from preferences: Grace Second - Art (Senior)
+€†4DEBUG: Loading profile: Grace Second - Art (Senior)
+€†*DEBUG: Student set in model: Grace Second
+€†8DEBUG: Loading courses from prefix: S77777_Grace_Second
+€†BDEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+€†XDEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+€†DEBUG: File exists: true
+€†DEBUG: Loaded 0 courses
+€† DEBUG: Added 0 courses to model
+€†6DEBUG: Loading tasks from prefix: S77777_Grace_Second
+€†DEBUG: Loaded 0 tasks
+€†DEBUG: Added 0 tasks to model
+€†7DEBUG: Loading events from prefix: S77777_Grace_Second
+€†DEBUG: Loaded 0 events
+€†DEBUG: Added 0 events to model

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.ui.PlannerControllerTest" tests="31" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:30" hostname="Mac.lan" time="6.612">
+  <properties/>
+  <testcase name="testSaveAccountState()" classname="planner.ui.PlannerControllerTest" time="0.181"/>
+  <testcase name="testAddTask()" classname="planner.ui.PlannerControllerTest" time="0.202"/>
+  <testcase name="testRemoveProfile()" classname="planner.ui.PlannerControllerTest" time="0.3"/>
+  <testcase name="testAddCourseWithNegativeCredits()" classname="planner.ui.PlannerControllerTest" time="0.176"/>
+  <testcase name="testSaveStudentProfileWithInvalidYear()" classname="planner.ui.PlannerControllerTest" time="0.289"/>
+  <testcase name="testSavePreferences()" classname="planner.ui.PlannerControllerTest" time="0.178"/>
+  <testcase name="testSaveStudentProfileWithString()" classname="planner.ui.PlannerControllerTest" time="0.188"/>
+  <testcase name="testUpdateTask()" classname="planner.ui.PlannerControllerTest" time="0.296"/>
+  <testcase name="testToggleTaskCompletionSilently()" classname="planner.ui.PlannerControllerTest" time="0.297"/>
+  <testcase name="testClearProfileDataWithNoStudent()" classname="planner.ui.PlannerControllerTest" time="0.12"/>
+  <testcase name="testExportData()" classname="planner.ui.PlannerControllerTest" time="0.186"/>
+  <testcase name="testUpdateCourse()" classname="planner.ui.PlannerControllerTest" time="0.163"/>
+  <testcase name="testLoadAccountState()" classname="planner.ui.PlannerControllerTest" time="0.232"/>
+  <testcase name="testRemoveCourse()" classname="planner.ui.PlannerControllerTest" time="0.332"/>
+  <testcase name="testSaveProfile()" classname="planner.ui.PlannerControllerTest" time="0.102"/>
+  <testcase name="testLoadProfileNames()" classname="planner.ui.PlannerControllerTest" time="0.163"/>
+  <testcase name="testUpdateCourseWithInvalidCredits()" classname="planner.ui.PlannerControllerTest" time="0.299"/>
+  <testcase name="testLoadPreferences()" classname="planner.ui.PlannerControllerTest" time="0.277"/>
+  <testcase name="testAddCourse()" classname="planner.ui.PlannerControllerTest" time="0.241"/>
+  <testcase name="testRemoveTask()" classname="planner.ui.PlannerControllerTest" time="0.199"/>
+  <testcase name="testSaveStudentProfileWithInvalidEmail()" classname="planner.ui.PlannerControllerTest" time="0.117"/>
+  <testcase name="testSaveProfileWithNoStudent()" classname="planner.ui.PlannerControllerTest" time="0.202"/>
+  <testcase name="testClearProfileData()" classname="planner.ui.PlannerControllerTest" time="0.215"/>
+  <testcase name="testAddCourseWithInvalidCredits()" classname="planner.ui.PlannerControllerTest" time="0.303"/>
+  <testcase name="testAddTaskWithCourse()" classname="planner.ui.PlannerControllerTest" time="0.16"/>
+  <testcase name="testImportData()" classname="planner.ui.PlannerControllerTest" time="0.138"/>
+  <testcase name="testLogout()" classname="planner.ui.PlannerControllerTest" time="0.318"/>
+  <testcase name="testLogoutWithNoStudent()" classname="planner.ui.PlannerControllerTest" time="0.175"/>
+  <testcase name="testSaveStudentProfileWithEnum()" classname="planner.ui.PlannerControllerTest" time="0.119"/>
+  <testcase name="testToggleTaskCompletion()" classname="planner.ui.PlannerControllerTest" time="0.297"/>
+  <testcase name="testConstructor()" classname="planner.ui.PlannerControllerTest" time="0.133"/>
+  <system-out><![CDATA[DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: saveCourses called with 0 courses, profilePrefix: S12345_Test_Student
+DEBUG: saveCourses called with 0 courses, profilePrefix: S12345_Test_Student
+DEBUG: saveCourses called with 1 courses, profilePrefix: S12345_Test_Student
+DEBUG: saveCourses called with 1 courses, profilePrefix: S12345_Test_Student
+DEBUG: saveCourses called with 0 courses, profilePrefix: S12345_Test_Student
+DEBUG: saveCourses called with 1 courses, profilePrefix: S12345_Test_Student
+DEBUG: saveCourses called with 0 courses, profilePrefix: S12345_Test_Student
+DEBUG: saveCourses called with 1 courses, profilePrefix: S12345_Test_Student
+DEBUG: Current profile from preferences: null
+DEBUG: No profile selected, loading first available profile
+DEBUG: Loading first available profile: Grace Second - Art (Senior)
+DEBUG: Student set in model: Grace Second
+DEBUG: Loading courses from prefix: S77777_Grace_Second
+DEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+DEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+DEBUG: File exists: true
+DEBUG: Loaded 0 courses
+DEBUG: Added 0 courses to model
+DEBUG: Loading tasks from prefix: S77777_Grace_Second
+DEBUG: Loaded 0 tasks
+DEBUG: Added 0 tasks to model
+DEBUG: Loading events from prefix: S77777_Grace_Second
+DEBUG: Loaded 0 events
+DEBUG: Added 0 events to model
+DEBUG: Logout - model has 1 courses before save
+DEBUG: saveCourses called with 1 courses, profilePrefix: S12345_Test_Student
+DEBUG: Logout - saved planner data
+DEBUG: Logout - completed
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

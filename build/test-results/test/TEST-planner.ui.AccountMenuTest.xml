@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.ui.AccountMenuTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:27" hostname="Mac.lan" time="1.952">
+  <properties/>
+  <testcase name="testProfileSwitchClearsData()" classname="planner.ui.AccountMenuTest" time="0.684"/>
+  <testcase name="testExportData()" classname="planner.ui.AccountMenuTest" time="0.429"/>
+  <testcase name="testLogoutClearsAllData()" classname="planner.ui.AccountMenuTest" time="0.267"/>
+  <testcase name="testImportData()" classname="planner.ui.AccountMenuTest" time="0.265"/>
+  <testcase name="testAccountMenuComponents()" classname="planner.ui.AccountMenuTest" time="0.305"/>
+  <system-out><![CDATA[DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: saveCourses called with 0 courses, profilePrefix: S12345_John_Doe
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: Current profile from preferences: null
+DEBUG: No profile selected, loading first available profile
+DEBUG: Loading first available profile: Grace Second - Art (Senior)
+DEBUG: Student set in model: Grace Second
+DEBUG: Loading courses from prefix: S77777_Grace_Second
+DEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+DEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+DEBUG: File exists: true
+DEBUG: Loaded 0 courses
+DEBUG: Added 0 courses to model
+DEBUG: Loading tasks from prefix: S77777_Grace_Second
+DEBUG: Loaded 0 tasks
+DEBUG: Added 0 tasks to model
+DEBUG: Loading events from prefix: S77777_Grace_Second
+DEBUG: Loaded 0 events
+DEBUG: Added 0 events to model
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: saveCourses called with 0 courses, profilePrefix: null
+DEBUG: Current profile from preferences: Grace Second - Art (Senior)
+DEBUG: Loading profile: Grace Second - Art (Senior)
+DEBUG: Student set in model: Grace Second
+DEBUG: Loading courses from prefix: S77777_Grace_Second
+DEBUG: loadCourses called with profilePrefix: S77777_Grace_Second
+DEBUG: Loading courses from file: planner_data/profiles/S77777_Grace_Second_courses.csv
+DEBUG: File exists: true
+DEBUG: Loaded 0 courses
+DEBUG: Added 0 courses to model
+DEBUG: Loading tasks from prefix: S77777_Grace_Second
+DEBUG: Loaded 0 tasks
+DEBUG: Added 0 tasks to model
+DEBUG: Loading events from prefix: S77777_Grace_Second
+DEBUG: Loaded 0 events
+DEBUG: Added 0 events to model
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

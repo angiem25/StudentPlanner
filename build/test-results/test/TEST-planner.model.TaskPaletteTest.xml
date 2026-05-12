@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.model.TaskPaletteTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:27" hostname="Mac.lan" time="0.005">
+  <properties/>
+  <testcase name="Should get predefined palette colors" classname="planner.model.TaskPaletteTest" time="0.002"/>
+  <testcase name="Should check if hex is in palette" classname="planner.model.TaskPaletteTest" time="0.0"/>
+  <testcase name="Should canonicalize hex colors correctly" classname="planner.model.TaskPaletteTest" time="0.0"/>
+  <testcase name="Should handle edge cases for color validation" classname="planner.model.TaskPaletteTest" time="0.0"/>
+  <testcase name="Should handle invalid hex colors" classname="planner.model.TaskPaletteTest" time="0.0"/>
+  <testcase name="Should handle short hex format" classname="planner.model.TaskPaletteTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

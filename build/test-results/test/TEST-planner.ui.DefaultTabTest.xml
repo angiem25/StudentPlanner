@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="planner.ui.DefaultTabTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-05-12T13:54:29" hostname="Mac.lan" time="1.447">
+  <properties/>
+  <testcase name="testDefaultTabEdgeCases()" classname="planner.ui.DefaultTabTest" time="0.317"/>
+  <testcase name="testDefaultTabIntegration()" classname="planner.ui.DefaultTabTest" time="0.361"/>
+  <testcase name="testDefaultTabFallback()" classname="planner.ui.DefaultTabTest" time="0.201"/>
+  <testcase name="testDefaultTabPersistence()" classname="planner.ui.DefaultTabTest" time="0.317"/>
+  <testcase name="testDefaultTabValidation()" classname="planner.ui.DefaultTabTest" time="0.25"/>
+  <system-out><![CDATA[DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+DEBUG: refreshCourseList() called
+DEBUG: Model has 0 courses
+DEBUG: CourseListModel now has 0 items
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

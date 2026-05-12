@@ -27,6 +27,8 @@ public class PlannerService {
                                    String studentId, Student.AcademicYear academicYear, String major) {
         validateStudentData(firstName, lastName, email, studentId, academicYear, major);
         Student student = new Student(firstName, lastName, email, studentId, academicYear, major);
+        // Set the current student in the model
+        model.setCurrentStudent(student);
         // Save the student profile to repository
         try {
             planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
@@ -44,6 +46,8 @@ public class PlannerService {
         validateStudentData(firstName, lastName, email, studentId, year, major);
         Student.AcademicYear academicYear = Student.AcademicYear.fromNumeric(year);
         Student student = new Student(firstName, lastName, email, studentId, academicYear, major);
+        // Set the current student in the model
+        model.setCurrentStudent(student);
         // Save the student profile to repository
         try {
             planner.persistence.PlannerRepository repository = new planner.persistence.PlannerRepository();
